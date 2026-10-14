@@ -2,7 +2,7 @@
 
 Mortar is a free, open-source (MIT) library that generates replayable, seed-based levels for action RPGs from hand-made pieces. Designers draw tiles and rooms as text, describe each area's overall structure, and Mortar turns a seed into a finished layout. The same seed always produces the same level, on every platform.
 
-Mortar is engine-agnostic. Unity runs the generator directly; Unreal Engine loads the layouts it produces.
+Mortar targets Unity, which runs the generator directly. The generator itself has no engine dependencies, so it also runs from the command line and in tests.
 
 ## 1. Goals and non-goals
 
@@ -13,14 +13,14 @@ Mortar is engine-agnostic. Unity runs the generator directly; Unreal Engine load
 - Deterministic output: identical layouts for the same inputs and seed on Windows, Linux, and macOS, in .NET and in Unity.
 - Every successful layout is guaranteed walkable from entrance to every landmark and marker.
 - Plain-text authoring that is easy to review in git.
-- Thin integrations for Unity and Unreal Engine.
+- A thin Unity integration.
 
 **Non-goals (v1)**
 
-- Visual room editors inside Unity or Unreal (text authoring only).
+- Visual room editors inside Unity (text authoring only).
 - Spawning monsters, loot, or gameplay objects. Mortar reports marker positions; games decide what spawns.
 - Multi-floor or vertical levels.
-- Running the generator natively inside Unreal. Unreal consumes layout files.
+- Engines other than Unity.
 
 ## 2. Repository layout
 
@@ -32,7 +32,6 @@ Mortar is engine-agnostic. Unity runs the generator directly; Unreal Engine load
 | `tests/` | Unit, snapshot, and success-rate tests. |
 | `samples/` | A small sample tileset, one indoor area, and one outdoor area. |
 | `unity/` | Unity package (installed by Git URL through the Package Manager). |
-| `unreal/MortarPlugin` | Unreal Engine plugin that loads layouts and places meshes. |
 | `docs/` | Design and authoring guides. |
 
 ## 3. Determinism
@@ -81,7 +80,7 @@ A room is a small hand-drawn grid with tags:
 - `D` is a possible door. It becomes floor if the generator connects something to it, and wall otherwise. Doors must lie on the room's outer edge.
 - Marker characters sit on floor cells: `E` entrance, `X` exit, `B` boss, `W` waypoint, `S` monster spawn, `C` chest.
 - Standard tags: `entrance`, `exit`, `boss`, `waypoint`, `filler`, `corridor`, `dead_end`. Areas may define custom tags.
-- Indoor rooms must measure a whole number of slots (see 4.4), counting the shared one-cell overlap.
+- Indoor room width and height must each be `(slotSize - 1) × n + 1` for a whole number `n` (with `slotSize` 9: 9, 17, 25…), so neighboring rooms share exactly one cell.
 
 ### 4.4 Areas (`areas/*.json`)
 
@@ -153,14 +152,7 @@ The layout file is the only thing engines and servers need.
 - **Mortar Level** component: takes an area file and seed, generates, and builds the level under a parent object. An editor button regenerates with a new seed.
 - Markers become tagged empty game objects for games to spawn content on.
 
-## 10. Unreal plugin
-
-- C++ plugin that loads a layout from a file path or a JSON string (for example, sent by a game server).
-- A data table maps tile types to one or more static meshes; the plugin places them as instanced static meshes.
-- Markers are exposed to Blueprints as tagged transforms.
-- Recomputes and checks the layout fingerprint and reports a mismatch.
-
-## 11. Testing
+## 10. Testing
 
 - **Determinism snapshots:** stored layouts for known seeds; any change in output fails the test.
 - **Validation property tests:** across many seeds, every successful layout passes the walkability checks.
@@ -168,14 +160,13 @@ The layout file is the only thing engines and servers need.
 - **Success-rate tests:** sample areas must succeed on at least 80% of seeds.
 - **CI:** GitHub Actions runs the test suite on Windows, Linux, and macOS and confirms identical snapshots on all three.
 
-## 12. Build order
+## 11. Build order
 
 1. **Core and CLI (first release):** file formats, PCG32, tile type resolution, validation, retries, indoor room stitching, `generate` and `preview`.
 2. **Outdoor generation:** feature tracing, filler, and `stats`.
 3. **Unity package** with a sample scene.
-4. **Unreal plugin** with a sample map.
 
-## 13. Repository conventions
+## 12. Repository conventions
 
 - MIT license; README with quick start; contribution notes.
 - Samples use plain placeholder geometry (cubes and planes) so the repo contains no licensed art.
