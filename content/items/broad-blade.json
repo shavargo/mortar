@@ -1,0 +1,12 @@
+{
+  "id": "broad-blade",
+  "name": "Broad Blade",
+  "icon": "broad-blade",
+  "slot": "weapon",
+  "size": { "width": 1, "height": 3 },
+  "itemLevel": 4,
+  "dropWeight": 3,
+  "requirements": { "strength": 32, "dexterity": 18 },
+  "damage": { "min": 6, "max": 12 },
+  "swing": { "attackTicks": 16, "hitFrame": 10 }
+}

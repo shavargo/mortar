@@ -2,5 +2,8 @@
   "rules": "rules.json",
   "classes": "classes",
   "monsters": "monsters",
-  "levels": "levels.json"
+  "levels": "levels.json",
+  "items": "items",
+  "affixes": "affixes.json",
+  "loot": "loot.json"
 }

@@ -1,0 +1,9 @@
+{
+  "id": "bone-charm",
+  "name": "Bone Charm",
+  "icon": "bone-charm",
+  "slot": "amulet",
+  "size": { "width": 1, "height": 1 },
+  "itemLevel": 3,
+  "dropWeight": 1
+}

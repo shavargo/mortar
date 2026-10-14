@@ -1,0 +1,10 @@
+{
+  "id": "padded-vest",
+  "name": "Padded Vest",
+  "icon": "padded-vest",
+  "slot": "body",
+  "size": { "width": 2, "height": 3 },
+  "itemLevel": 1,
+  "dropWeight": 6,
+  "armor": { "min": 3, "max": 6 }
+}

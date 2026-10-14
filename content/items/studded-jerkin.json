@@ -1,0 +1,11 @@
+{
+  "id": "studded-jerkin",
+  "name": "Studded Jerkin",
+  "icon": "studded-jerkin",
+  "slot": "body",
+  "size": { "width": 2, "height": 3 },
+  "itemLevel": 3,
+  "dropWeight": 4,
+  "requirements": { "strength": 22 },
+  "armor": { "min": 8, "max": 12 }
+}

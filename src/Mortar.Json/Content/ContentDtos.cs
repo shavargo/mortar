@@ -9,6 +9,12 @@ internal sealed class ManifestDto
     public string? Monsters { get; set; }
 
     public string? Levels { get; set; }
+
+    public string? Items { get; set; }
+
+    public string? Affixes { get; set; }
+
+    public string? Loot { get; set; }
 }
 
 internal sealed class RulesDto
@@ -101,6 +107,8 @@ internal sealed class ClassDto
     public RangeDto? UnarmedDamage { get; set; }
 
     public TimingsDto? Timings { get; set; }
+
+    public List<string?>? StartingItems { get; set; }
 }
 
 internal sealed class MinionsDto
@@ -139,6 +147,8 @@ internal sealed class MonsterDto
     public string? Ai { get; set; }
 
     public MinionsDto? Minions { get; set; }
+
+    public string? Loot { get; set; }
 }
 
 internal sealed class LevelsDto

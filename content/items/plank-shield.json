@@ -1,0 +1,11 @@
+{
+  "id": "plank-shield",
+  "name": "Plank Shield",
+  "icon": "plank-shield",
+  "slot": "shield",
+  "size": { "width": 2, "height": 2 },
+  "itemLevel": 1,
+  "dropWeight": 5,
+  "armor": { "min": 2, "max": 4 },
+  "blockChance": 15
+}

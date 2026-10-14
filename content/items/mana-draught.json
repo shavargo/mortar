@@ -1,0 +1,10 @@
+{
+  "id": "mana-draught",
+  "name": "Mana Draught",
+  "icon": "mana-draught",
+  "slot": "potion",
+  "size": { "width": 1, "height": 1 },
+  "itemLevel": 1,
+  "dropWeight": 4,
+  "potion": { "restores": "mana", "amount": 20 }
+}

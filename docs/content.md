@@ -2,13 +2,13 @@
 
 The `content/` folder defines everything the game simulation needs besides level layouts. `GameContentLoader.Load("content/game.json")` reads it; any problem is reported with the file or definition it came from.
 
-Monster and class numbers (life, damage, armor class, to-hit, experience, stats, caps, growth) must be at most 1,000,000.
+Monster, class, and item numbers (life, damage, armor class, to-hit, experience, stats, caps, growth) must be at most 1,000,000.
 
 All times are in **ticks**. The simulation runs at 20 ticks per second, so `moveTicks: 7` is 0.35 seconds per tile.
 
 ## `game.json`
 
-Points at the other files, relative to itself: `rules` (file), `classes` (folder), `monsters` (folder), `levels` (file).
+Points at the other files, relative to itself: `rules` (file), `classes` (folder), `monsters` (folder), `levels` (file), `items` (folder), `affixes` (file), and `loot` (file).
 
 ## `rules.json`
 
@@ -34,9 +34,11 @@ Leveling up restores the player's life and mana.
 
 `id`, `name`, `spriteSet`, `baseStats` and `statCaps` (`strength`, `dexterity`, `vitality`, `magic`), `growth` (`lifeBase`, `lifePerVitality`, `lifePerLevel`, `manaBase`, `manaPerMagic`, `manaPerLevel`, `statPointsPerLevel`), `unarmedDamage` (`min`, `max`), and `timings`.
 
+Optional `startingItems` lists item ids the class starts with. Each is created plain (no affixes, armor at its maximum). Equippable items fill empty slots; potions go to the belt; the rest go to the inventory. Items that don't fit are left out.
+
 ## `monsters/*.json`
 
-`id`, `name`, `spriteSet`, `level`, `life` (`min`, `max`; rolled per monster), `armorClass`, `toHit`, `damage` (`min`, `max`), optional `blockChance` (percent, default 0), `timings`, `sightRadius` (tiles), `experience`, and `ai`. A monster's `level` affects hit chance (both ways) and the experience it awards.
+`id`, `name`, `spriteSet`, `level`, `life` (`min`, `max`; rolled per monster), `armorClass`, `toHit`, `damage` (`min`, `max`), optional `blockChance` (percent, default 0), `timings`, `sightRadius` (tiles), `experience`, `ai`, and optional `loot` (a loot table id; monsters without one drop nothing). A monster's `level` affects hit chance (both ways) and the experience it awards.
 
 `ai` is one of:
 
@@ -50,3 +52,27 @@ Leveling up restores the player's life and mana.
 ## `levels.json`
 
 `levels` is a list with one entry per dungeon depth, numbered 1, 2, 3, … with no gaps. Each entry has `depth`, `area` (a Mortar area file, relative to `levels.json`), `spawns` (`monster` and `weight`; one is picked per spawn marker), and optional `boss` (spawned at the area's boss marker). Spawn markers within 5 tiles of the entrance stay empty.
+
+## `items/*.json`
+
+One item base per file: `id`, `name`, `icon`, `slot`, `size` (`width` 1–2, `height` 1–3), `itemLevel` (only monsters of at least this level drop it), `dropWeight` (0 never drops), and optional `requirements` (`strength`, `dexterity`, `vitality`, `magic`; missing ones are 0, compared against the player's base stats).
+
+`slot` is one of `weapon`, `body`, `head`, `shield`, `ring`, `amulet`, `potion`. Rings, amulets, and potions are 1×1.
+
+- Weapons need `damage` (`min`, `max`), which replaces the class's unarmed damage. Optional `swing` (`attackTicks`, `hitFrame`) replaces the class's attack timings.
+- Body, head, and shield items need `armor` (`min`, `max`); each dropped item rolls its armor value once. Shields may have `blockChance` (percent).
+- Potions need `potion` (`restores`: `life` or `mana`, and `amount`).
+
+The inventory is 10×4 cells and the belt holds 8 potions. Gold is a counter, not an item.
+
+## `affixes.json`
+
+`affixes` is a list. Each affix has `id`, `name` (shown before the base name for prefixes, after it for suffixes), `position` (`prefix` or `suffix`), `slots` (equippable slots it can appear on), `itemLevel` (`min`, `max`), `weight`, `bonus`, and `value` (`min`, `max`; rolled once per item).
+
+`bonus` is one of `strength`, `dexterity`, `vitality`, `magic`, `life`, `mana`, `armorClass`, `toHit`, `damage` (added to both ends of the damage range).
+
+## `loot.json`
+
+`tables` is a list. Each table has `id`, `rolls` (1–10), `noneWeight`, `goldWeight`, `itemWeight` (each roll picks one of nothing, a gold pile, or an item by these weights), `gold` (`min`, `max`; required when `goldWeight` is above 0), and `magicPercent` (the chance that an item is magic).
+
+A magic item rolls a prefix, a suffix, or both (equal odds), from affixes allowed on its slot at its item level. Potions are never magic. Drops land on the nearest floor cells around the corpse, up to 3 tiles away.

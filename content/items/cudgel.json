@@ -1,0 +1,11 @@
+{
+  "id": "cudgel",
+  "name": "Cudgel",
+  "icon": "cudgel",
+  "slot": "weapon",
+  "size": { "width": 1, "height": 3 },
+  "itemLevel": 3,
+  "dropWeight": 4,
+  "requirements": { "strength": 26 },
+  "damage": { "min": 4, "max": 9 }
+}

@@ -1,0 +1,10 @@
+{
+  "id": "leather-hood",
+  "name": "Leather Hood",
+  "icon": "leather-hood",
+  "slot": "head",
+  "size": { "width": 2, "height": 2 },
+  "itemLevel": 1,
+  "dropWeight": 5,
+  "armor": { "min": 2, "max": 4 }
+}

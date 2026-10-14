@@ -1,3 +1,4 @@
+using Mortar.Game.Items;
 using Mortar.Game.Simulation;
 using Mortar.Json.Content;
 using Mortar.Tests.Support;
@@ -80,5 +81,70 @@ public class GameContentLoaderTests
         Directory.Delete(Path.Combine(temp.Root, "monsters"), recursive: true);
         var result = GameContentLoader.Load(manifest);
         Assert.Contains(result.Errors, e => e.Source == manifest && e.Message == "'monsters' must name an existing folder");
+    }
+
+    [Fact]
+    public void RepoContent_HasItemsAffixesAndLoot()
+    {
+        var content = GameContentLoader.Load(ContentFixture.Manifest).Value!.Content;
+        Assert.Equal(15, content.ItemBases.Count);
+        Assert.Equal(13, content.Affixes.Count);
+        Assert.Equal(4, content.Items.LootTables.Count);
+        Assert.Equal("common", content.Monster("zombie").LootTableId);
+        Assert.True(content.TryGetClass("warrior", out var warrior));
+        Assert.Equal(new[] { "iron-knife", "padded-vest", "healing-draught", "healing-draught" }, warrior!.StartingItems);
+    }
+
+    [Fact]
+    public void RepoContent_StartsTheWarriorEquipped()
+    {
+        var content = GameContentLoader.Load(ContentFixture.Manifest).Value!;
+        var world = World.Create(content.Content, content.CreateLevelGenerator(), "warrior", 1).World!;
+        Assert.Equal("iron-knife", world.Belongings.Equipment.Get(EquipmentSlot.Weapon)!.Definition.Id);
+        Assert.Equal("padded-vest", world.Belongings.Equipment.Get(EquipmentSlot.Body)!.Definition.Id);
+        Assert.Equal("healing-draught", world.Belongings.Belt.Get(1)!.Definition.Id);
+    }
+
+    [Fact]
+    public void MissingItemField_NamesTheFile()
+    {
+        using var temp = new TempDir();
+        var manifest = ContentFixture.Copy(temp);
+        var vest = Path.Combine(temp.Root, "items", "padded-vest.json");
+        File.WriteAllText(vest, File.ReadAllText(vest).Replace("\"itemLevel\": 1,", ""));
+        var result = GameContentLoader.Load(manifest);
+        Assert.Contains(result.Errors, e => e.Source == vest && e.Message == "'itemLevel' is required");
+    }
+
+    [Fact]
+    public void NullAffixEntry_IsAnError()
+    {
+        using var temp = new TempDir();
+        var manifest = ContentFixture.Copy(temp);
+        var affixes = Path.Combine(temp.Root, "affixes.json");
+        File.WriteAllText(affixes, File.ReadAllText(affixes).Replace("\"affixes\": [", "\"affixes\": [null,"));
+        var result = GameContentLoader.Load(manifest);
+        Assert.Contains(result.Errors, e => e.Source == affixes && e.Message == "affixes entry 0 is null");
+    }
+
+    [Fact]
+    public void UnknownLootTable_IsAnError()
+    {
+        using var temp = new TempDir();
+        var manifest = ContentFixture.Copy(temp);
+        var zombie = Path.Combine(temp.Root, "monsters", "zombie.json");
+        File.WriteAllText(zombie, File.ReadAllText(zombie).Replace("\"loot\": \"common\"", "\"loot\": \"epic\""));
+        var result = GameContentLoader.Load(manifest);
+        Assert.Contains(result.Errors, e => e.Source == "monster 'zombie'" && e.Message == "loot references unknown loot table 'epic'");
+    }
+
+    [Fact]
+    public void MissingItemsFolder_IsAnError()
+    {
+        using var temp = new TempDir();
+        var manifest = ContentFixture.Copy(temp);
+        Directory.Delete(Path.Combine(temp.Root, "items"), recursive: true);
+        var result = GameContentLoader.Load(manifest);
+        Assert.Contains(result.Errors, e => e.Source == manifest && e.Message == "'items' must name an existing folder");
     }
 }

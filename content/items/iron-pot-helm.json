@@ -1,0 +1,11 @@
+{
+  "id": "iron-pot-helm",
+  "name": "Iron Pot Helm",
+  "icon": "iron-pot-helm",
+  "slot": "head",
+  "size": { "width": 2, "height": 2 },
+  "itemLevel": 3,
+  "dropWeight": 3,
+  "requirements": { "strength": 24 },
+  "armor": { "min": 5, "max": 8 }
+}

@@ -1,0 +1,11 @@
+{
+  "id": "ring-hauberk",
+  "name": "Ring Hauberk",
+  "icon": "ring-hauberk",
+  "slot": "body",
+  "size": { "width": 2, "height": 3 },
+  "itemLevel": 4,
+  "dropWeight": 2,
+  "requirements": { "strength": 34 },
+  "armor": { "min": 14, "max": 20 }
+}

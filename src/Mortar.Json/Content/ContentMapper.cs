@@ -36,7 +36,7 @@ internal static class ContentMapper
             ToGrowth(fields, dto.Growth),
             fields.ReadRange(dto.UnarmedDamage, "unarmedDamage"),
             fields.ReadTimings(dto.Timings),
-            Array.Empty<string>());
+            ToStartingItems(fields, dto.StartingItems));
     }
 
     public static MonsterDefinition ToMonster(string source, MonsterDto dto, List<AuthoringError> errors)
@@ -59,7 +59,7 @@ internal static class ContentMapper
             dto.Minions is null ? null : new MinionSpec(
                 fields.Text(dto.Minions.Monster, "minions.monster"),
                 fields.ReadRange(dto.Minions.Count, "minions.count")),
-            null);
+            string.IsNullOrWhiteSpace(dto.Loot) ? null : dto.Loot);
     }
 
     public static LevelDefinition ToLevel(string source, int index, LevelDto dto, string areaId, List<AuthoringError> errors)
@@ -93,4 +93,7 @@ internal static class ContentMapper
             fields.Int(dto.ManaPerLevel, "growth.manaPerLevel"),
             fields.Int(dto.StatPointsPerLevel, "growth.statPointsPerLevel"));
     }
+
+    private static IReadOnlyList<string> ToStartingItems(Fields fields, List<string?>? ids) =>
+        ids is null ? Array.Empty<string>() : ids.Select((id, i) => fields.Text(id, $"startingItems[{i}]")).ToList();
 }

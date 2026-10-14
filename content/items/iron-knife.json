@@ -1,0 +1,11 @@
+{
+  "id": "iron-knife",
+  "name": "Iron Knife",
+  "icon": "iron-knife",
+  "slot": "weapon",
+  "size": { "width": 1, "height": 2 },
+  "itemLevel": 1,
+  "dropWeight": 6,
+  "damage": { "min": 2, "max": 5 },
+  "swing": { "attackTicks": 11, "hitFrame": 6 }
+}

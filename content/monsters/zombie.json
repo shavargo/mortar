@@ -10,5 +10,6 @@
   "timings": { "moveTicks": 14, "attackTicks": 16, "hitFrame": 10, "recoveryTicks": 8 },
   "sightRadius": 5,
   "experience": 40,
-  "ai": "melee-chase"
+  "ai": "melee-chase",
+  "loot": "common"
 }

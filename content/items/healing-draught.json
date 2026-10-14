@@ -1,0 +1,10 @@
+{
+  "id": "healing-draught",
+  "name": "Healing Draught",
+  "icon": "healing-draught",
+  "slot": "potion",
+  "size": { "width": 1, "height": 1 },
+  "itemLevel": 1,
+  "dropWeight": 12,
+  "potion": { "restores": "life", "amount": 30 }
+}
