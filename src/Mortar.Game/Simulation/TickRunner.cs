@@ -22,6 +22,7 @@ internal static class TickRunner
         var due = ActionSystem.Advance(world, events);
         CombatSystem.Resolve(world, due, events);
         DeathSystem.Process(world, events);
+        PickupSystem.Process(world, events);
         return events.Events;
     }
 }

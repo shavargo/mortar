@@ -2,6 +2,7 @@ using Mortar.Game;
 using Mortar.Game.Commands;
 using Mortar.Game.Content;
 using Mortar.Game.Events;
+using Mortar.Game.Items;
 using Mortar.Game.Simulation;
 
 namespace Mortar.Tests.Gameplay.Support;
@@ -36,5 +37,20 @@ internal static class TestWorlds
             events.AddRange(world.Tick(Array.Empty<Command>()));
         }
         return events;
+    }
+
+    public static GroundItem DropGold(World world, int x, int y, int amount)
+    {
+        var ground = new GroundItem(world.NextItemId++, new Cell(x, y), null, amount);
+        world.Level.AddGroundItem(ground);
+        return ground;
+    }
+
+    public static GroundItem DropItem(World world, int x, int y, ItemBaseDefinition definition)
+    {
+        var item = ItemFactory.CreatePlain(world, definition);
+        var ground = new GroundItem(item.Id, new Cell(x, y), item, 0);
+        world.Level.AddGroundItem(ground);
+        return ground;
     }
 }

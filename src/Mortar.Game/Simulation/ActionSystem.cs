@@ -41,6 +41,9 @@ internal static class ActionSystem
             case IntentKind.Attack:
                 ContinueAttack(level, actor, events);
                 break;
+            case IntentKind.PickUp:
+                Movement.Approach(level, actor, actor.IntentCell, events);
+                break;
         }
     }
 

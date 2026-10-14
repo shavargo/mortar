@@ -5,4 +5,5 @@ public enum IntentKind
     None,
     MoveTo,
     Attack,
+    PickUp,
 }

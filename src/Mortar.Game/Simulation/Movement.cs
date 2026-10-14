@@ -26,6 +26,18 @@ internal static class Movement
         if (actor.Cell == goal) actor.ClearIntent();
     }
 
+    public static void Approach(LevelState level, Actor actor, Cell goal, EventSink events)
+    {
+        if (actor.Cell == goal || Reach.CanStrike(actor.Cell, goal, level.IsWalkable)) return;
+        var path = Pathfinder.FindPathNextTo(actor.Cell, goal, level.IsWalkable, level.IsFree);
+        if (path is { Count: > 0 })
+        {
+            Step(level, actor, path[0], events);
+            return;
+        }
+        if (path is null && !IsReachable(level, actor.Cell, goal)) actor.ClearIntent();
+    }
+
     public static bool IsReachable(LevelState level, Cell from, Cell to) =>
         from == to || Pathfinder.FindPath(from, to, level.IsWalkable, level.IsWalkable) is not null;
 

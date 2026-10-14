@@ -78,6 +78,13 @@ public sealed class Actor
         IntentTargetId = targetId;
     }
 
+    internal void SetPickUpIntent(int groundItemId, Cell cell)
+    {
+        Intent = IntentKind.PickUp;
+        IntentCell = cell;
+        IntentTargetId = groundItemId;
+    }
+
     internal void ClearIntent()
     {
         Intent = IntentKind.None;

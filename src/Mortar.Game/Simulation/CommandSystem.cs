@@ -26,6 +26,8 @@ internal static class CommandSystem
                 return PlayerGrowth.SpendPoint(world, spend.Stat, events);
             case UseStairsCommand _:
                 return Stairs.Use(world, events);
+            case PickUpCommand pickUp:
+                return PickupSystem.Start(world, pickUp);
             default:
                 return "unsupported command";
         }
