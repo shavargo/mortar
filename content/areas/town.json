@@ -1,0 +1,6 @@
+{
+  "id": "town",
+  "mode": "fixed",
+  "tileset": "../tilesets/town.json",
+  "map": "../maps/town.json"
+}

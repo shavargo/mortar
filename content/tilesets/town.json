@@ -1,0 +1,20 @@
+{
+  "groundTypes": [
+    { "id": "void", "char": " ", "walkable": false, "blocksSight": false },
+    { "id": "floor", "char": ".", "walkable": true, "blocksSight": false },
+    { "id": "wall", "char": "#", "walkable": false, "blocksSight": true },
+    { "id": "grass", "char": ",", "walkable": true, "blocksSight": false },
+    { "id": "road", "char": "=", "walkable": true, "blocksSight": false },
+    { "id": "water", "char": "~", "walkable": false, "blocksSight": false },
+    { "id": "tree", "char": "T", "walkable": false, "blocksSight": true }
+  ],
+  "variantWeights": {
+    "grass": [6, 2, 1],
+    "floor": [4, 1]
+  },
+  "markers": [
+    { "char": "F", "kind": "smith" },
+    { "char": "H", "kind": "healer" },
+    { "char": "G", "kind": "sage" }
+  ]
+}

@@ -46,7 +46,7 @@ internal static class MapRenderer
         return image;
     }
 
-    private static Rgb GroundColor(string groundId)
+    internal static Rgb GroundColor(string groundId)
     {
         if (GroundColors.TryGetValue(groundId, out var color))
         {

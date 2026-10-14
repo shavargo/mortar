@@ -127,6 +127,22 @@ public class CliTests
         Assert.Equal(57 * 8, BinaryPrimitives.ReadInt32BigEndian(png.AsSpan(16)));
     }
 
+    [Theory]
+    [InlineData("town")]
+    [InlineData("cathedral-1")]
+    [InlineData("cathedral-2")]
+    [InlineData("cathedral-3")]
+    [InlineData("cathedral-4")]
+    public void GenerateAndPreview_WorkOnShippedAreas(string name)
+    {
+        using var temp = new TempDir();
+        var layoutPath = Path.Combine(temp.Root, "layout.json");
+        var pngPath = Path.Combine(temp.Root, "map.png");
+        Assert.Equal(ExitCodes.Success, Run("generate", "--area", TestPaths.ContentArea(name), "--seed", "1", "--out", layoutPath).Code);
+        Assert.Equal(ExitCodes.Success, Run("preview", "--layout", layoutPath, "--out", pngPath).Code);
+        Assert.True(File.Exists(pngPath));
+    }
+
     [Fact]
     public void Preview_RejectsBadScale()
     {

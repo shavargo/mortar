@@ -58,4 +58,37 @@ public class ContentAreaTests
         }
         Assert.True(found, "no multi-slot filler was placed in 20 seeds");
     }
+
+    [Fact]
+    public void Town_MatchesSnapshot()
+    {
+        var area = Load("town");
+        var result = Generator.Generate(area, 1);
+        Assert.True(result.Succeeded, result.FailureSummary);
+        Snapshots.AssertMatches("town-seed-1.txt", AsciiMap.Render(result.Layout!, area.Tileset));
+    }
+
+    [Fact]
+    public void Town_GroundIsTheSameForEverySeed()
+    {
+        var area = Load("town");
+        var first = Generator.Generate(area, 1).Layout!.Cells;
+        var second = Generator.Generate(area, 2).Layout!.Cells;
+        for (var y = 0; y < first.Height; y++)
+        {
+            for (var x = 0; x < first.Width; x++)
+            {
+                Assert.Equal(first.GroundAt(x, y), second.GroundAt(x, y));
+            }
+        }
+    }
+
+    [Fact]
+    public void Town_HasItsMarkers()
+    {
+        var layout = Generator.Generate(Load("town"), 1).Layout!;
+        Assert.Equal(
+            new[] { "entrance", "exit", "healer", "sage", "smith" },
+            layout.Markers.Select(m => m.Kind).OrderBy(k => k, StringComparer.Ordinal));
+    }
 }
