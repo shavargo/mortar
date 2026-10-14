@@ -52,6 +52,10 @@ internal static class CommandSystem
         {
             return "destination is not walkable";
         }
+        if (!Movement.IsReachable(world.Level, world.Player.Cell, move.Destination))
+        {
+            return "destination is unreachable";
+        }
         world.Player.SetMoveIntent(move.Destination);
         return null;
     }

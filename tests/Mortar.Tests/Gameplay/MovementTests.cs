@@ -10,6 +10,22 @@ public class MovementTests
 {
     private static readonly Command[] None = Array.Empty<Command>();
 
+    private static readonly string[] SplitRoom =
+    {
+        "#########",
+        "#E..#...#",
+        "#...#...#",
+        "#...#..X#",
+        "#########",
+    };
+
+    private static readonly string[] Corridor =
+    {
+        "###########",
+        "#E.......X#",
+        "###########",
+    };
+
     [Fact]
     public void MoveCommand_StartsAStepImmediately()
     {
@@ -49,6 +65,52 @@ public class MovementTests
         var rejected = Assert.IsType<CommandRejected>(Assert.Single(events));
         Assert.Equal("destination is not walkable", rejected.Reason);
         Assert.Equal("1 rejected 'move to (0,0)': destination is not walkable", rejected.ToString());
+    }
+
+    [Fact]
+    public void UnreachableDestination_IsRejected()
+    {
+        var world = TestWorlds.Create(levels: new[] { SplitRoom, SplitRoom });
+        var events = world.Tick(new Command[] { new MoveCommand(new Cell(6, 1)) });
+        var rejected = Assert.IsType<CommandRejected>(Assert.Single(events));
+        Assert.Equal("destination is unreachable", rejected.Reason);
+        Assert.Equal(IntentKind.None, world.Player.Intent);
+    }
+
+    [Fact]
+    public void OccupiedDestination_StopsNextToTheOccupant()
+    {
+        var world = TestWorlds.Create(TestGameContent.Valid(monsters: new[] { TestGameContent.Monster("zombie", sight: 1) }));
+        TestWorlds.Spawn(world, "zombie", 5, 1);
+        var events = TestWorlds.Run(world, 14, new MoveCommand(new Cell(5, 1)));
+        var moves = events.OfType<ActorMoved>().Where(m => m.ActorId == Actor.PlayerId).ToList();
+        Assert.Equal(new long[] { 1, 5, 9 }, moves.Select(m => m.Tick));
+        Assert.Equal(new Cell(4, 1), world.Player.Cell);
+        Assert.Equal(IntentKind.None, world.Player.Intent);
+    }
+
+    [Fact]
+    public void BlockedCorridor_WaitsAndContinuesOnceClear()
+    {
+        var world = TestWorlds.Create(TestGameContent.Valid(monsters: new[] { TestGameContent.Monster("zombie", sight: 1) }), levels: new[] { Corridor, Corridor });
+        var blocker = TestWorlds.Spawn(world, "zombie", 6, 1);
+        var waiting = TestWorlds.Run(world, 5, new MoveCommand(new Cell(8, 1)));
+        Assert.Empty(waiting.OfType<ActorMoved>());
+        Assert.Equal(IntentKind.MoveTo, world.Player.Intent);
+        Assert.Equal(ActionKind.Idle, world.Player.Action);
+        world.Level.Remove(blocker);
+        TestWorlds.Run(world, 30);
+        Assert.Equal(new Cell(8, 1), world.Player.Cell);
+        Assert.Equal(IntentKind.None, world.Player.Intent);
+    }
+
+    [Fact]
+    public void WalkWithNoTerrainPath_IsAbandoned()
+    {
+        var world = TestWorlds.Create(levels: new[] { SplitRoom, SplitRoom });
+        world.Player.SetMoveIntent(new Cell(6, 1));
+        Assert.Empty(world.Tick(None));
+        Assert.Equal(IntentKind.None, world.Player.Intent);
     }
 
     [Fact]
