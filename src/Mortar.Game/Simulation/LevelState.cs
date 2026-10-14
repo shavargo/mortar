@@ -73,9 +73,13 @@ public sealed class LevelState
         }
         actor.Cell = cell;
         _occupants[Index(cell)] = actor.Id;
-        var index = _actors.FindIndex(existing => existing.Id > actor.Id);
-        _actors.Insert(index < 0 ? _actors.Count : index, actor);
-        _byId[actor.Id] = actor;
+        InsertById(actor);
+    }
+
+    internal void AddCorpse(Actor actor, Cell cell)
+    {
+        actor.Cell = cell;
+        InsertById(actor);
     }
 
     internal void Move(Actor actor, Cell to)
@@ -112,6 +116,13 @@ public sealed class LevelState
             }
         }
         return null;
+    }
+
+    private void InsertById(Actor actor)
+    {
+        var index = _actors.FindIndex(existing => existing.Id > actor.Id);
+        _actors.Insert(index < 0 ? _actors.Count : index, actor);
+        _byId[actor.Id] = actor;
     }
 
     private int Index(Cell cell) => cell.Y * Layout.Width + cell.X;

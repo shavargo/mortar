@@ -4,6 +4,7 @@ using Mortar.Game.Commands;
 using Mortar.Game.Content;
 using Mortar.Game.Events;
 using Mortar.Game.Items;
+using Mortar.Game.Saves;
 
 namespace Mortar.Game.Simulation;
 
@@ -66,6 +67,13 @@ public sealed class World
         var error = LevelEntry.Enter(world, 1, MarkerKinds.Entrance);
         return error is null ? WorldResult.Success(world) : WorldResult.Failure(error);
     }
+
+    public static WorldResult Restore(WorldSnapshot snapshot, ContentSet content, ILevelGenerator generator) =>
+        WorldRestorer.Restore(snapshot, content, generator);
+
+    internal static World ForRestore(
+        ContentSet content, ILevelGenerator generator, uint seed, ClassDefinition playerClass, PlayerProgress progress, Pcg32 rng) =>
+        new World(content, generator, seed, playerClass, progress, rng);
 
     public LevelState GetLevel(int depth) => _levels[depth];
 

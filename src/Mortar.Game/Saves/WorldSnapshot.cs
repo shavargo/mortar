@@ -2,7 +2,7 @@ using Mortar.Game.Simulation;
 
 namespace Mortar.Game.Saves;
 
-/// <summary>Plain data for a whole world. Values read from a file may be missing or invalid; restoring checks all of them.</summary>
+/// <summary>Plain data for a whole world. Values read from a file may be missing or invalid; <see cref="World.Restore"/> checks all of them.</summary>
 public sealed class WorldSnapshot
 {
     public const int CurrentVersion = 1;
