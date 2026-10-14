@@ -9,9 +9,18 @@ public class LevelingTests
     [Fact]
     public void KillExperience_ScalesWithLevelDifference()
     {
-        Assert.Equal(50, Leveling.KillExperience(50, 1, 1));
-        Assert.Equal(60, Leveling.KillExperience(50, 3, 1));
-        Assert.Equal(0, Leveling.KillExperience(50, 1, 15));
+        var rules = TestGameContent.Rules(experiencePercentPerLevel: 12, minimumExperiencePercent: 25);
+        Assert.Equal(50, Leveling.KillExperience(50, 1, 1, rules));
+        Assert.Equal(62, Leveling.KillExperience(50, 3, 1, rules));
+        Assert.Equal(38, Leveling.KillExperience(50, 3, 5, rules));
+        Assert.Equal(12, Leveling.KillExperience(50, 1, 15, rules));
+    }
+
+    [Fact]
+    public void KillExperience_CanDropToZeroWithNoMinimum()
+    {
+        var rules = TestGameContent.Rules(experiencePercentPerLevel: 10, minimumExperiencePercent: 0);
+        Assert.Equal(0, Leveling.KillExperience(50, 1, 15, rules));
     }
 
     [Fact]

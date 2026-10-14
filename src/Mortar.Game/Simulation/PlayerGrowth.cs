@@ -8,7 +8,7 @@ internal static class PlayerGrowth
     public static void RewardKill(World world, Actor monster, EventSink events)
     {
         var definition = world.Content.Monster(monster.DefinitionId);
-        var amount = Leveling.KillExperience(definition.Experience, definition.Level, world.Progress.Level);
+        var amount = Leveling.KillExperience(definition.Experience, definition.Level, world.Progress.Level, world.Content.Rules);
         if (amount == 0) return;
         var gained = Leveling.AddExperience(world.Progress, amount, world.PlayerClass, world.Content.Rules);
         events.Add(new ExperienceGained(events.Tick, amount, world.Progress.Experience));

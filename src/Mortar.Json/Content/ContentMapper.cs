@@ -19,6 +19,8 @@ internal static class ContentMapper
             fields.Int(dto.DexterityPerArmor, "dexterityPerArmor"),
             fields.Int(dto.StrengthPerDamage, "strengthPerDamage"),
             fields.Int(dto.HitRecoveryPercent, "hitRecoveryPercent"),
+            fields.Int(dto.ExperiencePercentPerLevel, "experiencePercentPerLevel"),
+            fields.Int(dto.MinimumExperiencePercent, "minimumExperiencePercent"),
             dto.ExperienceThresholds ?? new List<long>());
     }
 

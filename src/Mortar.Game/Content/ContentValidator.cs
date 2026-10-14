@@ -49,6 +49,14 @@ internal static class ContentValidator
         {
             errors.Add(source, "hitRecoveryPercent must be between 1 and 100");
         }
+        if (rules.ExperiencePercentPerLevel < 0 || rules.ExperiencePercentPerLevel > 100)
+        {
+            errors.Add(source, "experiencePercentPerLevel must be between 0 and 100");
+        }
+        if (rules.MinimumExperiencePercent < 0 || rules.MinimumExperiencePercent > 100)
+        {
+            errors.Add(source, "minimumExperiencePercent must be between 0 and 100");
+        }
         for (var i = 0; i < rules.ExperienceThresholds.Count; i++)
         {
             var previous = i == 0 ? 0 : rules.ExperienceThresholds[i - 1];

@@ -4,8 +4,13 @@ namespace Mortar.Game.Simulation;
 
 public static class Leveling
 {
-    public static long KillExperience(int baseExperience, int monsterLevel, int playerLevel) =>
-        Math.Max(0L, (long)baseExperience * (10 + monsterLevel - playerLevel) / 10);
+    public static long KillExperience(int baseExperience, int monsterLevel, int playerLevel, GameRules rules)
+    {
+        var percent = Math.Max(
+            rules.MinimumExperiencePercent,
+            100L + (long)rules.ExperiencePercentPerLevel * (monsterLevel - playerLevel));
+        return (long)baseExperience * percent / 100;
+    }
 
     public static int AddExperience(PlayerProgress progress, long amount, ClassDefinition definition, GameRules rules)
     {

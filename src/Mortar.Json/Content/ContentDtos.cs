@@ -31,6 +31,10 @@ internal sealed class RulesDto
 
     public int? HitRecoveryPercent { get; set; }
 
+    public int? ExperiencePercentPerLevel { get; set; }
+
+    public int? MinimumExperiencePercent { get; set; }
+
     public List<long>? ExperienceThresholds { get; set; }
 }
 

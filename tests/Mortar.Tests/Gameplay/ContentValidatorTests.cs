@@ -89,6 +89,17 @@ public class ContentValidatorTests
         AssertError(TestGameContent.Create(rules: rules), "rules", "strictly increasing");
     }
 
+    [Theory]
+    [InlineData(101, 25)]
+    [InlineData(-1, 25)]
+    [InlineData(12, 101)]
+    [InlineData(12, -1)]
+    public void ExperiencePercents_MustBeBetweenZeroAndOneHundred(int perLevel, int minimum)
+    {
+        var rules = TestGameContent.Rules(experiencePercentPerLevel: perLevel, minimumExperiencePercent: minimum);
+        AssertError(TestGameContent.Create(rules: rules), "rules", "must be between 0 and 100");
+    }
+
     [Fact]
     public void StatCapBelowBase_IsRejected()
     {

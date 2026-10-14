@@ -40,6 +40,17 @@ public class GameContentLoaderTests
     }
 
     [Fact]
+    public void MissingExperienceRule_IsAnError()
+    {
+        using var temp = new TempDir();
+        var manifest = ContentFixture.Copy(temp);
+        var rules = Path.Combine(temp.Root, "rules.json");
+        File.WriteAllText(rules, File.ReadAllText(rules).Replace("\"minimumExperiencePercent\": 25,", ""));
+        var result = GameContentLoader.Load(manifest);
+        Assert.Contains(result.Errors, e => e.Source == rules && e.Message == "'minimumExperiencePercent' is required");
+    }
+
+    [Fact]
     public void UnknownProperty_IsAnError()
     {
         using var temp = new TempDir();

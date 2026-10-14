@@ -5,8 +5,16 @@ namespace Mortar.Tests.Gameplay.Support;
 
 internal static class TestGameContent
 {
-    public static GameRules Rules(int minHit = 5, int maxHit = 95, int recoveryPercent = 20, long[]? thresholds = null) =>
-        new GameRules(minHit, maxHit, 50, 1, 1, 2, 5, 10, recoveryPercent, thresholds ?? new long[] { 100, 300, 600 });
+    public static GameRules Rules(
+        int minHit = 5,
+        int maxHit = 95,
+        int recoveryPercent = 20,
+        long[]? thresholds = null,
+        int experiencePercentPerLevel = 10,
+        int minimumExperiencePercent = 0) =>
+        new GameRules(
+            minHit, maxHit, 50, 1, 1, 2, 5, 10, recoveryPercent,
+            experiencePercentPerLevel, minimumExperiencePercent, thresholds ?? new long[] { 100, 300, 600 });
 
     public static ActionTimings Timings(int move = 4, int attack = 6, int hit = 3, int recovery = 3) =>
         new ActionTimings(move, attack, hit, recovery);

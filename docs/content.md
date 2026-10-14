@@ -18,9 +18,15 @@ Points at the other files, relative to itself: `rules` (file), `classes` (folder
 | `dexterityPerArmor` | Player armor class = dexterity ÷ this. |
 | `strengthPerDamage` | Player bonus damage = strength ÷ this. |
 | `hitRecoveryPercent` | A hit of at least this percent of max life staggers the target. |
-| `experienceThresholds` | Total experience to reach level 2, 3, …; strictly increasing. |
+| `experiencePercentPerLevel` | Percent of a monster's base experience added per level it is above the player (removed per level below); 0–100. |
+| `minimumExperiencePercent` | Kill experience never drops below this percent of base experience; 0–100. |
+| `experienceThresholds` | Total experience to reach level 2, 3, …; strictly increasing. The maximum level is the number of thresholds + 1. |
 
 Hit chance = attacker accuracy − defender armor class + level difference × `toHitPerLevelDifference`.
+
+Kill experience = base experience × max(`minimumExperiencePercent`, 100 + `experiencePercentPerLevel` × (monster level − player level)) ÷ 100, rounded down.
+
+Leveling up restores the player's life and mana.
 
 ## `classes/*.json`
 
@@ -28,7 +34,9 @@ Hit chance = attacker accuracy − defender armor class + level difference × `t
 
 ## `monsters/*.json`
 
-`id`, `name`, `spriteSet`, `level`, `life` (`min`, `max`; rolled per monster), `armorClass`, `toHit`, `damage` (`min`, `max`), optional `blockChance` (percent, default 0), `timings`, `sightRadius` (tiles), `experience`, and `ai`:
+`id`, `name`, `spriteSet`, `level`, `life` (`min`, `max`; rolled per monster), `armorClass`, `toHit`, `damage` (`min`, `max`), optional `blockChance` (percent, default 0), `timings`, `sightRadius` (tiles), `experience`, and `ai`. A monster's `level` affects hit chance (both ways) and the experience it awards.
+
+`ai` is one of:
 
 - `melee-chase`: wakes when the player comes within `sightRadius` or when hit, then chases and attacks.
 - `pack-leader`: as `melee-chase`, and spawns with `minions` (`monster`, `count` with `min` and `max`, at most 12). The whole pack wakes together.
