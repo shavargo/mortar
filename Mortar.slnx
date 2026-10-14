@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/Mortar.Core/Mortar.Core.csproj" />
+    <Project Path="src/Mortar.Json/Mortar.Json.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Mortar.Tests/Mortar.Tests.csproj" />

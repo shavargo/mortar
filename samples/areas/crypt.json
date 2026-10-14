@@ -1,0 +1,24 @@
+{
+  "id": "crypt",
+  "mode": "indoor",
+  "tileset": "../tileset.json",
+  "targetSize": { "width": 60, "height": 60, "tolerance": 15 },
+  "slotSize": 9,
+  "rooms": ["../rooms"],
+  "maxSideBranches": 4,
+  "maxAttempts": 20,
+  "graph": {
+    "nodes": [
+      { "id": "entrance", "kind": "entrance", "region": { "x": [0.0, 0.1], "y": [0.3, 0.7] } },
+      { "id": "waypoint", "kind": "waypoint", "region": { "x": [0.3, 0.7], "y": [0.0, 0.1] } },
+      { "id": "boss", "kind": "boss", "region": { "x": [0.9, 1.0], "y": [0.3, 0.7] } },
+      { "id": "exit", "kind": "exit", "region": { "x": [0.3, 0.7], "y": [0.9, 1.0] } }
+    ],
+    "edges": [
+      { "from": "entrance", "to": "waypoint", "kind": "path" },
+      { "from": "waypoint", "to": "boss", "kind": "path" },
+      { "from": "boss", "to": "exit", "kind": "path" },
+      { "from": "entrance", "to": "exit", "kind": "branch" }
+    ]
+  }
+}
