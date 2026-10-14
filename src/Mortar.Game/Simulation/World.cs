@@ -1,6 +1,8 @@
 using Mortar.Core.Model;
 using Mortar.Core.Rng;
+using Mortar.Game.Commands;
 using Mortar.Game.Content;
+using Mortar.Game.Events;
 
 namespace Mortar.Game.Simulation;
 
@@ -58,6 +60,8 @@ public sealed class World
     }
 
     public LevelState GetLevel(int depth) => _levels[depth];
+
+    public IReadOnlyList<GameEvent> Tick(IReadOnlyList<Command> commands) => TickRunner.Run(this, commands);
 
     internal LevelState? FindLevel(int depth) => _levels.TryGetValue(depth, out var level) ? level : null;
 
