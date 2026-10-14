@@ -10,7 +10,8 @@ public sealed class ClassDefinition
         Stats statCaps,
         ClassGrowth growth,
         IntRange unarmedDamage,
-        ActionTimings timings)
+        ActionTimings timings,
+        IReadOnlyList<string> startingItems)
     {
         Id = id;
         Name = name;
@@ -20,6 +21,7 @@ public sealed class ClassDefinition
         Growth = growth;
         UnarmedDamage = unarmedDamage;
         Timings = timings;
+        StartingItems = startingItems.ToArray();
     }
 
     public string Id { get; }
@@ -37,4 +39,6 @@ public sealed class ClassDefinition
     public IntRange UnarmedDamage { get; }
 
     public ActionTimings Timings { get; }
+
+    public IReadOnlyList<string> StartingItems { get; }
 }

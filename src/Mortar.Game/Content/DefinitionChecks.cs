@@ -91,7 +91,7 @@ internal static class DefinitionChecks
         else if (minion.Ai == AiKinds.PackLeader) errors.Add(source, "minions cannot be pack leaders");
     }
 
-    private static void CheckRange(string source, string field, IntRange range, int minimum, List<AuthoringError> errors)
+    public static void CheckRange(string source, string field, IntRange range, int minimum, List<AuthoringError> errors)
     {
         if (range.Min < minimum || range.Max < range.Min)
         {

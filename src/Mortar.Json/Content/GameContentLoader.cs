@@ -29,7 +29,7 @@ public static class GameContentLoader
         {
             return AuthoringResult<GameContent>.Failure(errors);
         }
-        var content = ContentSet.Create(rules, classes, monsters, levels);
+        var content = ContentSet.Create(rules, classes, monsters, levels, ItemCatalog.Empty);
         return content.Succeeded
             ? AuthoringResult<GameContent>.Success(new GameContent(content.Value!, areas))
             : AuthoringResult<GameContent>.Failure(content.Errors);

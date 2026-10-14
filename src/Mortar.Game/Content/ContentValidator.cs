@@ -8,7 +8,8 @@ internal static class ContentValidator
         GameRules rules,
         IReadOnlyList<ClassDefinition> classes,
         IReadOnlyList<MonsterDefinition> monsters,
-        IReadOnlyList<LevelDefinition> levels)
+        IReadOnlyList<LevelDefinition> levels,
+        ItemCatalog items)
     {
         var errors = new List<AuthoringError>();
         CheckRules(rules, errors);
@@ -27,6 +28,7 @@ internal static class ContentValidator
         foreach (var definition in classes) DefinitionChecks.CheckClass(definition, errors);
         foreach (var monster in monsters) DefinitionChecks.CheckMonster(monster, Find, errors);
         CheckLevels(levels, Find, errors);
+        ItemChecks.Validate(items, classes, monsters, errors);
         return errors;
     }
 
@@ -68,7 +70,7 @@ internal static class ContentValidator
         }
     }
 
-    private static void CheckUniqueIds(IEnumerable<string> ids, string kind, List<AuthoringError> errors)
+    public static void CheckUniqueIds(IEnumerable<string> ids, string kind, List<AuthoringError> errors)
     {
         var seen = new HashSet<string>(StringComparer.Ordinal);
         foreach (var id in ids)

@@ -27,7 +27,7 @@ public sealed class GameRules
         HitRecoveryPercent = hitRecoveryPercent;
         ExperiencePercentPerLevel = experiencePercentPerLevel;
         MinimumExperiencePercent = minimumExperiencePercent;
-        ExperienceThresholds = experienceThresholds;
+        ExperienceThresholds = experienceThresholds.ToArray();
     }
 
     public int MinHitChance { get; }

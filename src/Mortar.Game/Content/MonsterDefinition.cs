@@ -29,7 +29,8 @@ public sealed class MonsterDefinition
         int sightRadius,
         int experience,
         string ai,
-        MinionSpec? minions)
+        MinionSpec? minions,
+        string? lootTableId)
     {
         Id = id;
         Name = name;
@@ -45,6 +46,7 @@ public sealed class MonsterDefinition
         Experience = experience;
         Ai = ai;
         Minions = minions;
+        LootTableId = lootTableId;
     }
 
     public string Id { get; }
@@ -74,4 +76,6 @@ public sealed class MonsterDefinition
     public string Ai { get; }
 
     public MinionSpec? Minions { get; }
+
+    public string? LootTableId { get; }
 }

@@ -35,7 +35,8 @@ internal static class ContentMapper
             fields.ReadStats(dto.StatCaps, "statCaps"),
             ToGrowth(fields, dto.Growth),
             fields.ReadRange(dto.UnarmedDamage, "unarmedDamage"),
-            fields.ReadTimings(dto.Timings));
+            fields.ReadTimings(dto.Timings),
+            Array.Empty<string>());
     }
 
     public static MonsterDefinition ToMonster(string source, MonsterDto dto, List<AuthoringError> errors)
@@ -57,7 +58,8 @@ internal static class ContentMapper
             fields.Text(dto.Ai, "ai"),
             dto.Minions is null ? null : new MinionSpec(
                 fields.Text(dto.Minions.Monster, "minions.monster"),
-                fields.ReadRange(dto.Minions.Count, "minions.count")));
+                fields.ReadRange(dto.Minions.Count, "minions.count")),
+            null);
     }
 
     public static LevelDefinition ToLevel(string source, int index, LevelDto dto, string areaId, List<AuthoringError> errors)

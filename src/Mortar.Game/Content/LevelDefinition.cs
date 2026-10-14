@@ -19,7 +19,7 @@ public sealed class LevelDefinition
     {
         Depth = depth;
         AreaId = areaId;
-        Spawns = spawns;
+        Spawns = spawns.ToArray();
         BossId = bossId;
     }
 

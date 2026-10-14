@@ -78,7 +78,7 @@ public class ContentValidatorTests
     {
         var bad = new MonsterDefinition(
             "zombie", "Zombie", "zombie", 1, new IntRange(5, 5), 0, 50, new IntRange(1, 2), 0,
-            TestGameContent.Timings(attack: 6, hit: 6), 5, 10, AiKinds.MeleeChase, null);
+            TestGameContent.Timings(attack: 6, hit: 6), 5, 10, AiKinds.MeleeChase, null, null);
         AssertError(TestGameContent.Create(monsters: new[] { bad }), "monster 'zombie'", "hitFrame must be at least 1 and less than attackTicks");
     }
 
@@ -105,7 +105,7 @@ public class ContentValidatorTests
     {
         var huge = new MonsterDefinition(
             "zombie", "Zombie", "zombie", 1, new IntRange(5, 1_000_001), 0, 1_000_001, new IntRange(1, int.MaxValue), 0,
-            TestGameContent.Timings(), 5, 10, AiKinds.MeleeChase, null);
+            TestGameContent.Timings(), 5, 10, AiKinds.MeleeChase, null, null);
         var result = TestGameContent.Create(monsters: new[] { huge });
         AssertError(result, "monster 'zombie'", "life max must be at most 1000000");
         AssertError(result, "monster 'zombie'", "damage max must be at most 1000000");
@@ -118,7 +118,7 @@ public class ContentValidatorTests
         var warrior = TestGameContent.Warrior();
         var huge = new ClassDefinition(
             warrior.Id, warrior.Name, warrior.SpriteSet, warrior.BaseStats, new Stats(100, 100, 1_000_001, 100),
-            new ClassGrowth(10, 2, 2, 0, 1_000_001, 1, 5), new IntRange(2, 1_000_001), warrior.Timings);
+            new ClassGrowth(10, 2, 2, 0, 1_000_001, 1, 5), new IntRange(2, 1_000_001), warrior.Timings, Array.Empty<string>());
         var result = TestGameContent.Create(classes: new[] { huge });
         AssertError(result, "class 'warrior'", "vitality cap must be at most 1000000");
         AssertError(result, "class 'warrior'", "growth values must be at most 1000000");
@@ -131,7 +131,7 @@ public class ContentValidatorTests
         var warrior = TestGameContent.Warrior();
         var capped = new ClassDefinition(
             warrior.Id, warrior.Name, warrior.SpriteSet, warrior.BaseStats, new Stats(10, 100, 100, 100),
-            warrior.Growth, warrior.UnarmedDamage, warrior.Timings);
+            warrior.Growth, warrior.UnarmedDamage, warrior.Timings, Array.Empty<string>());
         AssertError(TestGameContent.Create(classes: new[] { capped }), "class 'warrior'", "strength cap must be at least the base value");
     }
 
