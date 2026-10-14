@@ -47,7 +47,7 @@ Mortar reads three kinds of files: a **tileset**, **rooms**, and **areas**. It w
 - Width and height must each be `(slotSize - 1) × n + 1`: 9, 17, 25… for `slotSize` 9. Neighboring rooms share their edge cells.
 - Standard tags: `entrance`, `exit`, `boss`, `waypoint` (the room must contain the matching marker), `filler` and `corridor` (fill the path between landmarks; at least one single-slot room must carry one of them), `dead_end` (preferred for side-branch tips). Any other tag can be used by a custom landmark kind; its marker is placed on the room's center cell, so that cell must be walkable.
 - `weight` (optional, 1–1000, default 1) makes a room more likely to be picked among rooms that fit.
-- Multi-slot rooms (17×17 and up) can be landmark, filler, or dead-end rooms. Doors on a multi-slot room belong to the slot side they sit on.
+- Rooms wider or taller than one slot (17×9, 9×17, 17×17, …) can be landmark, filler, or dead-end rooms. Doors on a multi-slot room belong to the slot side they sit on.
 
 ## Areas
 

@@ -83,7 +83,7 @@ A room is a small hand-drawn grid with tags:
 - Rooms may set `weight` (1–1000, default 1); a heavier room is picked more often among rooms that fit.
 - Standard tags: `entrance`, `exit`, `boss`, `waypoint`, `filler`, `corridor`, `dead_end`. Areas may define custom tags.
 - Indoor room width and height must each be `(slotSize - 1) × n + 1` for a whole number `n` (with `slotSize` 9: 9, 17, 25…), so neighboring rooms share exactly one cell.
-- Rooms 17×17 and up span several slots. Landmark, filler, and dead-end rooms may all span several slots; doors on a multi-slot room belong to the slot side they sit on.
+- Rooms wider or taller than one slot (17×9, 9×17, 17×17, …) span several slots. Landmark, filler, and dead-end rooms may all span several slots; doors on a multi-slot room belong to the slot side they sit on.
 
 ### 4.4 Areas (`areas/*.json`)
 
@@ -104,7 +104,7 @@ A **fixed** area is one hand-drawn map stamped as-is: it has only `id`, `mode`, 
 
 ## 5. Generation pipeline
 
-Fixed areas skip steps 2–6: the map is stamped, its tiles are resolved, and the result is attempt 0.
+Fixed areas skip steps 2, 3, 5 and 6: the map is stamped, step 4 resolves its tiles, and the result is attempt 0.
 
 1. **Seed.** Create the generator from the area id and seed.
 2. **Place landmarks.** Each node is placed at a random position within its home region.

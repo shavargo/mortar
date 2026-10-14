@@ -55,6 +55,8 @@ Optional `startingItems` lists item ids the class starts with. Each is created p
 
 An optional `town` entry (`{ "area": "…" }`) adds a safe town at depth 0: its area must use mode `fixed` with exactly one exit (`X`), it has no spawns or boss, and new games start there. The shipped content has a town and four cathedral levels (`content/areas/`).
 
+The shipped levels are built from these files: `content/tilesets/cathedral.json` and `content/tilesets/town.json` (the town adds `grass`, `road`, `water`, and `tree` grounds), the cathedral rooms in `content/rooms/cathedral/`, the areas in `content/areas/` (`town` and `cathedral-1` to `cathedral-4`), and the town map in `content/maps/town.json`. The town tileset declares custom markers `F` smith, `H` healer, and `G` sage; they are recorded in the layout for later milestones and do nothing yet.
+
 ## `items/*.json`
 
 One item base per file: `id`, `name`, `icon`, `slot`, `size` (`width` 1–2, `height` 1–3), `itemLevel` (only monsters of at least this level drop it), `dropWeight` (0 never drops), and optional `requirements` (`strength`, `dexterity`, `vitality`, `magic`; missing ones are 0, compared against the player's base stats).
