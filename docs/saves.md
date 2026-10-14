@@ -9,6 +9,8 @@ A save stores the seed, the tick, the random generator state, the player (class,
 
 Loading a save and continuing produces exactly the same game as never having saved.
 
-`version` is 1. A save with any other version is rejected with a message naming both versions.
+Restore also rejects values that play cannot produce: a tick, gold, or experience above `long.MaxValue / 2`, `nextActorId` or `nextItemId` above `int.MaxValue / 2`, experience outside the range for the saved level (at least the current level's threshold and, below the maximum level, under the next one), and enum names that are not an exact, case-sensitive member name.
+
+`version` is 1 (the property name is matched case-insensitively, like every other property). A save with any other version is rejected with a message naming both versions. Null or blank input is reported as "save is empty".
 
 The simulation never writes files on its own. The engine layer saves when it chooses to, for example after each `LevelChanged` event.

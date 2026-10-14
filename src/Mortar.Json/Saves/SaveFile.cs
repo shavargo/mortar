@@ -22,6 +22,7 @@ public static class SaveFile
 
     public static WorldResult FromJson(string json, ContentSet content, ILevelGenerator generator)
     {
+        if (string.IsNullOrWhiteSpace(json)) return WorldResult.Failure("save is empty");
         var versionError = CheckVersion(json);
         if (versionError is not null) return WorldResult.Failure(versionError);
         WorldSnapshot? snapshot;
@@ -79,9 +80,10 @@ public static class SaveFile
             using var document = JsonDocument.Parse(json);
             var root = document.RootElement;
             if (root.ValueKind != JsonValueKind.Object) return "save must be a JSON object";
-            if (!root.TryGetProperty("version", out var version)
-                || version.ValueKind != JsonValueKind.Number
-                || !version.TryGetInt32(out var number))
+            var version = FindVersion(root);
+            if (version is null
+                || version.Value.ValueKind != JsonValueKind.Number
+                || !version.Value.TryGetInt32(out var number))
             {
                 return "save has no version number";
             }
@@ -93,5 +95,15 @@ public static class SaveFile
         {
             return $"save is not valid JSON: {ex.Message}";
         }
+    }
+
+    private static JsonElement? FindVersion(JsonElement root)
+    {
+        JsonElement? found = null;
+        foreach (var property in root.EnumerateObject())
+        {
+            if (string.Equals(property.Name, "version", StringComparison.OrdinalIgnoreCase)) found = property.Value;
+        }
+        return found;
     }
 }

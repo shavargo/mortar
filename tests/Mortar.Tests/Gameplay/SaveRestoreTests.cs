@@ -54,6 +54,15 @@ public class SaveRestoreTests
         ["ground gold"] = (s => GroundGold(s).Gold = 0, "gold must be between 1"),
         ["next item id"] = (s => s.NextItemId = 1, "nextItemId must be greater than every item id"),
         ["next actor id"] = (s => s.NextActorId = 2, "nextActorId must be greater than every actor id"),
+        ["huge tick"] = (s => s.Tick = long.MaxValue, "tick is too large"),
+        ["huge gold"] = (s => s.Player!.Gold = long.MaxValue, "player gold is too large"),
+        ["huge experience"] = (s => s.Player!.Experience = long.MaxValue, "player experience is too large"),
+        ["huge next actor id"] = (s => s.NextActorId = int.MaxValue, "nextActorId is too large"),
+        ["huge next item id"] = (s => s.NextItemId = int.MaxValue, "nextItemId is too large"),
+        ["experience below level"] = (s => { s.Player!.Level = 2; s.Player.Experience = 99; }, "player experience must be between 100 and 299 for level 2"),
+        ["experience above level"] = (s => { s.Player!.Level = 1; s.Player.Experience = 100; }, "player experience must be between 0 and 99 for level 1"),
+        ["padded enum"] = (s => Hero(s).Facing = " North", "player facing ' North' is not valid"),
+        ["enum list"] = (s => Hero(s).Facing = "North, East", "player facing 'North, East' is not valid"),
     };
 
     public static IEnumerable<object[]> CorruptionNames => Corruptions.Keys.Select(name => new object[] { name });

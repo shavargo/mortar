@@ -74,13 +74,41 @@ public class SaveFileTests
 
     [Theory]
     [InlineData("\"version\": 1,", "\"version\": 1, \"cheat\": 1,", "save is not valid")]
-    [InlineData("\"nextItemId\": ", "\"nextItemId\": 99999999999, \"unused\": ", "save is not valid")]
     [InlineData("\"levels\": [", "\"levels\": [ null,", "save is invalid: level is missing")]
     public void FromJson_RejectsEditedSaves(string find, string replace, string error)
     {
         var json = SaveFile.ToJson(TestWorlds.Create(TestContent));
         Assert.Contains(find, json);
         Assert.Contains(error, SaveFile.FromJson(json.Replace(find, replace), TestContent, Generator()).Error);
+    }
+
+    [Fact]
+    public void FromJson_NumberTooLargeForItsField_IsATypeError()
+    {
+        var json = SaveFile.ToJson(TestWorlds.Create(TestContent));
+        var huge = Regex.Replace(json, "\"nextItemId\": \\d+", "\"nextItemId\": 99999999999");
+        Assert.NotEqual(json, huge);
+        var error = SaveFile.FromJson(huge, TestContent, Generator()).Error;
+        Assert.StartsWith("save is not valid: ", error);
+        Assert.Contains("System.Int32", error);
+        Assert.Contains("nextItemId", error);
+        Assert.DoesNotContain("could not be mapped", error);
+    }
+
+    [Fact]
+    public void FromJson_CapitalizedVersion_LoadsLikeTheLoader()
+    {
+        var world = TestWorlds.Create(TestContent);
+        var json = SaveFile.ToJson(world).Replace("\"version\": 1", "\"Version\": 1");
+        var loaded = SaveFile.FromJson(json, TestContent, Generator());
+        Assert.True(loaded.Succeeded, loaded.Error);
+        Assert.Equal(WorldHash.Compute(world), WorldHash.Compute(loaded.World!));
+    }
+
+    [Fact]
+    public void FromJson_Null_IsAnEmptySave()
+    {
+        Assert.Equal("save is empty", SaveFile.FromJson(null!, TestContent, Generator()).Error);
     }
 
     [Fact]

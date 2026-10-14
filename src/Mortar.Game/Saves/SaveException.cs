@@ -31,9 +31,7 @@ internal static class Check
     public static TEnum EnumValue<TEnum>(string? value, string name)
         where TEnum : struct, Enum
     {
-        var valid = !int.TryParse(value, out _)
-            && Enum.TryParse<TEnum>(value, ignoreCase: false, out var parsed)
-            && Enum.IsDefined(typeof(TEnum), parsed);
+        var valid = value is not null && Enum.GetNames(typeof(TEnum)).Contains(value, StringComparer.Ordinal);
         return valid ? Enum.Parse<TEnum>(value!) : throw new SaveException($"{name} '{value}' is not valid");
     }
 }

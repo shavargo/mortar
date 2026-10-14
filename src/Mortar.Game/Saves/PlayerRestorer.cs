@@ -40,15 +40,27 @@ internal static class PlayerRestorer
             Check.Range(stats.Get(kind), definition.BaseStats.Get(kind), definition.StatCaps.Get(kind), name);
         }
         Check.Range(player.Level, 1, rules.MaxLevel, "player level");
-        Check.That(player.Experience >= 0, "player experience must not be negative");
+        CheckExperience(player.Level, player.Experience, rules);
         Check.Range(player.UnspentPoints, 0, DefinitionChecks.MaxValue, "player unspentPoints");
         return new PlayerProgress(definition.Id, player.Level, player.Experience, stats, player.UnspentPoints);
+    }
+
+    private static void CheckExperience(int level, long experience, GameRules rules)
+    {
+        Check.That(experience >= 0, "player experience must not be negative");
+        Check.That(experience <= SaveLimits.MaxTotal, "player experience is too large");
+        var min = level == 1 ? 0 : rules.ExperienceThresholds[level - 2];
+        var max = level == rules.MaxLevel ? SaveLimits.MaxTotal : rules.ExperienceThresholds[level - 1] - 1;
+        Check.That(
+            experience >= min && experience <= max,
+            $"player experience must be between {min} and {max} for level {level}");
     }
 
     private static void RestoreBelongings(World world, PlayerSnapshot player, RestoredIds ids)
     {
         var belongings = world.Belongings;
         Check.That(player.Gold >= 0, "player gold must not be negative");
+        Check.That(player.Gold <= SaveLimits.MaxTotal, "player gold is too large");
         belongings.Gold = player.Gold;
         foreach (var stored in Check.Present(player.Inventory, "player inventory"))
         {

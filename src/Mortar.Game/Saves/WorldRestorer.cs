@@ -24,6 +24,9 @@ internal static class WorldRestorer
             snapshot.Version == WorldSnapshot.CurrentVersion,
             $"unsupported version {snapshot.Version}; this build reads version {WorldSnapshot.CurrentVersion}");
         Check.That(snapshot.Tick >= 0, "tick must not be negative");
+        Check.That(snapshot.Tick <= SaveLimits.MaxTotal, "tick is too large");
+        Check.That(snapshot.NextActorId <= SaveLimits.MaxId, "nextActorId is too large");
+        Check.That(snapshot.NextItemId <= SaveLimits.MaxId, "nextItemId is too large");
         Check.That((snapshot.RngIncrement & 1UL) == 1UL, "rngIncrement must be odd");
         var player = Check.Present(snapshot.Player, "player");
         var world = PlayerRestorer.CreateWorld(snapshot, player, content, generator);
