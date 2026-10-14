@@ -6,6 +6,9 @@ obj/
 .vs/
 TestResults/
 
+# CLI output
+out/
+
 # Unity
 unity/**/Library/
 unity/**/Temp/
