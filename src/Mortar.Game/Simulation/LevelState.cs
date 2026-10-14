@@ -1,10 +1,14 @@
 using Mortar.Core.Layouts;
+using Mortar.Game.Items;
 
 namespace Mortar.Game.Simulation;
 
 public sealed class LevelState
 {
+    public const int DropRadius = 3;
+
     private readonly int[] _occupants;
+    private readonly List<GroundItem> _groundItems = new List<GroundItem>();
     private readonly List<Actor> _actors = new List<Actor>();
     private readonly Dictionary<int, Actor> _byId = new Dictionary<int, Actor>();
 
@@ -44,21 +48,22 @@ public sealed class LevelState
         return null;
     }
 
-    internal Cell? NearestFree(Cell origin, int maxRadius)
+    public IReadOnlyList<GroundItem> GroundItems => _groundItems;
+
+    public GroundItem? FindGroundItem(int id) => _groundItems.Find(ground => ground.Id == id);
+
+    internal Cell? NearestFree(Cell origin, int maxRadius) => FirstInRings(origin, maxRadius, IsFree);
+
+    internal Cell DropCell(Cell origin) =>
+        FirstInRings(origin, DropRadius, cell => IsWalkable(cell) && !_groundItems.Exists(ground => ground.Cell == cell)) ?? origin;
+
+    internal void AddGroundItem(GroundItem ground)
     {
-        for (var radius = 0; radius <= maxRadius; radius++)
-        {
-            for (var y = origin.Y - radius; y <= origin.Y + radius; y++)
-            {
-                for (var x = origin.X - radius; x <= origin.X + radius; x++)
-                {
-                    var cell = new Cell(x, y);
-                    if (cell.DistanceTo(origin) == radius && IsFree(cell)) return cell;
-                }
-            }
-        }
-        return null;
+        var index = _groundItems.FindIndex(existing => existing.Id > ground.Id);
+        _groundItems.Insert(index < 0 ? _groundItems.Count : index, ground);
     }
+
+    internal void RemoveGroundItem(GroundItem ground) => _groundItems.Remove(ground);
 
     internal void Add(Actor actor, Cell cell)
     {
@@ -91,6 +96,22 @@ public sealed class LevelState
         Vacate(actor);
         _actors.Remove(actor);
         _byId.Remove(actor.Id);
+    }
+
+    private static Cell? FirstInRings(Cell origin, int maxRadius, Func<Cell, bool> accept)
+    {
+        for (var radius = 0; radius <= maxRadius; radius++)
+        {
+            for (var y = origin.Y - radius; y <= origin.Y + radius; y++)
+            {
+                for (var x = origin.X - radius; x <= origin.X + radius; x++)
+                {
+                    var cell = new Cell(x, y);
+                    if (cell.DistanceTo(origin) == radius && accept(cell)) return cell;
+                }
+            }
+        }
+        return null;
     }
 
     private int Index(Cell cell) => cell.Y * Layout.Width + cell.X;
