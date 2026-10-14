@@ -17,6 +17,10 @@ public static class MortarLoader
         {
             return AuthoringResult<CompiledArea>.Failure(new[] { readError! });
         }
+        if (dto.Mode == FixedAreaLoader.Mode)
+        {
+            return FixedAreaLoader.Load(source, dto);
+        }
         var area = AreaMapper.ToArea(source, dto);
         if (!area.Succeeded)
         {

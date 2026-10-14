@@ -15,6 +15,7 @@ internal static class AreaMapper
         if (dto.TargetSize is null) Error("area has no targetSize");
         if (dto.SlotSize is null) Error("area has no slotSize");
         if (dto.Graph?.Nodes is null) Error("area has no graph nodes");
+        if (dto.Map is not null) Error("'map' is only allowed in fixed areas");
         var nodes = MapAll(dto.Graph?.Nodes, "graph node", MapNode, Error);
         var edges = MapAll(dto.Graph?.Edges, "graph edge", MapEdge, Error);
         if (errors.Count > 0)
@@ -28,7 +29,7 @@ internal static class AreaMapper
             mode,
             new TargetSize(size.Width, size.Height, size.Tolerance),
             dto.SlotSize!.Value,
-            dto.MaxSideBranches,
+            dto.MaxSideBranches ?? 0,
             dto.MaxAttempts ?? AreaDefinition.DefaultMaxAttempts,
             dto.RoomTags ?? new List<string>(),
             nodes,
@@ -42,7 +43,7 @@ internal static class AreaMapper
             case "indoor": return AreaMode.Indoor;
             case "outdoor": return AreaMode.Outdoor;
             default:
-                error($"mode must be 'indoor' or 'outdoor', got '{mode}'");
+                error($"mode must be 'indoor', 'outdoor', or 'fixed', got '{mode}'");
                 return AreaMode.Indoor;
         }
     }

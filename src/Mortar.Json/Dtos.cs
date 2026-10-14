@@ -54,11 +54,13 @@ internal sealed class AreaDto
 
     public List<string>? RoomTags { get; set; }
 
-    public int MaxSideBranches { get; set; }
+    public int? MaxSideBranches { get; set; }
 
     public int? MaxAttempts { get; set; }
 
     public GraphDto? Graph { get; set; }
+
+    public string? Map { get; set; }
 }
 
 internal sealed class TargetSizeDto

@@ -47,7 +47,7 @@ public class MortarLoaderTests
     {
         using var temp = new TempDir();
         var path = temp.Write("area.json", SampleArea.AreaJson(SampleArea.Tileset, SampleArea.Rooms, mode: "underwater"));
-        Assert.Contains(MortarLoader.LoadArea(path).Errors, e => e.Message.Contains("mode must be 'indoor' or 'outdoor'"));
+        Assert.Contains(MortarLoader.LoadArea(path).Errors, e => e.Message.Contains("mode must be 'indoor', 'outdoor', or 'fixed'"));
     }
 
     [Fact]
