@@ -9,6 +9,7 @@ public static class Generator
 {
     public static GenerationResult Generate(CompiledArea area, uint seed)
     {
+        if (area.Map is not null) return GenerateFixed(area, area.Map, seed);
         var definition = area.Definition;
         var failures = new Dictionary<string, int>(StringComparer.Ordinal);
         for (var attempt = 0; attempt < definition.MaxAttempts; attempt++)
@@ -25,6 +26,13 @@ public static class Generator
             failures[failure] = failures.TryGetValue(failure, out var count) ? count + 1 : 1;
         }
         return GenerationResult.Failure(Summarize(failures), definition.MaxAttempts);
+    }
+
+    private static GenerationResult GenerateFixed(CompiledArea area, FixedMap map, uint seed)
+    {
+        var rng = Pcg32.ForAttempt(area.Definition.Id, seed, 0);
+        var layout = LayoutFactory.Create(area, seed, 0, map.Grid, map.Markers, rng);
+        return GenerationResult.Success(layout, Array.Empty<FailureCount>());
     }
 
     private static IReadOnlyList<FailureCount> Summarize(Dictionary<string, int> failures) =>

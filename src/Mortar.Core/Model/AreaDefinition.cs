@@ -4,6 +4,7 @@ public enum AreaMode
 {
     Indoor,
     Outdoor,
+    Fixed,
 }
 
 public sealed class TargetSize
@@ -33,6 +34,19 @@ public sealed class TargetSize
 public sealed class AreaDefinition
 {
     public const int DefaultMaxAttempts = 20;
+
+    /// <summary>A fixed area is one stamped map, so the indoor settings are unused placeholders.</summary>
+    public static AreaDefinition Fixed(string source, string id) => new AreaDefinition(
+        source,
+        id,
+        AreaMode.Fixed,
+        new TargetSize(0, 0, 0),
+        0,
+        0,
+        1,
+        Array.Empty<string>(),
+        Array.Empty<GraphNode>(),
+        Array.Empty<GraphEdge>());
 
     public AreaDefinition(
         string source,

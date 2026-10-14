@@ -22,7 +22,7 @@ internal static class LayoutValidator
         return CheckSize(grid, tileset, target);
     }
 
-    private static bool[] FloodFill(CellGrid grid, Tileset tileset, int startX, int startY)
+    internal static bool[] FloodFill(CellGrid grid, Tileset tileset, int startX, int startY)
     {
         var reached = new bool[grid.Width * grid.Height];
         if (!tileset.IsWalkable(grid[startX, startY]))
@@ -48,7 +48,7 @@ internal static class LayoutValidator
         return reached;
     }
 
-    private static void VoidUnreached(CellGrid grid, Tileset tileset, bool[] reached)
+    internal static void VoidUnreached(CellGrid grid, Tileset tileset, bool[] reached)
     {
         for (var i = 0; i < grid.Ground.Length; i++)
         {

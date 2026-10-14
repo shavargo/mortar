@@ -24,6 +24,22 @@ public static class AreaCompiler
             : AuthoringResult<CompiledArea>.Success(new CompiledArea(area, tileset, rooms));
     }
 
+    public static AuthoringResult<CompiledArea> CompileFixed(AreaDefinition area, Tileset tileset, RoomDefinition map)
+    {
+        if (area.Mode != AreaMode.Fixed)
+        {
+            return AuthoringResult<CompiledArea>.Failure(area.Source, "only fixed areas can be compiled from a map");
+        }
+        if (string.IsNullOrWhiteSpace(area.Id))
+        {
+            return AuthoringResult<CompiledArea>.Failure(area.Source, "area has no id");
+        }
+        var compiled = FixedMapCompiler.Compile(map, tileset);
+        return compiled.Succeeded
+            ? AuthoringResult<CompiledArea>.Success(new CompiledArea(area, tileset, compiled.Value!))
+            : AuthoringResult<CompiledArea>.Failure(compiled.Errors);
+    }
+
     private static List<Room> CompileRooms(
         AreaDefinition area,
         Tileset tileset,

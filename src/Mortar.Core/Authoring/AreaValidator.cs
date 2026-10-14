@@ -26,6 +26,7 @@ internal static class AreaValidator
         var size = area.TargetSize;
         if (string.IsNullOrWhiteSpace(area.Id)) Error("area has no id");
         if (area.Mode == AreaMode.Outdoor) Error("outdoor areas are not supported yet; use mode 'indoor'");
+        if (area.Mode == AreaMode.Fixed) Error("fixed areas are built from a map, not from rooms and a graph");
         if (area.SlotSize < 3) Error("slotSize must be at least 3");
         if (size.Width < area.SlotSize || size.Height < area.SlotSize) Error("targetSize width and height must be at least slotSize");
         if (size.Width > Layout.MaxDimension || size.Height > Layout.MaxDimension)
