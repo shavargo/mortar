@@ -1,0 +1,40 @@
+{
+  "levels": [
+    {
+      "depth": 1,
+      "area": "../samples/areas/crypt.json",
+      "spawns": [
+        { "monster": "zombie", "weight": 3 },
+        { "monster": "imp-chieftain", "weight": 1 }
+      ]
+    },
+    {
+      "depth": 2,
+      "area": "../samples/areas/crypt.json",
+      "spawns": [
+        { "monster": "zombie", "weight": 2 },
+        { "monster": "skeleton", "weight": 3 },
+        { "monster": "imp-chieftain", "weight": 1 }
+      ]
+    },
+    {
+      "depth": 3,
+      "area": "../samples/areas/crypt.json",
+      "spawns": [
+        { "monster": "skeleton", "weight": 3 },
+        { "monster": "carrion-bat", "weight": 2 },
+        { "monster": "imp-chieftain", "weight": 1 }
+      ]
+    },
+    {
+      "depth": 4,
+      "area": "../samples/areas/crypt.json",
+      "spawns": [
+        { "monster": "skeleton", "weight": 2 },
+        { "monster": "carrion-bat", "weight": 2 },
+        { "monster": "zombie", "weight": 1 }
+      ],
+      "boss": "gravewarden"
+    }
+  ]
+}

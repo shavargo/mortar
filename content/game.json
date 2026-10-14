@@ -1,0 +1,6 @@
+{
+  "rules": "rules.json",
+  "classes": "classes",
+  "monsters": "monsters",
+  "levels": "levels.json"
+}

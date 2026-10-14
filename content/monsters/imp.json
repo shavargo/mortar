@@ -1,0 +1,14 @@
+{
+  "id": "imp",
+  "name": "Cave Imp",
+  "spriteSet": "imp",
+  "level": 1,
+  "life": { "min": 2, "max": 5 },
+  "armorClass": 8,
+  "toHit": 25,
+  "damage": { "min": 1, "max": 3 },
+  "timings": { "moveTicks": 8, "attackTicks": 12, "hitFrame": 7, "recoveryTicks": 6 },
+  "sightRadius": 6,
+  "experience": 36,
+  "ai": "melee-chase"
+}

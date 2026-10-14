@@ -1,0 +1,14 @@
+{
+  "id": "carrion-bat",
+  "name": "Carrion Bat",
+  "spriteSet": "carrion-bat",
+  "level": 2,
+  "life": { "min": 4, "max": 8 },
+  "armorClass": 15,
+  "toHit": 35,
+  "damage": { "min": 1, "max": 3 },
+  "timings": { "moveTicks": 5, "attackTicks": 10, "hitFrame": 5, "recoveryTicks": 5 },
+  "sightRadius": 9,
+  "experience": 70,
+  "ai": "melee-chase"
+}

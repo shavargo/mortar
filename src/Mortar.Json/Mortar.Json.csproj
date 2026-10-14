@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Mortar.Core\Mortar.Core.csproj" />
+    <ProjectReference Include="..\Mortar.Game\Mortar.Game.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,14 @@
+{
+  "id": "zombie",
+  "name": "Rotting Corpse",
+  "spriteSet": "zombie",
+  "level": 1,
+  "life": { "min": 8, "max": 14 },
+  "armorClass": 5,
+  "toHit": 25,
+  "damage": { "min": 2, "max": 5 },
+  "timings": { "moveTicks": 14, "attackTicks": 16, "hitFrame": 10, "recoveryTicks": 8 },
+  "sightRadius": 5,
+  "experience": 48,
+  "ai": "melee-chase"
+}

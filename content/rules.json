@@ -1,0 +1,12 @@
+{
+  "minHitChance": 5,
+  "maxHitChance": 95,
+  "playerBaseToHit": 45,
+  "toHitPerDexterity": 1,
+  "toHitPerLevel": 1,
+  "toHitPerLevelDifference": 2,
+  "dexterityPerArmor": 5,
+  "strengthPerDamage": 10,
+  "hitRecoveryPercent": 15,
+  "experienceThresholds": [200, 600, 1300, 2400, 4000, 6200, 9100, 12800, 17500]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "gravewarden",
+  "name": "The Gravewarden",
+  "spriteSet": "gravewarden",
+  "level": 6,
+  "life": { "min": 120, "max": 120 },
+  "armorClass": 30,
+  "toHit": 60,
+  "damage": { "min": 6, "max": 14 },
+  "blockChance": 20,
+  "timings": { "moveTicks": 10, "attackTicks": 14, "hitFrame": 9, "recoveryTicks": 10 },
+  "sightRadius": 10,
+  "experience": 900,
+  "ai": "melee-chase"
+}
