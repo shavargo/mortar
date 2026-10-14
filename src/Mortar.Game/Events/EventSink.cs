@@ -17,5 +17,5 @@ internal sealed class EventSink
 
     public void Add(GameEvent gameEvent) => _events.Add(gameEvent);
 
-    public void Reject(Command command, string reason) => _events.Add(new CommandRejected(Tick, command, reason));
+    public void Reject(Command? command, string reason) => _events.Add(new CommandRejected(Tick, command, reason));
 }

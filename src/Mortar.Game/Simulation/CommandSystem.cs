@@ -9,7 +9,7 @@ internal static class CommandSystem
     {
         foreach (var command in commands)
         {
-            var reason = Execute(world, command, events);
+            var reason = command is null ? CommandRejected.MissingCommand : Execute(world, command, events);
             if (reason is not null) events.Reject(command, reason);
         }
     }

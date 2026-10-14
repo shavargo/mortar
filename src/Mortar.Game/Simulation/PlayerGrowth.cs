@@ -20,6 +20,7 @@ internal static class PlayerGrowth
 
     public static string? SpendPoint(World world, StatKind stat, EventSink events)
     {
+        if (!Stats.Kinds.Contains(stat)) return "unknown stat";
         var reason = Leveling.SpendPoint(world.Progress, stat, world.PlayerClass);
         if (reason is not null) return reason;
         Refresh(world);

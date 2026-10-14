@@ -11,7 +11,10 @@ internal static class TickRunner
         var events = new EventSink(world.TickCount);
         if (world.IsGameOver)
         {
-            foreach (var command in commands) events.Reject(command, "the player is dead");
+            foreach (var command in commands)
+            {
+                events.Reject(command, command is null ? CommandRejected.MissingCommand : "the player is dead");
+            }
             return events.Events;
         }
         CommandSystem.Apply(world, commands, events);
