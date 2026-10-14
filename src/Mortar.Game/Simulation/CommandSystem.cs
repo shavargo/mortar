@@ -24,6 +24,8 @@ internal static class CommandSystem
                 return Attack(world, attack);
             case SpendStatPointCommand spend:
                 return PlayerGrowth.SpendPoint(world, spend.Stat, events);
+            case UseStairsCommand _:
+                return Stairs.Use(world, events);
             default:
                 return "unsupported command";
         }
