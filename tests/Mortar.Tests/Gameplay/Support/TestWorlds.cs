@@ -53,4 +53,10 @@ internal static class TestWorlds
         world.Level.AddGroundItem(ground);
         return ground;
     }
+
+    public static Item Give(World world, ItemBaseDefinition definition)
+    {
+        var item = ItemFactory.CreatePlain(world, definition);
+        return world.Belongings.Stow(item) ? item : throw new InvalidOperationException($"no room for {definition.Id}");
+    }
 }

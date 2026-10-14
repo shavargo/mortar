@@ -28,6 +28,18 @@ internal static class CommandSystem
                 return Stairs.Use(world, events);
             case PickUpCommand pickUp:
                 return PickupSystem.Start(world, pickUp);
+            case EquipCommand equip:
+                return EquipActions.Equip(world, equip.ItemId, events);
+            case UnequipCommand unequip:
+                return EquipActions.Unequip(world, unequip.Slot, events);
+            case DropItemCommand drop:
+                return InventoryActions.Drop(world, drop.ItemId, events);
+            case MoveItemCommand moveItem:
+                return InventoryActions.Move(world, moveItem.ItemId, moveItem.To, events);
+            case PutInBeltCommand putInBelt:
+                return InventoryActions.PutInBelt(world, putInBelt.ItemId, putInBelt.Slot, events);
+            case UseBeltCommand useBelt:
+                return InventoryActions.UseBelt(world, useBelt.Slot, events);
             default:
                 return "unsupported command";
         }
