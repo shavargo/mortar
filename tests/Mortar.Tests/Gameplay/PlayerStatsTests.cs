@@ -1,3 +1,4 @@
+using Mortar.Game.Items;
 using Mortar.Game.Simulation;
 using Mortar.Tests.Gameplay.Support;
 
@@ -9,7 +10,7 @@ public class PlayerStatsTests
     public void StartingWarrior_DerivesFromBaseStats()
     {
         var warrior = TestGameContent.Warrior();
-        var profile = PlayerStats.Compute(warrior, PlayerProgress.Start(warrior), TestGameContent.Rules());
+        var profile = PlayerStats.Compute(warrior, PlayerProgress.Start(warrior), TestGameContent.Rules(), GearBonus.None);
         Assert.Equal(1, profile.Level);
         Assert.Equal(50, profile.MaxLife);
         Assert.Equal(10, profile.MaxMana);
@@ -25,7 +26,7 @@ public class PlayerStatsTests
     {
         var warrior = TestGameContent.Warrior();
         var progress = new PlayerProgress("warrior", 3, 0, warrior.BaseStats, 0);
-        var profile = PlayerStats.Compute(warrior, progress, TestGameContent.Rules());
+        var profile = PlayerStats.Compute(warrior, progress, TestGameContent.Rules(), GearBonus.None);
         Assert.Equal(54, profile.MaxLife);
         Assert.Equal(12, profile.MaxMana);
         Assert.Equal(73, profile.ToHit);

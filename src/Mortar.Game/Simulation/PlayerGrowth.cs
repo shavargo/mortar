@@ -13,7 +13,7 @@ internal static class PlayerGrowth
         var gained = Leveling.AddExperience(world.Progress, amount, world.PlayerClass, world.Content.Rules);
         events.Add(new ExperienceGained(events.Tick, amount, world.Progress.Experience));
         if (gained == 0) return;
-        Refresh(world);
+        world.RefreshPlayer();
         world.Player.RestoreVitals();
         events.Add(new LeveledUp(events.Tick, world.Progress.Level));
     }
@@ -23,11 +23,8 @@ internal static class PlayerGrowth
         if (!Stats.Kinds.Contains(stat)) return "unknown stat";
         var reason = Leveling.SpendPoint(world.Progress, stat, world.PlayerClass);
         if (reason is not null) return reason;
-        Refresh(world);
+        world.RefreshPlayer();
         events.Add(new StatIncreased(events.Tick, stat, world.Progress.BaseStats.Get(stat)));
         return null;
     }
-
-    private static void Refresh(World world) =>
-        world.Player.ApplyProfile(PlayerStats.Compute(world.PlayerClass, world.Progress, world.Content.Rules));
 }

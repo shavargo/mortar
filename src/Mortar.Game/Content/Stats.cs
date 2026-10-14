@@ -44,4 +44,7 @@ public readonly struct Stats
         StatKind.Vitality => new Stats(Strength, Dexterity, value, Magic),
         _ => new Stats(Strength, Dexterity, Vitality, value),
     };
+
+    public Stats Plus(Stats other) =>
+        new Stats(Strength + other.Strength, Dexterity + other.Dexterity, Vitality + other.Vitality, Magic + other.Magic);
 }

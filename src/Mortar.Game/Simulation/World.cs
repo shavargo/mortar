@@ -3,6 +3,7 @@ using Mortar.Core.Rng;
 using Mortar.Game.Commands;
 using Mortar.Game.Content;
 using Mortar.Game.Events;
+using Mortar.Game.Items;
 
 namespace Mortar.Game.Simulation;
 
@@ -10,15 +11,15 @@ public sealed class World
 {
     private readonly Dictionary<int, LevelState> _levels = new Dictionary<int, LevelState>();
 
-    private World(ContentSet content, ILevelGenerator generator, uint seed, ClassDefinition playerClass)
+    private World(ContentSet content, ILevelGenerator generator, uint seed, ClassDefinition playerClass, PlayerProgress progress, Pcg32 rng)
     {
         Content = content;
         Generator = generator;
         Seed = seed;
         PlayerClass = playerClass;
-        Rng = Pcg32.ForAttempt("world", seed, 0);
-        Progress = PlayerProgress.Start(playerClass);
-        var profile = PlayerStats.Compute(playerClass, Progress, content.Rules);
+        Rng = rng;
+        Progress = progress;
+        var profile = PlayerStats.Compute(playerClass, Progress, content.Rules, GearBonus.None);
         Player = new Actor(Actor.PlayerId, ActorKind.Player, playerClass.Id, profile);
     }
 
@@ -36,6 +37,8 @@ public sealed class World
 
     public Actor Player { get; }
 
+    public Belongings Belongings { get; } = new Belongings();
+
     public LevelState Level => _levels[Depth];
 
     public bool IsGameOver => Player.IsDead;
@@ -48,13 +51,18 @@ public sealed class World
 
     internal int NextActorId { get; set; } = Actor.PlayerId + 1;
 
+    internal int NextItemId { get; set; } = 1;
+
     public static WorldResult Create(ContentSet content, ILevelGenerator generator, string classId, uint seed)
     {
         if (!content.TryGetClass(classId, out var playerClass))
         {
             return WorldResult.Failure($"unknown class '{classId}'");
         }
-        var world = new World(content, generator, seed, playerClass);
+        var world = new World(content, generator, seed, playerClass, PlayerProgress.Start(playerClass), Pcg32.ForAttempt("world", seed, 0));
+        StartingKit.Give(world);
+        world.RefreshPlayer();
+        world.Player.RestoreVitals();
         var error = LevelEntry.Enter(world, 1, MarkerKinds.Entrance);
         return error is null ? WorldResult.Success(world) : WorldResult.Failure(error);
     }
@@ -66,6 +74,9 @@ public sealed class World
     internal LevelState? FindLevel(int depth) => _levels.TryGetValue(depth, out var level) ? level : null;
 
     internal void AddLevel(LevelState level) => _levels.Add(level.Depth, level);
+
+    internal void RefreshPlayer() =>
+        Player.ApplyProfile(PlayerStats.Compute(PlayerClass, Progress, Content.Rules, GearBonus.From(Belongings.Equipment)));
 
     internal Actor SpawnMonster(LevelState level, MonsterDefinition monster, Cell cell)
     {
