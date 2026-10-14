@@ -3,7 +3,7 @@ namespace Mortar.Core.Rng;
 public sealed class Pcg32
 {
     private const ulong Multiplier = 6364136223846793005UL;
-    private readonly ulong _increment;
+    private ulong _increment;
     private ulong _state;
 
     public Pcg32(ulong initState, ulong initSequence)
@@ -13,6 +13,22 @@ public sealed class Pcg32
         NextUInt();
         _state += initState;
         NextUInt();
+    }
+
+    public ulong State => _state;
+
+    public ulong Increment => _increment;
+
+    public static Pcg32 Restore(ulong state, ulong increment)
+    {
+        if ((increment & 1UL) == 0)
+        {
+            throw new ArgumentException("increment must be odd", nameof(increment));
+        }
+        var rng = new Pcg32(0, 0);
+        rng._state = state;
+        rng._increment = increment;
+        return rng;
     }
 
     public static Pcg32 ForAttempt(string areaId, uint seed, int attempt)

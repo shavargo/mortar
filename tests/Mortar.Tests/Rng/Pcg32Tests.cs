@@ -61,4 +61,22 @@ public class Pcg32Tests
             Assert.Equal(1, rng.PickWeighted(new[] { 0, 5, 0 }));
         }
     }
+
+    [Fact]
+    public void Restore_ContinuesTheSameSequence()
+    {
+        var original = Pcg32.ForAttempt("world", 9, 0);
+        original.NextUInt();
+        var copy = Pcg32.Restore(original.State, original.Increment);
+        for (var i = 0; i < 100; i++)
+        {
+            Assert.Equal(original.NextUInt(), copy.NextUInt());
+        }
+    }
+
+    [Fact]
+    public void Restore_RejectsEvenIncrement()
+    {
+        Assert.Throws<ArgumentException>(() => Pcg32.Restore(1, 2));
+    }
 }

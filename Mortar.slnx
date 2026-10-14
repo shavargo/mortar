@@ -2,6 +2,7 @@
   <Folder Name="/src/">
     <Project Path="src/Mortar.Cli/Mortar.Cli.csproj" />
     <Project Path="src/Mortar.Core/Mortar.Core.csproj" />
+    <Project Path="src/Mortar.Game/Mortar.Game.csproj" />
     <Project Path="src/Mortar.Json/Mortar.Json.csproj" />
   </Folder>
   <Folder Name="/tests/">
