@@ -2,6 +2,8 @@
 
 The `content/` folder defines everything the game simulation needs besides level layouts. `GameContentLoader.Load("content/game.json")` reads it; any problem is reported with the file or definition it came from.
 
+Monster and class numbers (life, damage, armor class, to-hit, experience, stats, caps, growth) must be at most 1,000,000.
+
 All times are in **ticks**. The simulation runs at 20 ticks per second, so `moveTicks: 7` is 0.35 seconds per tile.
 
 ## `game.json`
