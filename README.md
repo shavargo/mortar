@@ -6,7 +6,7 @@ Mortar is free and open source under the MIT license.
 
 ## Status
 
-Version 0.1 generates **indoor** levels by stitching hand-made rooms along a landmark graph. Outdoor generation, the Unity package, and the Unreal plugin are planned (see `docs/design.md`).
+Version 0.1 generates **indoor** levels by stitching hand-made rooms along a landmark graph. Outdoor generation and the Unity package are planned (see `docs/design.md` and `docs/superpowers/specs/2026-10-14-arpg-framework-design.md`).
 
 ## Quick start
 

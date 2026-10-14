@@ -5,8 +5,8 @@ Status: Approved design, pending implementation plans
 
 ## Goal
 
-Grow Mortar from a level generator into a full action-RPG framework for Unity
-(Unreal later), modeled on the design and mechanics of the original Diablo.
+Grow Mortar from a level generator into a full action-RPG framework for Unity,
+modeled on the design and mechanics of the original Diablo.
 The first target is a playable slice: a town plus four cathedral-style dungeon
 levels, three classes, monsters, items, spells, vendors, and save/load.
 
@@ -19,10 +19,10 @@ levels, three classes, monsters, items, spells, vendors, and save/load.
 - **License.** Everything in this repo stays MIT.
 - **Naming.** No Blizzard or Diablo names, trademarks, or lore in code, data,
   art prompts, or shipped content.
-- **Unity first.** Unreal stays limited to consuming Mortar layout files until
-  the Unity slice is playable; deeper Unreal support is a later decision.
-- **Engine-independent core.** All gameplay rules are plain C# with no engine
-  references, so they are testable headlessly and portable later.
+- **Unity only.** Unity is the sole supported engine. Unreal is out of scope.
+- **Engine-independent core.** All gameplay rules are plain C# with no Unity
+  references, so they are testable headlessly and run in CI without a Unity
+  license.
 
 ## Projects
 
@@ -200,7 +200,7 @@ Nothing is lost permanently in this slice.
 ### Deferred
 
 Traps, quests, additional dungeon themes (catacombs, caves, hell), multiplayer
-networking, Unreal integration.
+networking.
 
 ## `Mortar.Game` milestones
 

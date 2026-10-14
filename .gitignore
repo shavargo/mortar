@@ -15,12 +15,6 @@ unity/**/Temp/
 unity/**/Logs/
 unity/**/UserSettings/
 
-# Unreal
-unreal/**/Binaries/
-unreal/**/Intermediate/
-unreal/**/Saved/
-unreal/**/DerivedDataCache/
-
 # Editors and OS
 .idea/
 .vscode/
