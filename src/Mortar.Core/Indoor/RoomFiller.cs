@@ -7,10 +7,8 @@ internal static class RoomFiller
 {
     public static string? FillAll(CompiledArea area, SlotGrid grid, Pcg32 rng)
     {
-        var fillers = area.Rooms
-            .Where(r => r.IsSingleSlot && (r.HasTag(StandardTags.Filler) || r.HasTag(StandardTags.Corridor)))
-            .ToList();
-        var deadEnds = area.Rooms.Where(r => r.IsSingleSlot && r.HasTag(StandardTags.DeadEnd)).ToList();
+        var fillers = area.Rooms.Where(r => r.HasTag(StandardTags.Filler) || r.HasTag(StandardTags.Corridor)).ToList();
+        var deadEnds = area.Rooms.Where(r => r.HasTag(StandardTags.DeadEnd)).ToList();
         for (var y = 0; y < grid.Rows; y++)
         {
             for (var x = 0; x < grid.Columns; x++)
@@ -24,28 +22,57 @@ internal static class RoomFiller
         return null;
     }
 
-    public static bool Fits(SlotGrid grid, Room room, int x, int y, IReadOnlyList<Side> open)
+    public static bool Fits(SlotGrid grid, Room room, int x, int y) =>
+        CoversEmptyUsedSlots(grid, room, x, y)
+        && OuterOpenings(grid, room, x, y).All(opening => HasMatchingDoor(grid, new Placement(room, x, y, null), opening));
+
+    private static Room? Choose(SlotGrid grid, int x, int y, List<Room> fillers, List<Room> deadEnds, Pcg32 rng)
     {
-        var candidate = new Placement(room, x, y, null);
-        foreach (var side in open)
+        var endings = deadEnds.Where(r => Fits(grid, r, x, y) && OuterOpenings(grid, r, x, y).Count == 1).ToList();
+        if (endings.Count > 0) return RoomPicker.Pick(endings, rng);
+        var candidates = fillers.Where(r => Fits(grid, r, x, y)).ToList();
+        return candidates.Count == 0 ? null : RoomPicker.Pick(candidates, rng);
+    }
+
+    private static bool CoversEmptyUsedSlots(SlotGrid grid, Room room, int originX, int originY)
+    {
+        for (var y = originY; y < originY + room.SlotsHigh; y++)
         {
-            if (!room.HasDoorInSegment(side, 0)) return false;
-            var (dx, dy) = Sides.Offset(side);
-            var neighbor = grid.BlockAt(x + dx, y + dy);
-            if (neighbor != -1 && !DoorGeometry.DoorsMeet(candidate, grid.Placements[neighbor], grid.Stride)) return false;
+            for (var x = originX; x < originX + room.SlotsWide; x++)
+            {
+                if (!grid.InBounds(x, y) || !grid.IsUsed(x, y) || grid.BlockAt(x, y) != -1) return false;
+            }
         }
         return true;
     }
 
-    private static Room? Choose(SlotGrid grid, int x, int y, List<Room> fillers, List<Room> deadEnds, Pcg32 rng)
+    private static List<(int X, int Y, Side Side)> OuterOpenings(SlotGrid grid, Room room, int originX, int originY)
     {
-        var open = Sides.All.Where(side => grid.IsOpen(x, y, side)).ToList();
-        if (open.Count == 1)
+        var footprint = new Placement(room, originX, originY, null);
+        var openings = new List<(int X, int Y, Side Side)>();
+        for (var y = originY; y < originY + room.SlotsHigh; y++)
         {
-            var endings = deadEnds.Where(r => Fits(grid, r, x, y, open)).ToList();
-            if (endings.Count > 0) return RoomPicker.Pick(endings, rng);
+            for (var x = originX; x < originX + room.SlotsWide; x++)
+            {
+                foreach (var side in Sides.All)
+                {
+                    var (dx, dy) = Sides.Offset(side);
+                    if (!footprint.Contains(x + dx, y + dy) && grid.IsOpen(x, y, side)) openings.Add((x, y, side));
+                }
+            }
         }
-        var candidates = fillers.Where(r => Fits(grid, r, x, y, open)).ToList();
-        return candidates.Count == 0 ? null : RoomPicker.Pick(candidates, rng);
+        return openings;
+    }
+
+    private static bool HasMatchingDoor(SlotGrid grid, Placement candidate, (int X, int Y, Side Side) opening)
+    {
+        var segment = opening.Side == Side.North || opening.Side == Side.South
+            ? opening.X - candidate.SlotX
+            : opening.Y - candidate.SlotY;
+        if (!candidate.Room.HasDoorInSegment(opening.Side, segment)) return false;
+        var (dx, dy) = Sides.Offset(opening.Side);
+        var neighbor = grid.BlockAt(opening.X + dx, opening.Y + dy);
+        return neighbor == -1
+            || DoorGeometry.DoorsMeetOn(candidate, opening.Side, segment, grid.Placements[neighbor], grid.Stride);
     }
 }
