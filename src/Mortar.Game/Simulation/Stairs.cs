@@ -31,9 +31,9 @@ internal static class Stairs
 
     private static string? Travel(World world, int depth, string arrivalMarker, EventSink events)
     {
-        if (depth < 1)
+        if (depth < world.Content.ShallowestLevel)
         {
-            return "there is no level above";
+            return "there is nothing above";
         }
         if (depth > world.Content.DeepestLevel)
         {

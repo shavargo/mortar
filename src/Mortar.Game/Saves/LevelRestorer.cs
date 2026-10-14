@@ -9,7 +9,7 @@ internal static class LevelRestorer
     public static void Restore(World world, LevelSnapshot snapshot, RestoredIds ids)
     {
         var depth = snapshot.Depth;
-        Check.That(depth >= 1 && depth <= world.Content.DeepestLevel, $"level depth {depth} is not in the content");
+        Check.That(depth >= world.Content.ShallowestLevel && depth <= world.Content.DeepestLevel, $"level depth {depth} is not in the content");
         Check.That(world.FindLevel(depth) is null, $"level {depth} appears twice");
         var result = world.Generator.Generate(world.Content.Level(depth), snapshot.Seed);
         Check.That(result.Succeeded, $"level {depth} could not be regenerated: {result.Error}");

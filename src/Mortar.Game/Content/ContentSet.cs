@@ -44,7 +44,10 @@ public sealed class ContentSet
 
     public IReadOnlyList<AffixDefinition> Affixes => Items.Affixes;
 
-    public int DeepestLevel => Levels.Count;
+    /// <summary>0 when the content has a town, otherwise 1.</summary>
+    public int ShallowestLevel => Levels[0].Depth;
+
+    public int DeepestLevel => Levels[Levels.Count - 1].Depth;
 
     public static AuthoringResult<ContentSet> Create(
         GameRules rules,
@@ -70,7 +73,7 @@ public sealed class ContentSet
     public bool TryGetMonster(string id, [NotNullWhen(true)] out MonsterDefinition? definition) =>
         _monsters.TryGetValue(id, out definition);
 
-    public LevelDefinition Level(int depth) => Levels[depth - 1];
+    public LevelDefinition Level(int depth) => Levels[depth - ShallowestLevel];
 
     public ItemBaseDefinition ItemBase(string id) => _itemBases[id];
 

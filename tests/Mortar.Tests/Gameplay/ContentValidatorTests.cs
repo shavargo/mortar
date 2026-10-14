@@ -37,6 +37,48 @@ public class ContentValidatorTests
     }
 
     [Fact]
+    public void Town_IsDepthZero()
+    {
+        var content = TestGameContent.Valid(levels: TestGameContent.WithTown());
+        Assert.Equal(0, content.ShallowestLevel);
+        Assert.Equal(2, content.DeepestLevel);
+        Assert.Equal("town", content.Level(0).AreaId);
+        Assert.Equal(2, content.Level(2).Depth);
+    }
+
+    [Fact]
+    public void WithoutTown_ShallowestLevelIsOne() => Assert.Equal(1, TestGameContent.Valid().ShallowestLevel);
+
+    [Fact]
+    public void TownOnly_IsRejected() =>
+        AssertError(TestGameContent.Create(levels: new[] { TestGameContent.Town() }), "levels", "at least one dungeon level is required");
+
+    [Fact]
+    public void TwoTowns_AreRejected()
+    {
+        var levels = new[] { TestGameContent.Town(), TestGameContent.Town(), TestGameContent.Level(1) };
+        AssertError(TestGameContent.Create(levels: levels), "levels", "there must be at most one town");
+    }
+
+    [Fact]
+    public void TownWithSpawns_IsRejected()
+    {
+        var town = new LevelDefinition(0, "town", new[] { new SpawnEntry("zombie", 1) }, null);
+        AssertError(TestGameContent.Create(levels: new[] { town, TestGameContent.Level(1) }), "town", "the town must not have spawns");
+    }
+
+    [Fact]
+    public void TownWithBoss_IsRejected()
+    {
+        var town = new LevelDefinition(0, "town", Array.Empty<SpawnEntry>(), "zombie");
+        AssertError(TestGameContent.Create(levels: new[] { town, TestGameContent.Level(1) }), "town", "the town must not have a boss");
+    }
+
+    [Fact]
+    public void TownWithoutArea_IsRejected() =>
+        AssertError(TestGameContent.Create(levels: new[] { TestGameContent.Town(""), TestGameContent.Level(1) }), "town", "area is required");
+
+    [Fact]
     public void UnknownSpawnMonster_IsRejected()
     {
         var levels = new[] { TestGameContent.Level(1, monsterId: "ghost") };

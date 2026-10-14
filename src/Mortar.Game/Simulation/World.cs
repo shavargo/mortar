@@ -64,7 +64,7 @@ public sealed class World
         StartingKit.Give(world);
         world.RefreshPlayer();
         world.Player.RestoreVitals();
-        var error = LevelEntry.Enter(world, 1, MarkerKinds.Entrance);
+        var error = LevelEntry.Enter(world, content.ShallowestLevel, MarkerKinds.Entrance);
         return error is null ? WorldResult.Success(world) : WorldResult.Failure(error);
     }
 

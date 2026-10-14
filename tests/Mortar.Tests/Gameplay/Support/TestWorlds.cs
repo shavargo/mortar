@@ -19,10 +19,25 @@ internal static class TestWorlds
         "#########",
     };
 
+    public static readonly string[] Town =
+    {
+        "#######",
+        "#E.S.X#",
+        "#.....#",
+        "#######",
+    };
+
     public static World Create(ContentSet? content = null, uint seed = 1, string[][]? levels = null)
     {
         var generator = new FixedLevelGenerator(levels ?? new[] { Room, Room });
         var result = World.Create(content ?? TestGameContent.Valid(), generator, "warrior", seed);
+        return result.World ?? throw new InvalidOperationException(result.Error);
+    }
+
+    public static World CreateWithTown(ContentSet? content = null)
+    {
+        var generator = FixedLevelGenerator.WithTown(Town, Room, Room);
+        var result = World.Create(content ?? TestGameContent.Valid(levels: TestGameContent.WithTown()), generator, "warrior", 1);
         return result.World ?? throw new InvalidOperationException(result.Error);
     }
 

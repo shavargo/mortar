@@ -35,15 +35,26 @@ internal static class TestLevels
 
 internal sealed class FixedLevelGenerator : ILevelGenerator
 {
+    private readonly string[]? _town;
     private readonly string[][] _levels;
 
     public FixedLevelGenerator(params string[][] levels)
+        : this(null, levels)
     {
+    }
+
+    private FixedLevelGenerator(string[]? town, string[][] levels)
+    {
+        _town = town;
         _levels = levels;
     }
 
-    public LevelBuildResult Generate(LevelDefinition level, uint seed) =>
-        level.Depth <= _levels.Length
-            ? LevelBuildResult.Success(TestLevels.FromAscii(_levels[level.Depth - 1]))
-            : LevelBuildResult.Failure("no test layout");
+    /// <summary>Depth 0 is built from <paramref name="town"/>; depth n from the nth entry of <paramref name="levels"/>.</summary>
+    public static FixedLevelGenerator WithTown(string[] town, params string[][] levels) => new FixedLevelGenerator(town, levels);
+
+    public LevelBuildResult Generate(LevelDefinition level, uint seed)
+    {
+        var rows = level.Depth == 0 ? _town : level.Depth <= _levels.Length ? _levels[level.Depth - 1] : null;
+        return rows is null ? LevelBuildResult.Failure("no test layout") : LevelBuildResult.Success(TestLevels.FromAscii(rows));
+    }
 }

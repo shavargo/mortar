@@ -52,7 +52,7 @@ public class StairsTests
     public void LevelOneEntrance_IsRejected()
     {
         var world = TestWorlds.Create();
-        Assert.Equal("there is no level above", world.Tick(Stairs).OfType<CommandRejected>().Single().Reason);
+        Assert.Equal("there is nothing above", world.Tick(Stairs).OfType<CommandRejected>().Single().Reason);
     }
 
     [Fact]

@@ -90,7 +90,11 @@ internal static class ContentValidator
             errors.Add("levels", "at least one level is required");
             return;
         }
-        var depths = levels.Select(level => level.Depth).OrderBy(depth => depth).ToList();
+        var towns = levels.Where(level => level.Depth == 0).ToList();
+        var dungeon = levels.Where(level => level.Depth != 0).ToList();
+        if (towns.Count > 1) errors.Add("levels", "there must be at most one town");
+        if (dungeon.Count == 0) errors.Add("levels", "at least one dungeon level is required");
+        var depths = dungeon.Select(level => level.Depth).OrderBy(depth => depth).ToList();
         for (var i = 0; i < depths.Count; i++)
         {
             if (depths[i] != i + 1)
@@ -99,7 +103,16 @@ internal static class ContentValidator
                 break;
             }
         }
-        foreach (var level in levels) CheckLevel(level, find, errors);
+        foreach (var town in towns) CheckTown(town, errors);
+        foreach (var level in dungeon) CheckLevel(level, find, errors);
+    }
+
+    private static void CheckTown(LevelDefinition town, List<AuthoringError> errors)
+    {
+        const string source = "town";
+        if (string.IsNullOrWhiteSpace(town.AreaId)) errors.Add(source, "area is required");
+        if (town.Spawns.Count > 0) errors.Add(source, "the town must not have spawns");
+        if (town.BossId is not null) errors.Add(source, "the town must not have a boss");
     }
 
     private static void CheckLevel(LevelDefinition level, Func<string, MonsterDefinition?> find, List<AuthoringError> errors)

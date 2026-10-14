@@ -14,7 +14,7 @@ internal static class MonsterSpawner
         var entrance = level.FindMarker(MarkerKinds.Entrance);
         foreach (var marker in level.Layout.Markers)
         {
-            if (marker.Kind != MarkerKinds.Spawn) continue;
+            if (marker.Kind != MarkerKinds.Spawn || weights.Count == 0) continue;
             var origin = new Cell(marker.X, marker.Y);
             if (entrance is not null && origin.DistanceTo(entrance.Value) <= EntranceSafeRadius) continue;
             var spawn = definition.Spawns[world.Rng.PickWeighted(weights)];

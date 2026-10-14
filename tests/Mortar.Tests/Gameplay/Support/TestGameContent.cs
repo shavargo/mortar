@@ -43,6 +43,11 @@ internal static class TestGameContent
     public static LevelDefinition Level(int depth, string monsterId = "zombie", string? bossId = null) =>
         new LevelDefinition(depth, "test", new[] { new SpawnEntry(monsterId, 1) }, bossId);
 
+    public static LevelDefinition Town(string areaId = "town") =>
+        new LevelDefinition(0, areaId, Array.Empty<SpawnEntry>(), null);
+
+    public static LevelDefinition[] WithTown() => new[] { Town(), Level(1), Level(2) };
+
     public static ItemBaseDefinition Weapon(
         string id = "knife", int damageMin = 3, int damageMax = 5, int strength = 0, WeaponSwing? swing = null, int itemLevel = 1, int dropWeight = 1) =>
         new ItemBaseDefinition(

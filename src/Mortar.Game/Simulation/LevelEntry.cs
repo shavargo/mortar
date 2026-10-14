@@ -6,6 +6,7 @@ internal static class LevelEntry
 
     public static string? Enter(World world, int depth, string arrivalMarker)
     {
+        var current = world.FindLevel(world.Depth);
         var level = world.FindLevel(depth);
         if (level is null)
         {
@@ -22,10 +23,7 @@ internal static class LevelEntry
         {
             return $"level {depth} has no free cell near its {arrivalMarker}";
         }
-        if (world.Depth != 0)
-        {
-            world.Level.Remove(world.Player);
-        }
+        current?.Remove(world.Player);
         world.Player.ClearAction();
         world.Player.ClearIntent();
         level.Add(world.Player, cell.Value);
