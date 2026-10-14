@@ -1,5 +1,4 @@
 using Mortar.Game;
-using Mortar.Game.Commands;
 using Mortar.Game.Simulation;
 using Mortar.Json.Content;
 using Mortar.Tests.Gameplay.Support;
@@ -41,12 +40,26 @@ public class DeterminismTests
         Assert.Contains(run.Log, line => line.Contains("(killed by #1)"));
     }
 
-    [Fact]
-    public void WorldHash_ChangesWhenStateChanges()
+    [Theory]
+    [InlineData("rng")]
+    [InlineData("monster life")]
+    [InlineData("player intent")]
+    [InlineData("unspent points")]
+    [InlineData("next actor id")]
+    public void WorldHash_ChangesWhenOnePieceOfStateChanges(string change)
     {
         var world = TestWorlds.Create();
+        var zombie = TestWorlds.Spawn(world, "zombie", 5, 3);
         var before = WorldHash.Compute(world);
-        world.Tick(new Command[] { new MoveCommand(new Cell(3, 1)) });
+        Assert.Equal(before, WorldHash.Compute(world));
+        switch (change)
+        {
+            case "rng": world.Rng.NextInt(100); break;
+            case "monster life": zombie.Life--; break;
+            case "player intent": world.Player.SetMoveIntent(new Cell(3, 1)); break;
+            case "unspent points": world.Progress.UnspentPoints++; break;
+            case "next actor id": world.NextActorId++; break;
+        }
         Assert.NotEqual(before, WorldHash.Compute(world));
     }
 

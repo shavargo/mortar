@@ -5,7 +5,7 @@ public static class WorldHash
     public static string Compute(World world)
     {
         var hasher = new StateHasher();
-        hasher.Add(world.Seed).Add(world.TickCount).Add((long)world.Depth);
+        hasher.Add(world.Seed).Add(world.TickCount).Add((long)world.Depth).Add((long)world.NextActorId);
         hasher.Add(world.Rng.State).Add(world.Rng.Increment);
         AddProgress(hasher, world.Progress);
         foreach (var depth in world.VisitedDepths)
