@@ -20,9 +20,28 @@ internal static class CommandSystem
         {
             case MoveCommand move:
                 return Move(world, move);
+            case AttackCommand attack:
+                return Attack(world, attack);
+            case SpendStatPointCommand spend:
+                return PlayerGrowth.SpendPoint(world, spend.Stat, events);
             default:
                 return "unsupported command";
         }
+    }
+
+    private static string? Attack(World world, AttackCommand attack)
+    {
+        var target = world.Level.Find(attack.TargetId);
+        if (target is null || target.Kind != ActorKind.Monster)
+        {
+            return "no such monster on this level";
+        }
+        if (!target.IsAlive)
+        {
+            return "target is already dead";
+        }
+        world.Player.SetAttackIntent(target.Id);
+        return null;
     }
 
     private static string? Move(World world, MoveCommand move)

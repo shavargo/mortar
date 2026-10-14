@@ -15,7 +15,9 @@ internal static class TickRunner
             return events.Events;
         }
         CommandSystem.Apply(world, commands, events);
-        ActionSystem.Advance(world, events);
+        var due = ActionSystem.Advance(world, events);
+        CombatSystem.Resolve(world, due, events);
+        DeathSystem.Process(world, events);
         return events.Events;
     }
 }

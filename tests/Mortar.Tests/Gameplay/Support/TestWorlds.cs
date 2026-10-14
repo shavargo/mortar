@@ -1,5 +1,7 @@
 using Mortar.Game;
+using Mortar.Game.Commands;
 using Mortar.Game.Content;
+using Mortar.Game.Events;
 using Mortar.Game.Simulation;
 
 namespace Mortar.Tests.Gameplay.Support;
@@ -25,4 +27,14 @@ internal static class TestWorlds
 
     public static Actor Spawn(World world, string monsterId, int x, int y) =>
         world.SpawnMonster(world.Level, world.Content.Monster(monsterId), new Cell(x, y));
+
+    public static List<GameEvent> Run(World world, int ticks, params Command[] first)
+    {
+        var events = new List<GameEvent>(world.Tick(first));
+        for (var i = 1; i < ticks; i++)
+        {
+            events.AddRange(world.Tick(Array.Empty<Command>()));
+        }
+        return events;
+    }
 }
