@@ -22,6 +22,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Mortar.Core\Mortar.Core.csproj" />
     <ProjectReference Include="..\..\src\Mortar.Json\Mortar.Json.csproj" />
+    <ProjectReference Include="..\..\src\Mortar.Cli\Mortar.Cli.csproj" />
   </ItemGroup>
 
 </Project>

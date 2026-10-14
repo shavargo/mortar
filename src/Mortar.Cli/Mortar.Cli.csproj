@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>mortar</AssemblyName>
+    <RootNamespace>Mortar.Cli</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Mortar.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Mortar.Core\Mortar.Core.csproj" />
+    <ProjectReference Include="..\Mortar.Json\Mortar.Json.csproj" />
+  </ItemGroup>
+
+</Project>
