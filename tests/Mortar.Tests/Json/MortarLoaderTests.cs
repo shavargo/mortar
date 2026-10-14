@@ -116,6 +116,39 @@ public class MortarLoaderTests
         Assert.Contains(MortarLoader.LoadArea(area).Errors, e => e.Source == hall && e.Message.Contains("weight must be between 1 and 1000"));
     }
 
+    [Fact]
+    public void LoadTileset_ReadsCustomMarkers()
+    {
+        using var temp = new TempDir();
+        var path = temp.Write("tileset.json", TilesetWithMarker("""{ "char": "H", "kind": "healer" }"""));
+        var tileset = MortarLoader.LoadTileset(path);
+        Assert.True(tileset.Succeeded, string.Join("; ", tileset.Errors));
+        Assert.True(tileset.Value!.TryGetMarkerKind('H', out var kind));
+        Assert.Equal("healer", kind);
+    }
+
+    [Theory]
+    [InlineData("null", "marker 0 is null")]
+    [InlineData("""{ "char": "HH", "kind": "healer" }""", "marker 0 must have a single-character char")]
+    [InlineData("""{ "char": "E", "kind": "healer" }""", "marker char 'E' is reserved")]
+    public void LoadTileset_BadMarker_IsAnError(string marker, string expected)
+    {
+        using var temp = new TempDir();
+        var path = temp.Write("tileset.json", TilesetWithMarker(marker));
+        Assert.Contains(MortarLoader.LoadTileset(path).Errors, e => e.Source == path && e.Message.Contains(expected));
+    }
+
+    private static string TilesetWithMarker(string marker) => $$"""
+        {
+          "groundTypes": [
+            { "id": "void", "char": " ", "walkable": false, "blocksSight": false },
+            { "id": "floor", "char": ".", "walkable": true, "blocksSight": false },
+            { "id": "wall", "char": "#", "walkable": false, "blocksSight": true }
+          ],
+          "markers": [{{marker}}]
+        }
+        """;
+
     private static void CopySampleRooms(TempDir temp)
     {
         foreach (var file in Directory.GetFiles(Path.Combine(TestPaths.Samples, "rooms")))

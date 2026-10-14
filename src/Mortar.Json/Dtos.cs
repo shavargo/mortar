@@ -5,6 +5,8 @@ internal sealed class TilesetDto
     public List<GroundTypeDto?>? GroundTypes { get; set; }
 
     public Dictionary<string, List<int>?>? VariantWeights { get; set; }
+
+    public List<MarkerDto?>? Markers { get; set; }
 }
 
 internal sealed class GroundTypeDto
@@ -16,6 +18,13 @@ internal sealed class GroundTypeDto
     public bool Walkable { get; set; }
 
     public bool BlocksSight { get; set; }
+}
+
+internal sealed class MarkerDto
+{
+    public string? Char { get; set; }
+
+    public string? Kind { get; set; }
 }
 
 internal sealed class RoomDto

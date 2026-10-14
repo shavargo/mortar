@@ -6,16 +6,6 @@ namespace Mortar.Tests.Support;
 
 internal static class AsciiMap
 {
-    private static readonly Dictionary<string, char> MarkerSymbols = new Dictionary<string, char>
-    {
-        [MarkerKinds.Entrance] = 'E',
-        [MarkerKinds.Exit] = 'X',
-        [MarkerKinds.Boss] = 'B',
-        [MarkerKinds.Waypoint] = 'W',
-        [MarkerKinds.Spawn] = 'S',
-        [MarkerKinds.Chest] = 'C',
-    };
-
     public static string Render(Layout layout, Tileset tileset)
     {
         var rows = new char[layout.Height][];
@@ -30,7 +20,7 @@ internal static class AsciiMap
         }
         foreach (var marker in layout.Markers)
         {
-            rows[marker.Y][marker.X] = MarkerSymbols.TryGetValue(marker.Kind, out var symbol) ? symbol : '?';
+            rows[marker.Y][marker.X] = tileset.Markers.FirstOrDefault(type => type.Kind == marker.Kind)?.Symbol ?? '?';
         }
         var text = new StringBuilder();
         text.Append("fingerprint: ").Append(layout.Fingerprint).Append('\n');

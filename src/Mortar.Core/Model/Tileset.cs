@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Mortar.Core.Authoring;
 
 namespace Mortar.Core.Model;
@@ -13,9 +14,13 @@ public sealed class Tileset
 
     private readonly Dictionary<string, int> _byId = new Dictionary<string, int>(StringComparer.Ordinal);
     private readonly Dictionary<char, int> _bySymbol = new Dictionary<char, int>();
+    private readonly Dictionary<char, string> _markerKinds = new Dictionary<char, string>();
     private readonly IReadOnlyDictionary<string, IReadOnlyList<int>> _variantWeights;
 
-    private Tileset(IReadOnlyList<GroundType> grounds, IReadOnlyDictionary<string, IReadOnlyList<int>> variantWeights)
+    private Tileset(
+        IReadOnlyList<GroundType> grounds,
+        IReadOnlyDictionary<string, IReadOnlyList<int>> variantWeights,
+        IReadOnlyList<MarkerType> markers)
     {
         Grounds = grounds;
         _variantWeights = variantWeights;
@@ -27,6 +32,11 @@ public sealed class Tileset
         FloorIndex = _byId[FloorId];
         WallIndex = _byId[WallId];
         VoidIndex = _byId[VoidId];
+        Markers = MarkerChars.BuiltIn.Concat(markers).ToArray();
+        foreach (var marker in Markers)
+        {
+            _markerKinds[marker.Symbol] = marker.Kind;
+        }
     }
 
     public IReadOnlyList<GroundType> Grounds { get; }
@@ -36,6 +46,11 @@ public sealed class Tileset
     public int WallIndex { get; }
 
     public int VoidIndex { get; }
+
+    public IReadOnlyList<MarkerType> Markers { get; }
+
+    public bool TryGetMarkerKind(char symbol, [NotNullWhen(true)] out string? kind) =>
+        _markerKinds.TryGetValue(symbol, out kind);
 
     public int IndexOf(string id) => _byId.TryGetValue(id, out var index) ? index : -1;
 
@@ -49,14 +64,17 @@ public sealed class Tileset
     public static AuthoringResult<Tileset> Create(
         string source,
         IReadOnlyList<GroundType> grounds,
-        IReadOnlyDictionary<string, IReadOnlyList<int>> variantWeights)
+        IReadOnlyDictionary<string, IReadOnlyList<int>> variantWeights,
+        IReadOnlyList<MarkerType>? markers = null)
     {
+        var custom = markers ?? Array.Empty<MarkerType>();
         var errors = new List<AuthoringError>();
         CheckGrounds(source, grounds, errors);
         CheckWeights(source, variantWeights, errors);
+        CheckMarkers(source, grounds, custom, errors);
         return errors.Count > 0
             ? AuthoringResult<Tileset>.Failure(errors)
-            : AuthoringResult<Tileset>.Success(new Tileset(grounds, variantWeights));
+            : AuthoringResult<Tileset>.Success(new Tileset(grounds, variantWeights, custom));
     }
 
     private static void CheckGrounds(string source, IReadOnlyList<GroundType> grounds, List<AuthoringError> errors)
@@ -111,6 +129,31 @@ public sealed class Tileset
             {
                 errors.Add(new AuthoringError(source, $"variant weights for '{tileType}' must add up to at most {int.MaxValue}"));
             }
+        }
+    }
+
+    private static void CheckMarkers(
+        string source,
+        IReadOnlyList<GroundType> grounds,
+        IReadOnlyList<MarkerType> markers,
+        List<AuthoringError> errors)
+    {
+        var symbols = new HashSet<char>();
+        var kinds = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var marker in markers)
+        {
+            if (grounds.Any(ground => ground.Symbol == marker.Symbol))
+                errors.Add(new AuthoringError(source, $"marker char '{marker.Symbol}' is already a ground char"));
+            else if (MarkerChars.IsReserved(marker.Symbol))
+                errors.Add(new AuthoringError(source, $"marker char '{marker.Symbol}' is reserved"));
+            else if (!symbols.Add(marker.Symbol))
+                errors.Add(new AuthoringError(source, $"duplicate marker char '{marker.Symbol}'"));
+            if (string.IsNullOrWhiteSpace(marker.Kind))
+                errors.Add(new AuthoringError(source, $"marker '{marker.Symbol}' has no kind"));
+            else if (MarkerChars.IsBuiltInKind(marker.Kind))
+                errors.Add(new AuthoringError(source, $"marker kind '{marker.Kind}' is built in"));
+            else if (!kinds.Add(marker.Kind))
+                errors.Add(new AuthoringError(source, $"duplicate marker kind '{marker.Kind}'"));
         }
     }
 }

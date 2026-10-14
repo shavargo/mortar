@@ -8,9 +8,13 @@ public class TilesetTests
     private static readonly GroundType Void = new GroundType("void", ' ', false, false);
     private static readonly GroundType Floor = new GroundType("floor", '.', true, false);
     private static readonly GroundType Wall = new GroundType("wall", '#', false, true);
+    private static readonly MarkerType Healer = new MarkerType('H', "healer");
 
     private static AuthoringResult<Tileset> Create(params GroundType[] grounds) =>
         Tileset.Create("tileset.json", grounds, new Dictionary<string, IReadOnlyList<int>>());
+
+    private static AuthoringResult<Tileset> WithMarkers(params MarkerType[] markers) =>
+        Tileset.Create("tileset.json", new[] { Void, Floor, Wall }, new Dictionary<string, IReadOnlyList<int>>(), markers);
 
     private static void AssertError(AuthoringResult<Tileset> result, string expected)
     {
@@ -59,4 +63,33 @@ public class TilesetTests
         var weights = new Dictionary<string, IReadOnlyList<int>> { ["floor"] = new[] { int.MaxValue, 1 } };
         AssertError(Tileset.Create("tileset.json", new[] { Void, Floor, Wall }, weights), "variant weights for 'floor'");
     }
+
+    [Fact]
+    public void Create_CustomMarkers_JoinTheBuiltInOnes()
+    {
+        var tileset = WithMarkers(Healer).Value!;
+        Assert.True(tileset.TryGetMarkerKind('H', out var healer));
+        Assert.Equal("healer", healer);
+        Assert.True(tileset.TryGetMarkerKind('E', out var entrance));
+        Assert.Equal(MarkerKinds.Entrance, entrance);
+        Assert.False(tileset.TryGetMarkerKind('.', out _));
+        Assert.Equal(7, tileset.Markers.Count);
+    }
+
+    [Theory]
+    [InlineData('.', "healer", "marker char '.' is already a ground char")]
+    [InlineData('D', "healer", "marker char 'D' is reserved")]
+    [InlineData('E', "healer", "marker char 'E' is reserved")]
+    [InlineData('H', "", "marker 'H' has no kind")]
+    [InlineData('H', "exit", "marker kind 'exit' is built in")]
+    public void Create_BadCustomMarker_IsAnError(char symbol, string kind, string expected) =>
+        AssertError(WithMarkers(new MarkerType(symbol, kind)), expected);
+
+    [Fact]
+    public void Create_DuplicateMarkerChar_IsAnError() =>
+        AssertError(WithMarkers(Healer, new MarkerType('H', "herbalist")), "duplicate marker char 'H'");
+
+    [Fact]
+    public void Create_DuplicateMarkerKind_IsAnError() =>
+        AssertError(WithMarkers(Healer, new MarkerType('J', "healer")), "duplicate marker kind 'healer'");
 }

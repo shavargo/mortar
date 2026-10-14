@@ -25,6 +25,7 @@ internal static class DefinitionMapper
             }
             grounds.Add(new GroundType(ground.Id ?? "", ground.Char[0], ground.Walkable, ground.BlocksSight));
         }
+        var markers = ToMarkers(source, dto.Markers, errors);
         if (errors.Count > 0)
         {
             return AuthoringResult<Tileset>.Failure(errors);
@@ -34,7 +35,21 @@ internal static class DefinitionMapper
         {
             weights[pair.Key] = pair.Value ?? new List<int>();
         }
-        return Tileset.Create(source, grounds, weights);
+        return Tileset.Create(source, grounds, weights, markers);
+    }
+
+    private static List<MarkerType> ToMarkers(string source, List<MarkerDto?>? dtos, List<AuthoringError> errors)
+    {
+        var markers = new List<MarkerType>();
+        if (dtos is null) return markers;
+        for (var i = 0; i < dtos.Count; i++)
+        {
+            var marker = dtos[i];
+            if (marker is null) errors.Add(new AuthoringError(source, $"marker {i} is null"));
+            else if (marker.Char is not { Length: 1 }) errors.Add(new AuthoringError(source, $"marker {i} must have a single-character char"));
+            else markers.Add(new MarkerType(marker.Char[0], marker.Kind ?? ""));
+        }
+        return markers;
     }
 
     public static RoomDefinition ToRoom(string source, RoomDto dto) => new RoomDefinition(

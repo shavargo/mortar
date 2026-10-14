@@ -48,7 +48,7 @@ internal sealed class RoomGridParser
             AddDoor(x, y);
             return;
         }
-        if (MarkerChars.TryGetKind(symbol, out var kind))
+        if (_tileset.TryGetMarkerKind(symbol, out var kind))
         {
             _ground[index] = _tileset.FloorIndex;
             AddMarker(kind, symbol, x, y);

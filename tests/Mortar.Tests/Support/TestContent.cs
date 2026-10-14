@@ -5,7 +5,9 @@ namespace Mortar.Tests.Support;
 
 internal static partial class TestContent
 {
-    public static Tileset CreateTileset(IReadOnlyDictionary<string, IReadOnlyList<int>>? weights = null)
+    public static Tileset CreateTileset(
+        IReadOnlyDictionary<string, IReadOnlyList<int>>? weights = null,
+        IReadOnlyList<MarkerType>? markers = null)
     {
         var grounds = new[]
         {
@@ -14,7 +16,7 @@ internal static partial class TestContent
             new GroundType("wall", '#', false, true),
             new GroundType("water", '~', false, false),
         };
-        var result = Tileset.Create("test-tileset.json", grounds, weights ?? new Dictionary<string, IReadOnlyList<int>>());
+        var result = Tileset.Create("test-tileset.json", grounds, weights ?? new Dictionary<string, IReadOnlyList<int>>(), markers);
         Assert.True(result.Succeeded, string.Join("; ", result.Errors));
         return result.Value!;
     }

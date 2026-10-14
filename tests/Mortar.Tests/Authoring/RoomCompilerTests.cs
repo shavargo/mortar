@@ -101,4 +101,15 @@ public class RoomCompilerTests
         var definition = TestContent.RoomDef("room_a", Array.Empty<string>(), TestContent.Box(9, 9, new[] { 4 }), 1000);
         Assert.Equal(1000, RoomCompiler.Compile(definition, Tiles, 9).Value!.Weight);
     }
+
+    [Fact]
+    public void Compile_CustomMarker_UsesTheTilesetKind()
+    {
+        var tiles = TestContent.CreateTileset(markers: new[] { new MarkerType('H', "healer") });
+        var definition = TestContent.RoomDef("room_a", Array.Empty<string>(), TestContent.Box(9, 9, new[] { 4 }, (4, 4, 'H')));
+        var room = RoomCompiler.Compile(definition, tiles, 9).Value!;
+        var marker = Assert.Single(room.Markers);
+        Assert.Equal(("healer", 4, 4), (marker.Kind, marker.X, marker.Y));
+        Assert.Equal(tiles.FloorIndex, room.GroundAt(4, 4));
+    }
 }
