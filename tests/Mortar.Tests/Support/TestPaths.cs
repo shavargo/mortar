@@ -8,6 +8,10 @@ internal static class TestPaths
 
     public static string CryptArea => Path.Combine(Samples, "areas", "crypt.json");
 
+    public static string Content => Path.Combine(Root, "content");
+
+    public static string ContentArea(string name) => Path.Combine(Content, "areas", $"{name}.json");
+
     private static string FindRoot()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);

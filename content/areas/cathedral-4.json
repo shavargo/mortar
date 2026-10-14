@@ -1,0 +1,24 @@
+{
+  "id": "cathedral-4",
+  "mode": "indoor",
+  "tileset": "../tilesets/cathedral.json",
+  "targetSize": { "width": 73, "height": 73, "tolerance": 15 },
+  "slotSize": 9,
+  "rooms": ["../rooms/cathedral"],
+  "maxSideBranches": 8,
+  "maxAttempts": 50,
+  "graph": {
+    "nodes": [
+      { "id": "entrance", "kind": "entrance", "region": { "x": [0.0, 0.1], "y": [0.3, 0.7] } },
+      { "id": "shrine", "kind": "waypoint", "region": { "x": [0.3, 0.7], "y": [0.0, 0.1] } },
+      { "id": "boss", "kind": "boss", "region": { "x": [0.9, 1.0], "y": [0.3, 0.7] } },
+      { "id": "exit", "kind": "exit", "region": { "x": [0.3, 0.7], "y": [0.9, 1.0] } }
+    ],
+    "edges": [
+      { "from": "entrance", "to": "shrine", "kind": "path" },
+      { "from": "shrine", "to": "boss", "kind": "path" },
+      { "from": "boss", "to": "exit", "kind": "path" },
+      { "from": "entrance", "to": "exit", "kind": "branch" }
+    ]
+  }
+}

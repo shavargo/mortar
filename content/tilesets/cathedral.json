@@ -1,0 +1,11 @@
+{
+  "groundTypes": [
+    { "id": "void", "char": " ", "walkable": false, "blocksSight": false },
+    { "id": "floor", "char": ".", "walkable": true, "blocksSight": false },
+    { "id": "wall", "char": "#", "walkable": false, "blocksSight": true }
+  ],
+  "variantWeights": {
+    "floor": [8, 2, 1],
+    "wall": [6, 1, 1]
+  }
+}

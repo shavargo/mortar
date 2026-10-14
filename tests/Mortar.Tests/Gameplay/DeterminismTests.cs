@@ -108,13 +108,6 @@ public class DeterminismTests
     {
         var run = ScriptedPlayer.Run(Content(), 7, RunTicks);
         var actual = string.Join("\n", run.Log.Take(300)) + $"\nhash: {run.Hash}\n";
-        var path = Path.Combine(TestPaths.Root, "tests", "Mortar.Tests", "Snapshots", "game-seed-7.txt");
-        if (!File.Exists(path))
-        {
-            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
-            File.WriteAllText(path, actual);
-            Assert.Fail($"Snapshot created at {path}; review it, then run the tests again.");
-        }
-        Assert.Equal(File.ReadAllText(path).Replace("\r\n", "\n"), actual);
+        Snapshots.AssertMatches("game-seed-7.txt", actual);
     }
 }
