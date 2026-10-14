@@ -1,9 +1,12 @@
+using Mortar.Core.Layouts;
 using Mortar.Core.Model;
 
 namespace Mortar.Core.Authoring;
 
 internal static class AreaValidator
 {
+    private const int MaxCount = 1000;
+
     public static List<AuthoringError> Validate(AreaDefinition area)
     {
         var errors = new List<AuthoringError>();
@@ -25,9 +28,13 @@ internal static class AreaValidator
         if (area.Mode == AreaMode.Outdoor) Error("outdoor areas are not supported yet; use mode 'indoor'");
         if (area.SlotSize < 3) Error("slotSize must be at least 3");
         if (size.Width < area.SlotSize || size.Height < area.SlotSize) Error("targetSize width and height must be at least slotSize");
+        if (size.Width > Layout.MaxDimension || size.Height > Layout.MaxDimension)
+            Error($"targetSize width and height must be at most {Layout.MaxDimension}");
         if (size.TolerancePercent < 0 || size.TolerancePercent > 100) Error("targetSize tolerance must be between 0 and 100");
         if (area.MaxAttempts < 1) Error("maxAttempts must be at least 1");
+        if (area.MaxAttempts > MaxCount) Error($"maxAttempts must be at most {MaxCount}");
         if (area.MaxSideBranches < 0) Error("maxSideBranches must not be negative");
+        if (area.MaxSideBranches > MaxCount) Error($"maxSideBranches must be at most {MaxCount}");
     }
 
     private static void CheckNodes(AreaDefinition area, List<AuthoringError> errors)

@@ -2,7 +2,7 @@ namespace Mortar.Json;
 
 internal sealed class TilesetDto
 {
-    public List<GroundTypeDto>? GroundTypes { get; set; }
+    public List<GroundTypeDto?>? GroundTypes { get; set; }
 
     public Dictionary<string, List<int>?>? VariantWeights { get; set; }
 }
@@ -39,7 +39,7 @@ internal sealed class AreaDto
 
     public int? SlotSize { get; set; }
 
-    public List<string>? Rooms { get; set; }
+    public List<string?>? Rooms { get; set; }
 
     public List<string>? RoomTags { get; set; }
 
@@ -61,9 +61,9 @@ internal sealed class TargetSizeDto
 
 internal sealed class GraphDto
 {
-    public List<NodeDto>? Nodes { get; set; }
+    public List<NodeDto?>? Nodes { get; set; }
 
-    public List<EdgeDto>? Edges { get; set; }
+    public List<EdgeDto?>? Edges { get; set; }
 }
 
 internal sealed class NodeDto

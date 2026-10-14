@@ -9,8 +9,15 @@ internal static class DefinitionMapper
     {
         var errors = new List<AuthoringError>();
         var grounds = new List<GroundType>();
-        foreach (var ground in dto.GroundTypes ?? new List<GroundTypeDto>())
+        var groundTypes = dto.GroundTypes ?? new List<GroundTypeDto?>();
+        for (var i = 0; i < groundTypes.Count; i++)
         {
+            var ground = groundTypes[i];
+            if (ground is null)
+            {
+                errors.Add(new AuthoringError(source, $"ground type {i} is null"));
+                continue;
+            }
             if (ground.Char is not { Length: 1 })
             {
                 errors.Add(new AuthoringError(source, $"ground '{ground.Id}' must have a single-character char"));

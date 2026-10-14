@@ -52,4 +52,11 @@ public class TilesetTests
         var weights = new Dictionary<string, IReadOnlyList<int>> { ["floor"] = new[] { 0, 0 } };
         AssertError(Tileset.Create("tileset.json", new[] { Void, Floor, Wall }, weights), "variant weights for 'floor'");
     }
+
+    [Fact]
+    public void Create_WeightsOverflowingInt_IsAnError()
+    {
+        var weights = new Dictionary<string, IReadOnlyList<int>> { ["floor"] = new[] { int.MaxValue, 1 } };
+        AssertError(Tileset.Create("tileset.json", new[] { Void, Floor, Wall }, weights), "variant weights for 'floor'");
+    }
 }

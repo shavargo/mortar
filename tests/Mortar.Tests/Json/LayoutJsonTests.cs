@@ -64,6 +64,47 @@ public class LayoutJsonTests
         Assert.StartsWith("invalid JSON", Assert.Single(LayoutReader.FromJson("{\"formatVersion\":").Errors).Message);
 
     [Fact]
+    public void FromJson_OverflowingSize_IsMalformed()
+    {
+        var node = SampleNode();
+        node["width"] = 65536;
+        node["height"] = 65536;
+        var error = Assert.Single(LayoutReader.FromJson(node.ToJsonString()).Errors);
+        Assert.StartsWith("malformed layout: width and height must be between 1 and 4096", error.Message);
+    }
+
+    [Fact]
+    public void FromJson_MarkerOutsideGrid_IsMalformed()
+    {
+        var node = SampleNode();
+        node["markers"]![0]!["x"] = 99;
+        var error = Assert.Single(LayoutReader.FromJson(node.ToJsonString()).Errors);
+        Assert.StartsWith("malformed layout: marker 0 lies outside the grid", error.Message);
+    }
+
+    [Fact]
+    public void FromJson_NegativeVariant_IsMalformed()
+    {
+        var node = SampleNode();
+        node["cells"]!["variant"]![0] = -7;
+        var error = Assert.Single(LayoutReader.FromJson(node.ToJsonString()).Errors);
+        Assert.StartsWith("malformed layout: variant must not be negative", error.Message);
+    }
+
+    [Fact]
+    public void FromJson_WalkableOutsideZeroOne_IsMalformed()
+    {
+        var node = SampleNode();
+        node["walkable"]![0] = 5;
+        var error = Assert.Single(LayoutReader.FromJson(node.ToJsonString()).Errors);
+        Assert.StartsWith("malformed layout: walkable entries must be 0 or 1", error.Message);
+    }
+
+    [Fact]
+    public void FromFile_EmptyPath_IsAnError() =>
+        Assert.Contains("invalid path", Assert.Single(LayoutReader.FromFile("").Errors).Message);
+
+    [Fact]
     public void FromJson_MissingProperties_IsMalformed() =>
         Assert.StartsWith("malformed layout", Assert.Single(LayoutReader.FromJson("{\"formatVersion\":1}").Errors).Message);
 }

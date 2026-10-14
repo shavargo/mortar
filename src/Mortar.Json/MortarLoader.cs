@@ -7,7 +7,11 @@ public static class MortarLoader
 {
     public static AuthoringResult<CompiledArea> LoadArea(string areaPath)
     {
-        var source = Path.GetFullPath(areaPath);
+        var source = SafePath.Resolve(null, areaPath);
+        if (source is null)
+        {
+            return AuthoringResult<CompiledArea>.Failure(areaPath, "invalid path");
+        }
         var dto = JsonFile.Read<AreaDto>(source, out var readError);
         if (dto is null)
         {
@@ -19,7 +23,10 @@ public static class MortarLoader
             return AuthoringResult<CompiledArea>.Failure(area.Errors);
         }
         var directory = Path.GetDirectoryName(source)!;
-        var tileset = LoadTileset(Path.Combine(directory, dto.Tileset!));
+        var tilesetPath = SafePath.Resolve(directory, dto.Tileset);
+        var tileset = tilesetPath is null
+            ? AuthoringResult<Tileset>.Failure(source, $"tileset '{dto.Tileset}' is an invalid path")
+            : LoadTileset(tilesetPath);
         var errors = new List<AuthoringError>(tileset.Errors);
         var rooms = LoadRooms(source, directory, dto.Rooms!, errors);
         if (errors.Count > 0)
@@ -31,7 +38,11 @@ public static class MortarLoader
 
     public static AuthoringResult<Tileset> LoadTileset(string path)
     {
-        var source = Path.GetFullPath(path);
+        var source = SafePath.Resolve(null, path);
+        if (source is null)
+        {
+            return AuthoringResult<Tileset>.Failure(path, "invalid path");
+        }
         var dto = JsonFile.Read<TilesetDto>(source, out var error);
         return dto is null
             ? AuthoringResult<Tileset>.Failure(new[] { error! })
@@ -41,14 +52,14 @@ public static class MortarLoader
     private static List<RoomDefinition> LoadRooms(
         string areaSource,
         string directory,
-        IReadOnlyList<string> entries,
+        IReadOnlyList<string?> entries,
         List<AuthoringError> errors)
     {
         var rooms = new List<RoomDefinition>();
         var seen = new HashSet<string>(StringComparer.Ordinal);
-        foreach (var entry in entries)
+        for (var i = 0; i < entries.Count; i++)
         {
-            foreach (var file in ExpandRoomEntry(areaSource, directory, entry, errors))
+            foreach (var file in ExpandRoomEntry(areaSource, directory, i, entries[i], errors))
             {
                 if (!seen.Add(file)) continue;
                 var dto = JsonFile.Read<RoomDto>(file, out var error);
@@ -62,13 +73,21 @@ public static class MortarLoader
     private static IEnumerable<string> ExpandRoomEntry(
         string areaSource,
         string directory,
-        string entry,
+        int index,
+        string? entry,
         List<AuthoringError> errors)
     {
-        var path = Path.GetFullPath(Path.Combine(directory, entry));
+        var path = SafePath.Resolve(directory, entry);
+        if (path is null)
+        {
+            errors.Add(new AuthoringError(areaSource, $"rooms entry {index} is empty or an invalid path"));
+            return Array.Empty<string>();
+        }
         if (Directory.Exists(path))
         {
-            return Directory.GetFiles(path, "*.json").OrderBy(file => Path.GetFileName(file), StringComparer.Ordinal);
+            return Directory.GetFiles(path)
+                .Where(file => string.Equals(Path.GetExtension(file), ".json", StringComparison.OrdinalIgnoreCase))
+                .OrderBy(file => Path.GetFileName(file), StringComparer.Ordinal);
         }
         if (File.Exists(path))
         {

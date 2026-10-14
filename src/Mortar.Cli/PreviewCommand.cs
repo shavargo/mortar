@@ -8,6 +8,7 @@ internal static class PreviewCommand
 {
     private const int DefaultScale = 8;
     private const int MaxScale = 64;
+    private const long MaxPixels = 64_000_000;
 
     public static int Run(CliOptions options, TextWriter output, TextWriter error)
     {
@@ -22,7 +23,13 @@ internal static class PreviewCommand
             foreach (var problem in layout.Errors) error.WriteLine($"error: {problem}");
             return ExitCodes.InvalidInput;
         }
-        var image = MapRenderer.Render(layout.Value!, scale.Value);
+        var pixels = (long)layout.Value!.Width * layout.Value.Height * scale.Value * scale.Value;
+        if (pixels > MaxPixels)
+        {
+            error.WriteLine($"error: image too large ({pixels} pixels, limit {MaxPixels}); lower --scale");
+            return ExitCodes.InvalidInput;
+        }
+        var image = MapRenderer.Render(layout.Value, scale.Value);
         if (!OutputFile.TryWrite(outPath, PngEncoder.EncodeRgb(image.Width, image.Height, image.Pixels), error))
         {
             return ExitCodes.InvalidInput;

@@ -107,6 +107,10 @@ public sealed class Tileset
                     source,
                     $"variant weights for '{tileType}' must be non-negative with at least one positive weight"));
             }
+            else if (weights.Sum(w => (long)w) > int.MaxValue)
+            {
+                errors.Add(new AuthoringError(source, $"variant weights for '{tileType}' must add up to at most {int.MaxValue}"));
+            }
         }
     }
 }

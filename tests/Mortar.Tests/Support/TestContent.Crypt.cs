@@ -28,14 +28,15 @@ internal static partial class TestContent
         int size = 60,
         int tolerance = 15,
         int maxAttempts = 20,
-        string[]? roomTags = null) =>
+        string[]? roomTags = null,
+        int maxSideBranches = 4) =>
         new AreaDefinition(
             "crypt.json",
             "crypt",
             mode,
             new TargetSize(size, size, tolerance),
             9,
-            4,
+            maxSideBranches,
             maxAttempts,
             roomTags ?? Array.Empty<string>(),
             nodes ?? CryptNodes(),

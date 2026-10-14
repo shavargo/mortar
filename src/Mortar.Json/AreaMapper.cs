@@ -15,8 +15,8 @@ internal static class AreaMapper
         if (dto.TargetSize is null) Error("area has no targetSize");
         if (dto.SlotSize is null) Error("area has no slotSize");
         if (dto.Graph?.Nodes is null) Error("area has no graph nodes");
-        var nodes = (dto.Graph?.Nodes ?? new List<NodeDto>()).Select(n => MapNode(n, Error)).ToList();
-        var edges = (dto.Graph?.Edges ?? new List<EdgeDto>()).Select(e => MapEdge(e, Error)).ToList();
+        var nodes = MapAll(dto.Graph?.Nodes, "graph node", MapNode, Error);
+        var edges = MapAll(dto.Graph?.Edges, "graph edge", MapEdge, Error);
         if (errors.Count > 0)
         {
             return AuthoringResult<AreaDefinition>.Failure(errors);
@@ -45,6 +45,24 @@ internal static class AreaMapper
                 error($"mode must be 'indoor' or 'outdoor', got '{mode}'");
                 return AreaMode.Indoor;
         }
+    }
+
+    private static List<TOut> MapAll<TIn, TOut>(
+        List<TIn?>? items,
+        string label,
+        Func<TIn, Action<string>, TOut> map,
+        Action<string> error)
+        where TIn : class
+    {
+        var mapped = new List<TOut>();
+        if (items is null) return mapped;
+        for (var i = 0; i < items.Count; i++)
+        {
+            var item = items[i];
+            if (item is null) error($"{label} {i} is null");
+            else mapped.Add(map(item, error));
+        }
+        return mapped;
     }
 
     private static GraphNode MapNode(NodeDto dto, Action<string> error)

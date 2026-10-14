@@ -8,7 +8,11 @@ public static class LayoutReader
 {
     public static AuthoringResult<Layout> FromFile(string path)
     {
-        var source = Path.GetFullPath(path);
+        var source = SafePath.Resolve(null, path);
+        if (source is null)
+        {
+            return AuthoringResult<Layout>.Failure(path, "invalid path");
+        }
         try
         {
             return FromJson(File.ReadAllText(source), source);
@@ -45,8 +49,10 @@ public static class LayoutReader
                 source,
                 $"unsupported formatVersion {formatVersion}; this Mortar reads {Layout.CurrentFormatVersion}");
         }
-        var cells = ReadCells(root);
-        var problem = CheckCells(cells);
+        var walkable = Ints(root.GetProperty("walkable"));
+        var cells = ReadCells(root, walkable);
+        var markers = ReadMarkers(root);
+        var problem = CheckCells(cells, walkable) ?? CheckMarkers(cells, markers);
         if (problem is not null)
         {
             return AuthoringResult<Layout>.Failure(source, $"malformed layout: {problem}");
@@ -56,7 +62,7 @@ public static class LayoutReader
             root.GetProperty("seed").GetUInt32(),
             root.GetProperty("attempt").GetInt32(),
             cells,
-            ReadMarkers(root),
+            markers,
             root.GetProperty("mortarVersion").GetString() ?? "",
             formatVersion);
         var stored = root.GetProperty("fingerprint").GetString();
@@ -65,7 +71,7 @@ public static class LayoutReader
             : AuthoringResult<Layout>.Failure(source, $"fingerprint mismatch: file has {stored}, contents hash to {layout.Fingerprint}");
     }
 
-    private static LayoutCells ReadCells(JsonElement root)
+    private static LayoutCells ReadCells(JsonElement root, int[] walkable)
     {
         var cells = root.GetProperty("cells");
         return new LayoutCells(
@@ -76,19 +82,35 @@ public static class LayoutReader
             Strings(root.GetProperty("tileTypes")),
             Ints(cells.GetProperty("tile")),
             Ints(cells.GetProperty("variant")),
-            Ints(root.GetProperty("walkable")).Select(value => value != 0).ToArray());
+            walkable.Select(value => value != 0).ToArray());
     }
 
-    private static string? CheckCells(LayoutCells cells)
+    private static string? CheckCells(LayoutCells cells, int[] walkable)
     {
-        if (cells.Width <= 0 || cells.Height <= 0) return "width and height must be positive";
+        if (!InRange(cells.Width, 1, Layout.MaxDimension + 1) || !InRange(cells.Height, 1, Layout.MaxDimension + 1))
+            return $"width and height must be between 1 and {Layout.MaxDimension}";
         var count = cells.Width * cells.Height;
-        if (cells.Ground.Count != count || cells.Tiles.Count != count || cells.Variants.Count != count || cells.Walkable.Count != count)
+        if (cells.Ground.Count != count || cells.Tiles.Count != count || cells.Variants.Count != count || walkable.Length != count)
             return $"cell arrays must each hold width x height = {count} entries";
-        if (cells.Ground.Any(g => g < 0 || g >= cells.GroundTypes.Count)) return "ground index out of range";
-        if (cells.Tiles.Any(t => t < 0 || t >= cells.TileTypes.Count)) return "tile index out of range";
+        if (cells.Ground.Any(g => !InRange(g, 0, cells.GroundTypes.Count))) return "ground index out of range";
+        if (cells.Tiles.Any(t => !InRange(t, 0, cells.TileTypes.Count))) return "tile index out of range";
+        if (cells.Variants.Any(v => v < 0)) return "variant must not be negative";
+        if (walkable.Any(w => w != 0 && w != 1)) return "walkable entries must be 0 or 1";
         return null;
     }
+
+    private static string? CheckMarkers(LayoutCells cells, IReadOnlyList<Marker> markers)
+    {
+        for (var i = 0; i < markers.Count; i++)
+        {
+            if (!InRange(markers[i].X, 0, cells.Width) || !InRange(markers[i].Y, 0, cells.Height))
+                return $"marker {i} lies outside the grid";
+        }
+        return null;
+    }
+
+    private static bool InRange(int value, int minInclusive, int maxExclusive) =>
+        value >= minInclusive && value < maxExclusive;
 
     private static List<Marker> ReadMarkers(JsonElement root) =>
         root.GetProperty("markers").EnumerateArray()

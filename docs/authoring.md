@@ -44,7 +44,7 @@ Mortar reads three kinds of files: a **tileset**, **rooms**, and **areas**. It w
 - Put doors at the middle of each slot side (offset 4 with `slotSize` 9) so rooms line up with each other.
 - Markers sit on floor cells and never on the edge: `E` entrance, `X` exit, `B` boss, `W` waypoint, `S` monster spawn, `C` chest.
 - Width and height must each be `(slotSize - 1) × n + 1`: 9, 17, 25… for `slotSize` 9. Neighboring rooms share their edge cells.
-- Standard tags: `entrance`, `exit`, `boss`, `waypoint` (the room must contain the matching marker), `filler` and `corridor` (fill the path between landmarks; must be one slot), `dead_end` (preferred for side-branch tips). Any other tag can be used by a custom landmark kind.
+- Standard tags: `entrance`, `exit`, `boss`, `waypoint` (the room must contain the matching marker), `filler` and `corridor` (fill the path between landmarks; must be one slot), `dead_end` (preferred for side-branch tips). Any other tag can be used by a custom landmark kind; its marker is placed on the room's center cell, so that cell must be walkable.
 - Multi-slot rooms (17×17 and up) can be landmark rooms. Doors on a multi-slot room belong to the slot side they sit on.
 
 ## Areas
@@ -72,17 +72,17 @@ Mortar reads three kinds of files: a **tileset**, **rooms**, and **areas**. It w
 ```
 
 - `mode`: only `indoor` is supported in this version.
-- `tileset` and `rooms` are paths relative to the area file. A `rooms` entry can be a file or a folder of `.json` files.
+- `tileset` and `rooms` are paths relative to the area file. A `rooms` entry can be a file or a folder; a folder loads every file whose extension is `.json` in any letter case, in ordinal file-name order.
 - `roomTags` (optional) keeps only rooms that carry at least one of these tags.
-- `targetSize`: the level is built on a grid of `(width - 1) / (slotSize - 1)` slots per side. After generation, the walkable area must measure within `tolerance` percent of `width` and `height`, or the attempt is retried.
-- `maxSideBranches`: up to this many optional dead-end rooms are added per attempt.
-- `maxAttempts`: retry limit (default 20).
+- `targetSize`: the level is built on a grid of `(width - 1) / (slotSize - 1)` slots per side. After generation, the walkable area must measure within `tolerance` percent of `width` and `height`, or the attempt is retried. Width and height are at most 4096.
+- `maxSideBranches`: up to this many optional dead-end rooms are added per attempt (at most 1000).
+- `maxAttempts`: retry limit (default 20, at most 1000).
 - `nodes`: landmarks. `kind` defaults to the node `id`. `region` is the home rectangle in fractions of the area; the landmark's room is placed on a slot inside it. Exactly one node must be an `entrance`.
 - `edges`: `path` edges are required connections; every node must reach the entrance through them. `branch` edges are each included with a 50% chance and dropped if no route exists.
 
 ## Layout files
 
-`mortar generate` writes compact JSON with these properties, in order:
+`mortar generate` writes compact JSON with these properties, in order. Readers reject files whose width or height exceeds 4096, whose arrays or markers fall outside the grid, or whose fingerprint does not match the contents.
 
 | Property | Meaning |
 | --- | --- |

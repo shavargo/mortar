@@ -1,5 +1,6 @@
 using System.Buffers.Binary;
 using Mortar.Cli;
+using Mortar.Core.Layouts;
 using Mortar.Json;
 using Mortar.Tests.Support;
 
@@ -44,6 +45,44 @@ public class CliTests
         var (code, _, error) = Run("generate", "--area", TestPaths.CryptArea, "--seed", seed, "--out", "unused.json");
         Assert.Equal(ExitCodes.InvalidInput, code);
         Assert.Contains("--seed must be a whole number", error);
+    }
+
+    [Fact]
+    public void Generate_RequiresSeed()
+    {
+        var (code, _, error) = Run("generate", "--area", TestPaths.CryptArea, "--out", "unused.json");
+        Assert.Equal(ExitCodes.InvalidInput, code);
+        Assert.Contains("missing --seed", error);
+    }
+
+    [Theory]
+    [InlineData("--area", "")]
+    [InlineData("--out", "")]
+    public void Generate_EmptyPath_ExitsTwo(string option, string value)
+    {
+        using var temp = new TempDir();
+        var args = new List<string> { "generate", "--area", TestPaths.CryptArea, "--seed", "1", "--out", Path.Combine(temp.Root, "out.json") };
+        args[args.IndexOf(option) + 1] = value;
+        var (code, _, error) = Run(args.ToArray());
+        Assert.Equal(ExitCodes.InvalidInput, code);
+        Assert.Contains("invalid path", error);
+    }
+
+    [Fact]
+    public void Preview_TooLargeImage_ExitsTwo()
+    {
+        using var temp = new TempDir();
+        var layoutPath = temp.Write("wide.json", LayoutWriter.ToJson(WideLayout(4096, 64)));
+        var (code, _, error) = Run("preview", "--layout", layoutPath, "--out", Path.Combine(temp.Root, "map.png"), "--scale", "64");
+        Assert.Equal(ExitCodes.InvalidInput, code);
+        Assert.Contains("image too large", error);
+    }
+
+    private static Layout WideLayout(int width, int height)
+    {
+        var count = width * height;
+        var cells = new LayoutCells(width, height, new[] { "void" }, new int[count], new[] { "void" }, new int[count], new int[count], new bool[count]);
+        return new Layout("wide", 0, 0, cells, Array.Empty<Marker>(), "0.1.0", Layout.CurrentFormatVersion);
     }
 
     [Fact]

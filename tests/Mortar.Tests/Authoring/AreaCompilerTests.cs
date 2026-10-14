@@ -82,6 +82,18 @@ public class AreaCompilerTests
     }
 
     [Fact]
+    public void Compile_HugeTargetSize_IsAnError() =>
+        AssertError(Compile(TestContent.CryptDefinition(size: 1_000_001)), "targetSize width and height must be at most 4096");
+
+    [Fact]
+    public void Compile_HugeMaxAttempts_IsAnError() =>
+        AssertError(Compile(TestContent.CryptDefinition(maxAttempts: 1_000_000)), "maxAttempts must be at most 1000");
+
+    [Fact]
+    public void Compile_HugeMaxSideBranches_IsAnError() =>
+        AssertError(Compile(TestContent.CryptDefinition(maxSideBranches: int.MaxValue)), "maxSideBranches must be at most 1000");
+
+    [Fact]
     public void Compile_RoomErrors_NameTheRoomFile()
     {
         var rooms = TestContent.CryptRooms();

@@ -3,6 +3,7 @@ namespace Mortar.Core.Layouts;
 public sealed class Layout
 {
     public const int CurrentFormatVersion = 1;
+    public const int MaxDimension = 4096;
 
     public Layout(
         string areaId,

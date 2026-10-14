@@ -33,8 +33,8 @@ public class GeneratorTests
     {
         var first = Generator.Generate(Crypt, seed);
         var second = Generator.Generate(Crypt, seed);
-        Assert.Equal(first.Succeeded, second.Succeeded);
-        Assert.Equal(first.Layout?.Fingerprint, second.Layout?.Fingerprint);
+        Assert.True(first.Succeeded, first.FailureSummary);
+        Assert.Equal(first.Layout!.Fingerprint, second.Layout?.Fingerprint);
     }
 
     [Fact]
