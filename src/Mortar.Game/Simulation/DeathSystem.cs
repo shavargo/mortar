@@ -13,7 +13,7 @@ internal static class DeathSystem
             actor.MarkDead();
             level.Vacate(actor);
             events.Add(new ActorDied(events.Tick, actor.Id, actor.LastAttackerId));
-            if (actor.Kind == ActorKind.Monster && actor.LastAttackerId == Actor.PlayerId)
+            if (actor.Kind == ActorKind.Monster && actor.LastAttackerId == Actor.PlayerId && !world.Player.IsDead)
             {
                 PlayerGrowth.RewardKill(world, actor, events);
             }
