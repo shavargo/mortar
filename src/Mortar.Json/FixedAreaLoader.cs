@@ -15,10 +15,7 @@ internal static class FixedAreaLoader
             return AuthoringResult<CompiledArea>.Failure(errors);
         }
         var directory = Path.GetDirectoryName(source)!;
-        var tilesetPath = SafePath.Resolve(directory, dto.Tileset);
-        var tileset = tilesetPath is null
-            ? AuthoringResult<Tileset>.Failure(source, $"tileset '{dto.Tileset}' is an invalid path")
-            : MortarLoader.LoadTileset(tilesetPath);
+        var tileset = MortarLoader.LoadAreaTileset(source, directory, dto.Tileset);
         errors.AddRange(tileset.Errors);
         var map = LoadMap(source, directory, dto.Map, errors);
         if (errors.Count > 0)

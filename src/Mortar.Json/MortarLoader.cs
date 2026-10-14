@@ -27,10 +27,7 @@ public static class MortarLoader
             return AuthoringResult<CompiledArea>.Failure(area.Errors);
         }
         var directory = Path.GetDirectoryName(source)!;
-        var tilesetPath = SafePath.Resolve(directory, dto.Tileset);
-        var tileset = tilesetPath is null
-            ? AuthoringResult<Tileset>.Failure(source, $"tileset '{dto.Tileset}' is an invalid path")
-            : LoadTileset(tilesetPath);
+        var tileset = LoadAreaTileset(source, directory, dto.Tileset);
         var errors = new List<AuthoringError>(tileset.Errors);
         var rooms = LoadRooms(source, directory, dto.Rooms!, errors);
         if (errors.Count > 0)
@@ -51,6 +48,14 @@ public static class MortarLoader
         return dto is null
             ? AuthoringResult<Tileset>.Failure(new[] { error! })
             : DefinitionMapper.ToTileset(source, dto);
+    }
+
+    internal static AuthoringResult<Tileset> LoadAreaTileset(string source, string directory, string? entry)
+    {
+        var path = SafePath.Resolve(directory, entry);
+        return path is null
+            ? AuthoringResult<Tileset>.Failure(source, $"tileset '{entry}' is an invalid path")
+            : LoadTileset(path);
     }
 
     private static List<RoomDefinition> LoadRooms(

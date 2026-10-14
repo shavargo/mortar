@@ -79,6 +79,22 @@ public class FixedAreaLoaderTests
         using var temp = new TempDir();
         var json = SampleArea.AreaJson(SampleArea.Tileset, SampleArea.Rooms, extra: "\n  \"map\": \"map.json\",");
         var path = temp.Write("area.json", json);
-        Assert.Contains(MortarLoader.LoadArea(path).Errors, e => e.Message == "'map' is only allowed in fixed areas");
+        Assert.Contains(MortarLoader.LoadArea(path).Errors, e => e.Source == path && e.Message == "'map' is only allowed in fixed areas");
+    }
+
+    [Fact]
+    public void LoadArea_FixedAreaWithUnknownProperty_IsAnError()
+    {
+        using var temp = new TempDir();
+        var path = WriteArea(temp, AreaJson("\n  \"bogus\": 1,"));
+        Assert.Contains(MortarLoader.LoadArea(path).Errors, e => e.Source == path && e.Message.StartsWith("invalid JSON"));
+    }
+
+    [Fact]
+    public void LoadArea_FixedAreaWithoutTileset_IsAnError()
+    {
+        using var temp = new TempDir();
+        var path = WriteArea(temp, """{ "id": "town", "mode": "fixed", "map": "map.json" }""");
+        Assert.Contains(MortarLoader.LoadArea(path).Errors, e => e.Source == path && e.Message == "area has no tileset");
     }
 }
