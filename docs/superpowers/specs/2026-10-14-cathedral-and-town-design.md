@@ -40,8 +40,8 @@ Filler and dead-end rooms may span 2×1, 1×2, or 2×2 slots (today only landmar
 
 - A room file may set `weight`, an integer from 1 to 1000. The default is 1.
 - Landmark, filler, and dead-end picks become weighted picks with the existing generator.
-- With every weight at 1, picks consume the generator exactly as today, so existing sample
-  layouts and their fingerprints are unchanged. A snapshot test pins this.
+- When every candidate in a pick has weight 1, the pick uses the existing uniform `Pick`, so
+  existing sample layouts and their fingerprints are unchanged. A snapshot test pins this.
 
 ### 1.3 `fixed` area mode
 
@@ -96,10 +96,13 @@ All new files live under `content/`. `samples/` stays unchanged as the level-gen
 
 | Depth | Target size (±15%) | Side branches | Graph |
 |---|---|---|---|
-| 1 | 48×48 | 3 | entrance → shrine → exit (paths), entrance → exit (branch) |
-| 2 | 56×56 | 4 | as depth 1 |
-| 3 | 64×64 | 6 | as depth 1 |
-| 4 | 72×72 | 8 | entrance → shrine → boss → exit (paths), entrance → exit (branch) |
+| 1 | 49×49 | 3 | entrance → shrine → exit (paths), entrance → exit (branch) |
+| 2 | 57×57 | 4 | as depth 1 |
+| 3 | 65×65 | 6 | as depth 1 |
+| 4 | 73×73 | 8 | entrance → shrine → boss → exit (paths), entrance → exit (branch) |
+
+Sizes are `8n + 1` so the slot grid (stride 8) covers the whole target; with 48 the grid is one
+slot short and every attempt would be too small.
 
 - `content/levels.json` points depths 1–4 at these areas and keeps the current spawns and the
   depth-4 boss.
