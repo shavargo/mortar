@@ -45,6 +45,7 @@ internal static class LevelEntry
         }
         var level = new LevelState(depth, seed, result.Layout!);
         world.AddLevel(level);
+        MonsterSpawner.Populate(world, level, definition);
         error = null;
         return level;
     }
