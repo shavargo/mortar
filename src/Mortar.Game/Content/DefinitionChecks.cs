@@ -6,6 +6,9 @@ internal static class DefinitionChecks
 {
     public const int MaxMinions = 12;
 
+    /// <summary>Upper bound for authored numbers, low enough that the simulation's int math (rolls, percent checks) cannot overflow.</summary>
+    public const int MaxValue = 1_000_000;
+
     public static void Add(this List<AuthoringError> errors, string source, string message) =>
         errors.Add(new AuthoringError(source, message));
 
@@ -21,14 +24,9 @@ internal static class DefinitionChecks
             {
                 errors.Add(source, $"{name} cap must be at least the base value");
             }
+            if (definition.StatCaps.Get(kind) > MaxValue) errors.Add(source, $"{name} cap must be at most {MaxValue}");
         }
-        var growth = definition.Growth;
-        if (growth.LifeBase < 1) errors.Add(source, "lifeBase must be at least 1");
-        if (growth.LifePerVitality < 0 || growth.LifePerLevel < 0 || growth.ManaBase < 0
-            || growth.ManaPerMagic < 0 || growth.ManaPerLevel < 0 || growth.StatPointsPerLevel < 0)
-        {
-            errors.Add(source, "growth values must not be negative");
-        }
+        CheckGrowth(source, definition.Growth, errors);
         CheckRange(source, "unarmedDamage", definition.UnarmedDamage, 0, errors);
         CheckTimings(source, definition.Timings, errors);
     }
@@ -44,10 +42,29 @@ internal static class DefinitionChecks
         {
             errors.Add(source, "armorClass, toHit, and experience must not be negative");
         }
+        if (monster.ArmorClass > MaxValue || monster.ToHit > MaxValue || monster.Experience > MaxValue)
+        {
+            errors.Add(source, $"armorClass, toHit, and experience must be at most {MaxValue}");
+        }
         if (monster.BlockChance < 0 || monster.BlockChance > 100) errors.Add(source, "blockChance must be between 0 and 100");
         if (monster.SightRadius < 1) errors.Add(source, "sightRadius must be at least 1");
         CheckTimings(source, monster.Timings, errors);
         CheckAi(source, monster, find, errors);
+    }
+
+    private static void CheckGrowth(string source, ClassGrowth growth, List<AuthoringError> errors)
+    {
+        var values = new[]
+        {
+            growth.LifePerVitality, growth.LifePerLevel, growth.ManaBase,
+            growth.ManaPerMagic, growth.ManaPerLevel, growth.StatPointsPerLevel,
+        };
+        if (growth.LifeBase < 1) errors.Add(source, "lifeBase must be at least 1");
+        if (values.Any(value => value < 0)) errors.Add(source, "growth values must not be negative");
+        if (growth.LifeBase > MaxValue || values.Any(value => value > MaxValue))
+        {
+            errors.Add(source, $"growth values must be at most {MaxValue}");
+        }
     }
 
     private static void CheckAi(string source, MonsterDefinition monster, Func<string, MonsterDefinition?> find, List<AuthoringError> errors)
@@ -80,6 +97,7 @@ internal static class DefinitionChecks
         {
             errors.Add(source, $"{field} must satisfy {minimum} <= min <= max");
         }
+        if (range.Max > MaxValue) errors.Add(source, $"{field} max must be at most {MaxValue}");
     }
 
     private static void CheckTimings(string source, ActionTimings timings, List<AuthoringError> errors)

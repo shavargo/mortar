@@ -101,6 +101,31 @@ public class ContentValidatorTests
     }
 
     [Fact]
+    public void HugeMonsterNumbers_AreRejected()
+    {
+        var huge = new MonsterDefinition(
+            "zombie", "Zombie", "zombie", 1, new IntRange(5, 1_000_001), 0, 1_000_001, new IntRange(1, int.MaxValue), 0,
+            TestGameContent.Timings(), 5, 10, AiKinds.MeleeChase, null);
+        var result = TestGameContent.Create(monsters: new[] { huge });
+        AssertError(result, "monster 'zombie'", "life max must be at most 1000000");
+        AssertError(result, "monster 'zombie'", "damage max must be at most 1000000");
+        AssertError(result, "monster 'zombie'", "armorClass, toHit, and experience must be at most 1000000");
+    }
+
+    [Fact]
+    public void HugeClassNumbers_AreRejected()
+    {
+        var warrior = TestGameContent.Warrior();
+        var huge = new ClassDefinition(
+            warrior.Id, warrior.Name, warrior.SpriteSet, warrior.BaseStats, new Stats(100, 100, 1_000_001, 100),
+            new ClassGrowth(10, 2, 2, 0, 1_000_001, 1, 5), new IntRange(2, 1_000_001), warrior.Timings);
+        var result = TestGameContent.Create(classes: new[] { huge });
+        AssertError(result, "class 'warrior'", "vitality cap must be at most 1000000");
+        AssertError(result, "class 'warrior'", "growth values must be at most 1000000");
+        AssertError(result, "class 'warrior'", "unarmedDamage max must be at most 1000000");
+    }
+
+    [Fact]
     public void StatCapBelowBase_IsRejected()
     {
         var warrior = TestGameContent.Warrior();
