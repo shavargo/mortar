@@ -154,6 +154,13 @@ internal sealed class MonsterDto
 internal sealed class LevelsDto
 {
     public List<LevelDto?>? Levels { get; set; }
+
+    public TownDto? Town { get; set; }
+}
+
+internal sealed class TownDto
+{
+    public string? Area { get; set; }
 }
 
 internal sealed class LevelDto

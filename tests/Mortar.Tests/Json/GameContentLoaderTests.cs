@@ -1,3 +1,6 @@
+using Mortar.Core.Model;
+using Mortar.Game;
+using Mortar.Game.Commands;
 using Mortar.Game.Items;
 using Mortar.Game.Simulation;
 using Mortar.Json.Content;
@@ -15,18 +18,61 @@ public class GameContentLoaderTests
         var content = result.Value!.Content;
         Assert.True(content.TryGetClass("warrior", out _));
         Assert.Equal(6, content.Monsters.Count);
+        Assert.Equal(0, content.ShallowestLevel);
         Assert.Equal(4, content.DeepestLevel);
+        Assert.Equal("town", content.Level(0).AreaId);
         Assert.Equal("gravewarden", content.Level(4).BossId);
-        Assert.True(result.Value.Areas.ContainsKey("crypt"));
+        Assert.Equal(
+            new[] { "cathedral-1", "cathedral-2", "cathedral-3", "cathedral-4", "town" },
+            result.Value.Areas.Keys.OrderBy(id => id, StringComparer.Ordinal));
     }
 
     [Fact]
-    public void RepoContent_CreatesAPlayableWorld()
+    public void RepoContent_StartsInAQuietTownAboveAPopulatedCathedral()
     {
         var content = GameContentLoader.Load(ContentFixture.Manifest).Value!;
-        var world = World.Create(content.Content, content.CreateLevelGenerator(), "warrior", 1);
-        Assert.True(world.Succeeded, world.Error);
-        Assert.Contains(world.World!.Level.Actors, actor => actor.Kind == ActorKind.Monster);
+        var created = World.Create(content.Content, content.CreateLevelGenerator(), "warrior", 1);
+        Assert.True(created.Succeeded, created.Error);
+        var world = created.World!;
+        Assert.Equal(0, world.Depth);
+        Assert.DoesNotContain(world.Level.Actors, actor => actor.Kind == ActorKind.Monster);
+        world.Level.Move(world.Player, world.Level.FindMarker(MarkerKinds.Exit)!.Value);
+        world.Tick(new Command[] { new UseStairsCommand() });
+        Assert.Equal(1, world.Depth);
+        Assert.Contains(world.Level.Actors, actor => actor.Kind == ActorKind.Monster);
+    }
+
+    [Fact]
+    public void TownSpawns_AreAnError()
+    {
+        using var temp = new TempDir();
+        var manifest = ContentFixture.Copy(temp);
+        var levels = Path.Combine(temp.Root, "levels.json");
+        File.WriteAllText(levels, File.ReadAllText(levels).Replace("\"area\": \"areas/town.json\"", "\"area\": \"areas/town.json\", \"spawns\": []"));
+        var result = GameContentLoader.Load(manifest);
+        Assert.Contains(result.Errors, e => e.Source == levels && e.Message.StartsWith("invalid JSON") && e.Message.Contains("spawns"));
+    }
+
+    [Fact]
+    public void TownWithIndoorArea_IsAnError()
+    {
+        using var temp = new TempDir();
+        var manifest = ContentFixture.Copy(temp);
+        var levels = Path.Combine(temp.Root, "levels.json");
+        File.WriteAllText(levels, File.ReadAllText(levels).Replace("\"area\": \"areas/town.json\"", "\"area\": \"areas/cathedral-1.json\""));
+        var result = GameContentLoader.Load(manifest);
+        Assert.Contains(result.Errors, e => e.Source == levels && e.Message == "the town area must use mode 'fixed'");
+    }
+
+    [Fact]
+    public void TownMapWithoutExit_IsAnError()
+    {
+        using var temp = new TempDir();
+        var manifest = ContentFixture.Copy(temp);
+        var map = Path.Combine(temp.Root, "maps", "town.json");
+        File.WriteAllText(map, File.ReadAllText(map).Replace('X', '.'));
+        var result = GameContentLoader.Load(manifest);
+        Assert.Contains(result.Errors, e => e.Message == "the town map must have exactly one exit (X), found 0");
     }
 
     [Fact]

@@ -12,9 +12,6 @@ internal static class ContentFixture
         {
             temp.Write(Path.GetRelativePath(source, file), File.ReadAllText(file));
         }
-        var levels = Path.Combine(temp.Root, "levels.json");
-        var crypt = TestPaths.CryptArea.Replace('\\', '/');
-        File.WriteAllText(levels, File.ReadAllText(levels).Replace("../samples/areas/crypt.json", crypt));
         return Path.Combine(temp.Root, "game.json");
     }
 }

@@ -53,6 +53,8 @@ Optional `startingItems` lists item ids the class starts with. Each is created p
 
 `levels` is a list with one entry per dungeon depth, numbered 1, 2, 3, … with no gaps. Each entry has `depth`, `area` (a Mortar area file, relative to `levels.json`), `spawns` (`monster` and `weight`; one is picked per spawn marker), and optional `boss` (spawned at the area's boss marker). Spawn markers within 5 tiles of the entrance stay empty.
 
+An optional `town` entry (`{ "area": "…" }`) adds a safe town at depth 0: its area must use mode `fixed` with exactly one exit (`X`), it has no spawns or boss, and new games start there. The shipped content has a town and four cathedral levels (`content/areas/`).
+
 ## `items/*.json`
 
 One item base per file: `id`, `name`, `icon`, `slot`, `size` (`width` 1–2, `height` 1–3), `itemLevel` (only monsters of at least this level drop it), `dropWeight` (0 never drops), and optional `requirements` (`strength`, `dexterity`, `vitality`, `magic`; missing ones are 0, compared against the player's base stats).

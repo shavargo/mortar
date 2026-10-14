@@ -32,6 +32,11 @@ internal static class LevelFileLoader
             return levels;
         }
         var areaIdsByFile = new Dictionary<string, string>(StringComparer.Ordinal);
+        if (dto.Town is not null)
+        {
+            var town = LoadTown(path, dto.Town, areas, areaIdsByFile, errors);
+            if (town is not null) levels.Add(town);
+        }
         for (var i = 0; i < dto.Levels.Count; i++)
         {
             var level = dto.Levels[i];
@@ -40,15 +45,39 @@ internal static class LevelFileLoader
                 errors.Add(new AuthoringError(path, $"levels entry {i} is null"));
                 continue;
             }
-            var areaId = LoadArea(path, i, level.Area, areas, areaIdsByFile, errors);
+            var areaId = LoadArea(path, $"levels entry {i}", level.Area, areas, areaIdsByFile, errors);
             if (areaId is not null) levels.Add(ContentMapper.ToLevel(path, i, level, areaId, errors));
         }
         return levels;
     }
 
+    private static LevelDefinition? LoadTown(
+        string source,
+        TownDto town,
+        Dictionary<string, CompiledArea> areas,
+        Dictionary<string, string> areaIdsByFile,
+        List<AuthoringError> errors)
+    {
+        var id = LoadArea(source, "town", town.Area, areas, areaIdsByFile, errors);
+        if (id is null) return null;
+        var map = areas[id].Map;
+        if (map is null)
+        {
+            errors.Add(new AuthoringError(source, "the town area must use mode 'fixed'"));
+            return null;
+        }
+        var exits = map.Markers.Count(marker => marker.Kind == MarkerKinds.Exit);
+        if (exits != 1)
+        {
+            errors.Add(new AuthoringError(source, $"the town map must have exactly one exit (X), found {exits}"));
+            return null;
+        }
+        return new LevelDefinition(0, id, Array.Empty<SpawnEntry>(), null);
+    }
+
     private static string? LoadArea(
         string source,
-        int index,
+        string label,
         string? entry,
         Dictionary<string, CompiledArea> areas,
         Dictionary<string, string> areaIdsByFile,
@@ -57,7 +86,7 @@ internal static class LevelFileLoader
         var file = SafePath.Resolve(Path.GetDirectoryName(source)!, entry);
         if (file is null)
         {
-            errors.Add(new AuthoringError(source, $"levels entry {index} has an empty or invalid area path"));
+            errors.Add(new AuthoringError(source, $"{label} has an empty or invalid area path"));
             return null;
         }
         if (areaIdsByFile.TryGetValue(file, out var known)) return known;

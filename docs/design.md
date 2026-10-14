@@ -51,6 +51,7 @@ Defines **ground types**. Each ground type has:
 - `char`: the character used to draw it in room grids
 - `walkable`: whether units can stand on it
 - `blocksSight`: whether it blocks projectiles and line of sight (walls, tall trees)
+- `markers` (optional): extra marker characters, each with `char` and `kind` (for example `{ "char": "H", "kind": "healer" }`). They cannot reuse a ground char or a built-in marker char or kind.
 
 It may also list **variant weights** per tile type, so engines can favor some art variants over others.
 
@@ -79,14 +80,16 @@ A room is a small hand-drawn grid with tags:
 - Ground characters come from the tileset (`#` wall, `.` floor in the samples).
 - `D` is a possible door. It becomes floor if the generator connects something to it, and wall otherwise. Doors must lie on the room's outer edge.
 - Marker characters sit on floor cells: `E` entrance, `X` exit, `B` boss, `W` waypoint, `S` monster spawn, `C` chest.
+- Rooms may set `weight` (1–1000, default 1); a heavier room is picked more often among rooms that fit.
 - Standard tags: `entrance`, `exit`, `boss`, `waypoint`, `filler`, `corridor`, `dead_end`. Areas may define custom tags.
 - Indoor room width and height must each be `(slotSize - 1) × n + 1` for a whole number `n` (with `slotSize` 9: 9, 17, 25…), so neighboring rooms share exactly one cell.
+- Rooms 17×17 and up span several slots. Landmark, filler, and dead-end rooms may all span several slots; doors on a multi-slot room belong to the slot side they sit on.
 
 ### 4.4 Areas (`areas/*.json`)
 
 An area fixes the overall shape that stays recognizable between visits:
 
-- `mode`: `indoor` or `outdoor`
+- `mode`: `indoor`, `outdoor`, or `fixed`
 - `tileset`: tileset file
 - `targetSize`: width and height in cells, with a tolerance (for example 60×60 ± 15%)
 - `slotSize` (indoor): room slot size in cells (for example 9, giving an 8-cell stride with overlap)
@@ -97,7 +100,11 @@ An area fixes the overall shape that stays recognizable between visits:
   - `nodes`: landmarks (`entrance`, `exit`, `boss`, `waypoint`, or custom), each with a **home region** expressed as a rectangle in fractions of the area (for example entrance at x 0.0–0.2, y 0.3–0.7)
   - `edges`: links between nodes. Indoor edges are `path` (required) or `branch` (optional). Outdoor edges have a feature type (`river`, `cliff`, `road`, `forest_edge`) with a width and the ground types for each side.
 
+A **fixed** area is one hand-drawn map stamped as-is: it has only `id`, `mode`, `tileset`, and `map` (a file with a `grid`, like a room). The map needs exactly one `E`; every marker must be reachable from it; unreachable walkable pockets become `void`. The same map is produced for every seed (tile variants still follow the seed).
+
 ## 5. Generation pipeline
+
+Fixed areas skip steps 2–6: the map is stamped, its tiles are resolved, and the result is attempt 0.
 
 1. **Seed.** Create the generator from the area id and seed.
 2. **Place landmarks.** Each node is placed at a random position within its home region.
@@ -157,7 +164,7 @@ The layout file is the only thing engines and servers need.
 - **Determinism snapshots:** stored layouts for known seeds; any change in output fails the test.
 - **Validation property tests:** across many seeds, every successful layout passes the walkability checks.
 - **Authoring error tests:** each invalid-input case produces the expected error.
-- **Success-rate tests:** sample areas must succeed on at least 80% of seeds.
+- **Success-rate tests:** sample areas must succeed on at least 80% of seeds; the shipped cathedral areas must succeed on all of seeds 1–500.
 - **CI:** GitHub Actions runs the test suite on Windows, Linux, and macOS and confirms identical snapshots on all three.
 
 ## 11. Build order
