@@ -1,4 +1,5 @@
 using Mortar.Game.Events;
+using Mortar.Game.Pathing;
 
 namespace Mortar.Game.Simulation;
 
@@ -19,7 +20,7 @@ internal static class CombatSystem
             if (!attacker.IsAlive || attacker.Action != ActionKind.Attacking) continue;
             var target = world.Level.Find(attacker.ActionTargetId);
             if (target is null || !target.IsAlive) continue;
-            if (!attacker.Cell.IsAdjacentTo(target.Cell))
+            if (!Reach.CanStrike(attacker.Cell, target.Cell, world.Level.IsWalkable))
             {
                 events.Add(new AttackResolved(events.Tick, attacker.Id, target.Id, AttackOutcome.Miss, 0));
                 continue;

@@ -1,6 +1,7 @@
 using Mortar.Core.Model;
 using Mortar.Game.Commands;
 using Mortar.Game.Content;
+using Mortar.Game.Pathing;
 using Mortar.Game.Simulation;
 using Mortar.Json.Content;
 
@@ -39,8 +40,11 @@ internal static class ScriptedPlayer
     private static IReadOnlyList<Command> Decide(World world)
     {
         var player = world.Player;
-        if (player.Intent == IntentKind.Attack) return Array.Empty<Command>();
         var target = NearestAwakeMonster(world);
+        if (player.Intent == IntentKind.Attack)
+        {
+            return target is not null && ShouldSwitchTo(world, target) ? new Command[] { new AttackCommand(target.Id) } : Array.Empty<Command>();
+        }
         if (target is not null) return new Command[] { new AttackCommand(target.Id) };
         if (player.Intent != IntentKind.None) return Array.Empty<Command>();
         if (world.Progress.UnspentPoints > 0 && world.Progress.BaseStats.Strength < world.PlayerClass.StatCaps.Strength)
@@ -52,6 +56,16 @@ internal static class ScriptedPlayer
         return player.Cell.DistanceTo(exit.Value) <= 1
             ? new Command[] { new UseStairsCommand() }
             : new Command[] { new MoveCommand(exit.Value) };
+    }
+
+    /// <summary>Drop a target that is out of reach (for example boxed in by its pack) when another monster can be struck now.</summary>
+    private static bool ShouldSwitchTo(World world, Actor target)
+    {
+        var player = world.Player;
+        var current = world.Level.Find(player.IntentTargetId);
+        return current is not null
+            && !Reach.CanStrike(player.Cell, current.Cell, world.Level.IsWalkable)
+            && Reach.CanStrike(player.Cell, target.Cell, world.Level.IsWalkable);
     }
 
     private static Actor? NearestAwakeMonster(World world)

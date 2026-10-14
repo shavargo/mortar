@@ -8,7 +8,7 @@ public static class Pathfinder
         Search(start, cell => cell == goal, cell => cell.DistanceTo(goal), walkable, free);
 
     public static IReadOnlyList<Cell>? FindPathNextTo(Cell start, Cell target, Func<Cell, bool> walkable, Func<Cell, bool> free) =>
-        Search(start, cell => cell.IsAdjacentTo(target), cell => Math.Max(0, cell.DistanceTo(target) - 1), walkable, free);
+        Search(start, cell => Reach.CanStrike(cell, target, walkable), cell => Math.Max(0, cell.DistanceTo(target) - 1), walkable, free);
 
     private static IReadOnlyList<Cell>? Search(
         Cell start,
@@ -45,9 +45,7 @@ public static class Pathfinder
     private static bool CanStep(Cell from, Direction direction, Func<Cell, bool> walkable, Func<Cell, bool> free)
     {
         var to = from.Step(direction);
-        if (!free(to)) return false;
-        if (!direction.IsDiagonal()) return true;
-        return walkable(new Cell(to.X, from.Y)) && walkable(new Cell(from.X, to.Y));
+        return free(to) && Reach.CornersClear(from, to, walkable);
     }
 
     private static IReadOnlyList<Cell> Rebuild(Dictionary<Cell, Cell> cameFrom, Cell start, Cell end)

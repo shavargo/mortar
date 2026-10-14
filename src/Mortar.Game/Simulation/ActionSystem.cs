@@ -52,7 +52,7 @@ internal static class ActionSystem
             actor.ClearIntent();
             return;
         }
-        if (actor.Cell.IsAdjacentTo(target.Cell))
+        if (Reach.CanStrike(actor.Cell, target.Cell, level.IsWalkable))
         {
             CombatSystem.StartAttack(actor, target, events);
             return;

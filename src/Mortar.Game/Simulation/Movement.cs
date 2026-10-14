@@ -9,7 +9,7 @@ internal static class Movement
     {
         var goal = actor.IntentCell;
         var occupied = IsOccupiedByOther(level, actor, goal);
-        if (actor.Cell == goal || (occupied && actor.Cell.IsAdjacentTo(goal)))
+        if (actor.Cell == goal || (occupied && Reach.CanStrike(actor.Cell, goal, level.IsWalkable)))
         {
             actor.ClearIntent();
             return;

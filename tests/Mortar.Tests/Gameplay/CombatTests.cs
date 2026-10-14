@@ -118,6 +118,20 @@ public class CombatTests
         Assert.Equal(zombie.Id, swing.TargetId);
     }
 
+    [Fact]
+    public void DiagonalTargetPastAWallCorner_IsApproachedBeforeAttacking()
+    {
+        var notched = new[] { "#######", "#E....#", "##....#", "#.....#", "#######" };
+        var world = TestWorlds.Create(TestGameContent.Valid(rules: TestGameContent.Rules(minHit: 100, maxHit: 100)), levels: new[] { notched, notched });
+        var zombie = TestWorlds.Spawn(world, "zombie", 2, 2);
+        var events = TestWorlds.Run(world, 12, new AttackCommand(zombie.Id));
+        var step = events.OfType<ActorMoved>().First(e => e.ActorId == Actor.PlayerId);
+        Assert.Equal(1, step.Tick);
+        Assert.Equal(new Cell(2, 1), step.To);
+        var swing = events.OfType<AttackStarted>().First(e => e.AttackerId == Actor.PlayerId);
+        Assert.True(swing.Tick > step.Tick);
+    }
+
     [Theory]
     [InlineData(70, 4, 1, 1, 66)]
     [InlineData(70, 4, 5, 1, 74)]

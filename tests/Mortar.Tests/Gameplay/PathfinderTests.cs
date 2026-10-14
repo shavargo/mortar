@@ -68,6 +68,24 @@ public class PathfinderTests
     }
 
     [Fact]
+    public void NextTo_DoesNotStopDiagonallyPastAWallCorner()
+    {
+        var grid = new GridText("S.", "#T");
+        var path = Pathfinder.FindPathNextTo(grid.Find('S'), grid.Find('T'), grid.Walkable, grid.Walkable);
+        Assert.Equal(new[] { new Cell(1, 0) }, path);
+    }
+
+    [Theory]
+    [InlineData(1, 0, true)]
+    [InlineData(1, 1, false)]
+    [InlineData(2, 0, false)]
+    public void CanStrike_NeedsReachWithClearCorners(int toX, int toY, bool expected)
+    {
+        var grid = new GridText("S..", "#..");
+        Assert.Equal(expected, Reach.CanStrike(grid.Find('S'), new Cell(toX, toY), grid.Walkable));
+    }
+
+    [Fact]
     public void SameInputs_GiveTheSamePath()
     {
         var first = Pathfinder.FindPath(new Cell(0, 0), new Cell(7, 3), Always, Always);
