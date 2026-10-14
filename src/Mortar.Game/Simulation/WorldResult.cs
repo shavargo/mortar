@@ -16,5 +16,5 @@ public sealed class WorldResult
 
     internal static WorldResult Success(World world) => new WorldResult(world, null);
 
-    internal static WorldResult Failure(string error) => new WorldResult(null, error);
+    public static WorldResult Failure(string error) => new WorldResult(null, error);
 }

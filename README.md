@@ -8,7 +8,7 @@ Mortar is free and open source under the MIT license.
 
 Version 0.1 generates **indoor** levels by stitching hand-made rooms along a landmark graph. Outdoor generation and the Unity package are planned (see `docs/design.md`).
 
-Mortar is growing into a full action-RPG framework for Unity (see `docs/superpowers/specs/2026-10-14-arpg-framework-design.md`). `Mortar.Game` already runs a deterministic, engine-independent game simulation: a warrior, melee combat, monsters with AI, and stairs between four dungeon levels, all driven by the data in `content/` (see `docs/content.md`). Items, inventory, and save/load come next.
+Mortar is growing into a full action-RPG framework for Unity (see `docs/superpowers/specs/2026-10-14-arpg-framework-design.md`). `Mortar.Game` already runs a deterministic, engine-independent game simulation: a warrior, melee combat, monsters with AI, and stairs between four dungeon levels, all driven by the data in `content/` (see `docs/content.md`). Items with magic affixes, an inventory and potion belt, monster loot, and save files (see `docs/saves.md`) complete the first milestone; the town and more classes come next.
 
 ## Quick start
 
