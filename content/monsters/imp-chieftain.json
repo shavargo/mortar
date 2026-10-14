@@ -3,13 +3,13 @@
   "name": "Imp Chieftain",
   "spriteSet": "imp-chieftain",
   "level": 3,
-  "life": { "min": 14, "max": 20 },
-  "armorClass": 15,
-  "toHit": 40,
-  "damage": { "min": 3, "max": 6 },
+  "life": { "min": 16, "max": 22 },
+  "armorClass": 14,
+  "toHit": 50,
+  "damage": { "min": 3, "max": 5 },
   "timings": { "moveTicks": 8, "attackTicks": 12, "hitFrame": 7, "recoveryTicks": 6 },
   "sightRadius": 7,
-  "experience": 140,
+  "experience": 120,
   "ai": "pack-leader",
   "minions": { "monster": "imp", "count": { "min": 2, "max": 4 } }
 }

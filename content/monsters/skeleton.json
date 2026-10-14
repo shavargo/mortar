@@ -3,12 +3,12 @@
   "name": "Restless Bones",
   "spriteSet": "skeleton",
   "level": 2,
-  "life": { "min": 6, "max": 12 },
-  "armorClass": 10,
-  "toHit": 30,
-  "damage": { "min": 1, "max": 4 },
+  "life": { "min": 7, "max": 11 },
+  "armorClass": 12,
+  "toHit": 45,
+  "damage": { "min": 2, "max": 3 },
   "timings": { "moveTicks": 9, "attackTicks": 12, "hitFrame": 7, "recoveryTicks": 6 },
   "sightRadius": 7,
-  "experience": 64,
+  "experience": 55,
   "ai": "melee-chase"
 }
