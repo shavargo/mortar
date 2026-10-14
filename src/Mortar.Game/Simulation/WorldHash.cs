@@ -1,3 +1,5 @@
+using Mortar.Game.Items;
+
 namespace Mortar.Game.Simulation;
 
 public static class WorldHash
@@ -5,14 +7,17 @@ public static class WorldHash
     public static string Compute(World world)
     {
         var hasher = new StateHasher();
-        hasher.Add(world.Seed).Add(world.TickCount).Add((long)world.Depth).Add((long)world.NextActorId);
+        hasher.Add(world.Seed).Add(world.TickCount).Add((long)world.Depth).Add((long)world.NextActorId).Add((long)world.NextItemId);
         hasher.Add(world.Rng.State).Add(world.Rng.Increment);
         AddProgress(hasher, world.Progress);
+        AddBelongings(hasher, world.Belongings);
         foreach (var depth in world.VisitedDepths)
         {
             var level = world.GetLevel(depth);
             hasher.Add((long)level.Depth).Add(level.Seed).Add(level.Layout.Fingerprint);
             foreach (var actor in level.Actors) AddActor(hasher, actor);
+            hasher.Add((long)level.GroundItems.Count);
+            foreach (var ground in level.GroundItems) AddGround(hasher, ground);
         }
         return hasher.Value.ToString("x16");
     }
@@ -34,4 +39,38 @@ public static class WorldHash
         hasher.Add((long)actor.Intent).Add((long)actor.IntentCell.X).Add((long)actor.IntentCell.Y).Add((long)actor.IntentTargetId);
         hasher.Add((long)actor.Profile.Level).Add((long)actor.Profile.MaxLife).Add((long)actor.Profile.MaxMana);
     }
+
+    private static void AddBelongings(StateHasher hasher, Belongings belongings)
+    {
+        hasher.Add(belongings.Gold).Add((long)belongings.Inventory.Items.Count);
+        foreach (var stored in belongings.Inventory.Items)
+        {
+            hasher.Add((long)stored.Cell.X).Add((long)stored.Cell.Y);
+            AddItem(hasher, stored.Item);
+        }
+        for (var slot = 0; slot < Belt.Slots; slot++) AddOptional(hasher, belongings.Belt.Get(slot));
+        foreach (var slot in Equipment.Slots) AddOptional(hasher, belongings.Equipment.Get(slot));
+    }
+
+    private static void AddGround(StateHasher hasher, GroundItem ground)
+    {
+        hasher.Add((long)ground.Id).Add((long)ground.Cell.X).Add((long)ground.Cell.Y).Add((long)ground.Gold);
+        AddOptional(hasher, ground.Item);
+    }
+
+    private static void AddOptional(StateHasher hasher, Item? item)
+    {
+        hasher.Add(item is not null);
+        if (item is not null) AddItem(hasher, item);
+    }
+
+    private static void AddItem(StateHasher hasher, Item item)
+    {
+        hasher.Add((long)item.Id).Add(item.Definition.Id).Add((long)item.ItemLevel).Add((long)item.ArmorValue);
+        AddAffix(hasher, item.Prefix);
+        AddAffix(hasher, item.Suffix);
+    }
+
+    private static void AddAffix(StateHasher hasher, RolledAffix? affix) =>
+        hasher.Add(affix?.Definition.Id ?? "").Add((long)(affix?.Value ?? 0));
 }
