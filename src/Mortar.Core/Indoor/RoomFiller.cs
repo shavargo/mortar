@@ -43,9 +43,9 @@ internal static class RoomFiller
         if (open.Count == 1)
         {
             var endings = deadEnds.Where(r => Fits(grid, r, x, y, open)).ToList();
-            if (endings.Count > 0) return rng.Pick(endings);
+            if (endings.Count > 0) return RoomPicker.Pick(endings, rng);
         }
         var candidates = fillers.Where(r => Fits(grid, r, x, y, open)).ToList();
-        return candidates.Count == 0 ? null : rng.Pick(candidates);
+        return candidates.Count == 0 ? null : RoomPicker.Pick(candidates, rng);
     }
 }

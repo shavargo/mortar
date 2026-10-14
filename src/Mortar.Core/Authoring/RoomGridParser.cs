@@ -35,7 +35,7 @@ internal sealed class RoomGridParser
             }
         }
         CheckDoorsAndTags();
-        return new Room(_definition.Id, _definition.Tags, _width, _height, _stride, _ground, _doors, _markers);
+        return new Room(_definition.Id, _definition.Tags, _definition.Weight, _width, _height, _stride, _ground, _doors, _markers);
     }
 
     private void ParseCell(int x, int y)

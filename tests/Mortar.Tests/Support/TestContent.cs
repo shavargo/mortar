@@ -51,12 +51,12 @@ internal static partial class TestContent
         return rows.Select(row => new string(row)).ToArray();
     }
 
-    public static RoomDefinition RoomDef(string id, string[] tags, string[] grid) =>
-        new RoomDefinition($"{id}.json", id, tags, grid);
+    public static RoomDefinition RoomDef(string id, string[] tags, string[] grid, int weight = 1) =>
+        new RoomDefinition($"{id}.json", id, tags, grid, weight);
 
-    public static Room CompileRoom(string id, string[] tags, string[] grid)
+    public static Room CompileRoom(string id, string[] tags, string[] grid, int weight = 1)
     {
-        var result = RoomCompiler.Compile(RoomDef(id, tags, grid), CreateTileset(), 9);
+        var result = RoomCompiler.Compile(RoomDef(id, tags, grid, weight), CreateTileset(), 9);
         Assert.True(result.Succeeded, string.Join("; ", result.Errors));
         return result.Value!;
     }

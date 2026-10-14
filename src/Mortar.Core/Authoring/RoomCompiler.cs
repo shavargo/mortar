@@ -11,6 +11,10 @@ public static class RoomCompiler
         {
             errors.Add(new AuthoringError(definition.Source, "room has no id"));
         }
+        if (definition.Weight < 1 || definition.Weight > Room.MaxWeight)
+        {
+            errors.Add(new AuthoringError(definition.Source, $"room '{definition.Id}' weight must be between 1 and {Room.MaxWeight}"));
+        }
         if (!CheckShape(definition, slotSize, errors))
         {
             return AuthoringResult<Room>.Failure(errors);

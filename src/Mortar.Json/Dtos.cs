@@ -24,6 +24,8 @@ internal sealed class RoomDto
 
     public List<string>? Tags { get; set; }
 
+    public int? Weight { get; set; }
+
     public List<string?>? Grid { get; set; }
 }
 

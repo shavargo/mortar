@@ -28,7 +28,7 @@ internal static class LandmarkPlacer
     {
         var slotX = PickSlot(node.Region.X0, node.Region.X1, grid.Columns, rng);
         var slotY = PickSlot(node.Region.Y0, node.Region.Y1, grid.Rows, rng);
-        var room = rng.Pick(area.RoomsTagged(node.Kind));
+        var room = RoomPicker.Pick(area.RoomsTagged(node.Kind), rng);
         var origins = new List<(int X, int Y)>();
         for (var y = slotY - room.SlotsHigh + 1; y <= slotY; y++)
         {

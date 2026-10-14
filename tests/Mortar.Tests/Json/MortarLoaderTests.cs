@@ -88,12 +88,45 @@ public class MortarLoaderTests
     public void LoadArea_RoomFolder_MatchesJsonExtensionIgnoringCase()
     {
         using var temp = new TempDir();
+        CopySampleRooms(temp);
+        File.Move(Path.Combine(temp.Root, "rooms", "boss.json"), Path.Combine(temp.Root, "rooms", "Boss.JSON"));
+        var area = temp.Write("area.json", SampleArea.AreaJson(SampleArea.Tileset, "rooms"));
+        Assert.True(MortarLoader.LoadArea(area).Succeeded);
+    }
+
+    [Fact]
+    public void LoadArea_ReadsRoomWeights()
+    {
+        using var temp = new TempDir();
+        CopySampleRooms(temp);
+        WriteHall(temp, "\"weight\": 5, \"tags\"");
+        var area = temp.Write("area.json", SampleArea.AreaJson(SampleArea.Tileset, "rooms"));
+        var loaded = MortarLoader.LoadArea(area);
+        Assert.True(loaded.Succeeded, string.Join("; ", loaded.Errors));
+        Assert.Equal(5, loaded.Value!.Rooms.Single(r => r.Id == "filler_hall").Weight);
+    }
+
+    [Fact]
+    public void LoadArea_RoomWeightOutOfRange_NamesTheRoomFile()
+    {
+        using var temp = new TempDir();
+        CopySampleRooms(temp);
+        var hall = WriteHall(temp, "\"weight\": 0, \"tags\"");
+        var area = temp.Write("area.json", SampleArea.AreaJson(SampleArea.Tileset, "rooms"));
+        Assert.Contains(MortarLoader.LoadArea(area).Errors, e => e.Source == hall && e.Message.Contains("weight must be between 1 and 1000"));
+    }
+
+    private static void CopySampleRooms(TempDir temp)
+    {
         foreach (var file in Directory.GetFiles(Path.Combine(TestPaths.Samples, "rooms")))
         {
             temp.Write(Path.Combine("rooms", Path.GetFileName(file)), File.ReadAllText(file));
         }
-        File.Move(Path.Combine(temp.Root, "rooms", "boss.json"), Path.Combine(temp.Root, "rooms", "Boss.JSON"));
-        var area = temp.Write("area.json", SampleArea.AreaJson(SampleArea.Tileset, "rooms"));
-        Assert.True(MortarLoader.LoadArea(area).Succeeded);
+    }
+
+    private static string WriteHall(TempDir temp, string tagsReplacement)
+    {
+        var text = File.ReadAllText(Path.Combine(TestPaths.Samples, "rooms", "filler_hall.json"));
+        return temp.Write(Path.Combine("rooms", "filler_hall.json"), text.Replace("\"tags\"", tagsReplacement));
     }
 }

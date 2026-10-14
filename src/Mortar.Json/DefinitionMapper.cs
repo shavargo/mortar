@@ -41,5 +41,6 @@ internal static class DefinitionMapper
         source,
         dto.Id ?? "",
         dto.Tags ?? new List<string>(),
-        (dto.Grid ?? new List<string?>()).Select(row => row ?? "").ToList());
+        (dto.Grid ?? new List<string?>()).Select(row => row ?? "").ToList(),
+        dto.Weight ?? 1);
 }

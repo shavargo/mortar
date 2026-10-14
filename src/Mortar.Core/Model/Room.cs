@@ -2,11 +2,14 @@ namespace Mortar.Core.Model;
 
 public sealed class Room
 {
+    public const int MaxWeight = 1000;
+
     private readonly int[] _ground;
 
     internal Room(
         string id,
         IReadOnlyList<string> tags,
+        int weight,
         int width,
         int height,
         int stride,
@@ -16,6 +19,7 @@ public sealed class Room
     {
         Id = id;
         Tags = tags;
+        Weight = weight;
         Width = width;
         Height = height;
         Stride = stride;
@@ -27,6 +31,8 @@ public sealed class Room
     public string Id { get; }
 
     public IReadOnlyList<string> Tags { get; }
+
+    public int Weight { get; }
 
     public int Width { get; }
 

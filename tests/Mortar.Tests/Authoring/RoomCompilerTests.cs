@@ -86,4 +86,19 @@ public class RoomCompilerTests
         var result = Compile(TestContent.Box(9, 9, new[] { 4 }, (2, 2, '?'), (3, 3, 'D')));
         Assert.Equal(2, result.Errors.Count);
     }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1001)]
+    public void Compile_WeightOutOfRange_IsAnError(int weight) =>
+        AssertError(
+            RoomCompiler.Compile(TestContent.RoomDef("room_a", Array.Empty<string>(), TestContent.Box(9, 9, new[] { 4 }), weight), Tiles, 9),
+            "weight must be between 1 and 1000");
+
+    [Fact]
+    public void Compile_KeepsTheWeight()
+    {
+        var definition = TestContent.RoomDef("room_a", Array.Empty<string>(), TestContent.Box(9, 9, new[] { 4 }), 1000);
+        Assert.Equal(1000, RoomCompiler.Compile(definition, Tiles, 9).Value!.Weight);
+    }
 }
