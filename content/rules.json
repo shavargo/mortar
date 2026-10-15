@@ -1,7 +1,7 @@
 {
   "minHitChance": 10,
   "maxHitChance": 90,
-  "playerBaseToHit": 50,
+  "playerBaseToHit": 60,
   "toHitPerDexterity": 1,
   "toHitPerLevel": 2,
   "toHitPerLevelDifference": 3,
