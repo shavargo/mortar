@@ -79,6 +79,73 @@ namespace Mortar.Unity.Tests
         }
 
         [Test]
+        public void LeftFacingWalkersKeepTheirBakedRowUnflipped()
+        {
+            Assert.IsTrue(ActorPose.FacesLeft(Direction.West));
+            var player = World.Player;
+            _game.Enqueue(new MoveCommand(player.Cell.Step(Direction.West)));
+            for (var i = 0; i < 30 && player.Action != ActionKind.Moving; i++)
+            {
+                _game.RunTick();
+                _actors.Sync(World, _space, _catalog);
+            }
+            Assert.AreEqual(ActionKind.Moving, player.Action, "the player should be walking west");
+            Assert.AreEqual(Direction.West, player.Facing);
+            var view = _actors.Find(Actor.PlayerId)!;
+
+            view.Render(0.5f, Time.time);
+
+            var walk = _catalog.Clip("warrior", ClipNames.Walk)!;
+            var progress = ActorPose.Progress(player.ActionElapsed, player.ActionDuration, 0.5f);
+            Assert.AreSame(walk.Frame(Direction.West, ActorAnimator.ProgressFrame(progress, walk.Frames)), view.Body.sprite);
+            Assert.IsFalse(view.Body.flipX);
+            Assert.AreEqual(Vector3.zero, view.Body.transform.localPosition);
+        }
+
+        [Test]
+        public void DeadBakedActorsRestOnTheirLastDeathFrame()
+        {
+            Journeys.TakeStairsDown(_game);
+            _actors.Clear();
+            var monster = NearestMonster();
+            var spriteSet = ActorViews.SpriteSetOf(World, monster);
+            _clips.InstallFighter(_catalog, spriteSet);
+            for (var i = 0; i < Journeys.MaxTicks && !monster.IsDead; i++)
+            {
+                if (World.Player.Intent == IntentKind.None)
+                {
+                    _game.Enqueue(new AttackCommand(monster.Id));
+                }
+                _game.RunTick();
+                _actors.Sync(World, _space, _catalog);
+            }
+            Assert.IsTrue(monster.IsDead, "the player should kill the nearest monster");
+            var view = _actors.Find(monster.Id)!;
+            var death = _catalog.Clip(spriteSet, ClipNames.Death)!;
+
+            view.Render(0f, Time.time + death.Seconds + 0.1f);
+
+            Assert.AreSame(death.Frame(monster.Facing, death.Frames - 1), view.Body.sprite);
+            Assert.AreEqual(Color.white, view.Body.color);
+        }
+
+        [Test]
+        public void BakedActorsArePickedByTheirOutlineNotTheirFrame()
+        {
+            Object.Destroy(_catalog);
+            _catalog = ScriptableObject.CreateInstance<SpriteCatalog>();
+            _clips.InstallOutlined(_catalog, "warrior");
+            _actors.Sync(World, _space, _catalog);
+            var view = _actors.Find(Actor.PlayerId)!;
+            view.Render(0f, Time.time);
+
+            Assert.IsFalse(view.Covers(PixelPoint(view, 2, 2)), "a transparent frame corner should not pick the actor");
+            Assert.IsTrue(
+                view.Covers(PixelPoint(view, TestClips.OutlinedWidth / 2, TestClips.OutlinedHeight / 2)),
+                "the opaque centre should pick the actor");
+        }
+
+        [Test]
         public void TownNpcsWithAnIdleClipAreAnimated()
         {
             _clips.InstallNpc(_catalog, "smith");
@@ -93,6 +160,12 @@ namespace Mortar.Unity.Tests
             animator!.Show(0.25f);
             var idle = _catalog.Clip("smith", ClipNames.Idle)!;
             Assert.AreSame(idle.Frame(Direction.South, 2), smith.GetComponent<SpriteRenderer>().sprite);
+        }
+
+        private static Vector3 PixelPoint(ActorView view, int x, int y)
+        {
+            var local = new Vector3(x - TestClips.OutlinedPivotX, y - TestClips.OutlinedPivotY, 0f) / ActorClip.PixelsPerUnit;
+            return view.Body.transform.TransformPoint(local);
         }
 
         private Actor NearestMonster()

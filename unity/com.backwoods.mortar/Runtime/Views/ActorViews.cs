@@ -53,14 +53,6 @@ namespace Mortar.Unity
             }
         }
 
-        private ActorView CreateView(World world, Actor actor, CellSpace space, SpriteCatalog catalog)
-        {
-            var spriteSet = SpriteSetOf(world, actor);
-            var clips = ClipSet.For(catalog, spriteSet);
-            var sprite = clips != null ? clips.Get(ClipNames.Idle).Frame(actor.Facing, 0) : catalog.Actor(spriteSet);
-            return ActorView.Create(transform, actor, sprite, clips, space);
-        }
-
         public void Clear()
         {
             foreach (var view in _views.Values)
@@ -112,6 +104,14 @@ namespace Mortar.Unity
                 return view.GroundPosition.x < other.GroundPosition.x;
             }
             return view.ActorId < other.ActorId;
+        }
+
+        private ActorView CreateView(World world, Actor actor, CellSpace space, SpriteCatalog catalog)
+        {
+            var spriteSet = SpriteSetOf(world, actor);
+            var clips = ClipSet.For(catalog, spriteSet);
+            var sprite = clips != null ? clips.Get(ClipNames.Idle).Frame(actor.Facing, 0) : catalog.Actor(spriteSet);
+            return ActorView.Create(transform, actor, sprite, clips, space);
         }
 
         public static string SpriteSetOf(World world, Actor actor)

@@ -8,8 +8,6 @@ namespace Mortar.Unity
         private SpriteRenderer _renderer = null!;
         private ActorClip _clip = null!;
 
-        public ActorClip Clip => _clip;
-
         public static PropAnimator Attach(SpriteRenderer renderer, ActorClip clip)
         {
             var animator = renderer.gameObject.AddComponent<PropAnimator>();
