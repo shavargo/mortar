@@ -1,0 +1,51 @@
+{
+  "model": "@cf/black-forest-labs/flux-1-schnell",
+  "steps": 8,
+  "style": {
+    "tile": "seamless tileable texture viewed straight from above, flat even lighting, no perspective, no shadows, muted dark fantasy colors, hand-painted game texture",
+    "actor": "single full-body figure standing and facing the viewer, seen slightly from above, centered with empty space around it, plain flat solid magenta background, muted dark fantasy colors, painted game sprite, no text",
+    "icon": "single object centered with empty space around it, plain flat solid magenta background, muted dark fantasy colors, painted inventory icon, no text"
+  },
+  "tiles": [
+    { "theme": "cathedral", "ground": "floor", "variants": 3, "seed": 1101, "prompt": "worn grey stone flagstones of an old chapel floor" },
+    { "theme": "cathedral", "ground": "wall", "variants": 3, "seed": 1201, "raised": true, "prompt": "rough dark grey cut stone blocks" },
+    { "theme": "town", "ground": "floor", "variants": 2, "seed": 2101, "prompt": "packed dirt and gravel" },
+    { "theme": "town", "ground": "wall", "variants": 1, "seed": 2201, "raised": true, "prompt": "weathered timber planks and plaster" },
+    { "theme": "town", "ground": "grass", "variants": 3, "seed": 2301, "prompt": "short green and brown meadow grass" },
+    { "theme": "town", "ground": "road", "variants": 1, "seed": 2401, "prompt": "worn cobblestone road" },
+    { "theme": "town", "ground": "water", "variants": 1, "seed": 2501, "prompt": "dark still pond water" },
+    { "theme": "town", "ground": "tree", "variants": 1, "seed": 2601, "raised": true, "prompt": "dense dark green leaves" }
+  ],
+  "actors": [
+    { "id": "warrior", "seed": 3101, "prompt": "human warrior in dented plate and chain armor holding a short blade and a round shield" },
+    { "id": "zombie", "seed": 3201, "prompt": "shambling rotting corpse in torn burial rags" },
+    { "id": "skeleton", "seed": 3301, "prompt": "skeleton soldier holding a rusty sword" },
+    { "id": "imp", "seed": 3401, "prompt": "small horned red-brown cave imp with long claws" },
+    { "id": "imp-chieftain", "seed": 3501, "prompt": "large horned cave imp chieftain with a bone club and a feathered headdress" },
+    { "id": "carrion-bat", "seed": 3601, "prompt": "large leathery carrion bat with spread wings" },
+    { "id": "gravewarden", "seed": 3701, "prompt": "towering undead knight in black armor with a great axe and glowing eyes" },
+    { "id": "smith", "seed": 3801, "prompt": "burly village blacksmith with a leather apron and a hammer" },
+    { "id": "healer", "seed": 3901, "prompt": "elderly village healer in a green robe holding a bundle of herbs" },
+    { "id": "sage", "seed": 4001, "prompt": "old bearded sage in a blue robe with a staff and a book" },
+    { "id": "stairs-down", "seed": 4101, "prompt": "small square stone stairwell descending into darkness, seen from above at an angle" },
+    { "id": "stairs-up", "seed": 4201, "prompt": "short flight of stone stairs rising upward, seen from above at an angle" }
+  ],
+  "icons": [
+    { "id": "iron-knife", "seed": 5101, "prompt": "plain iron knife" },
+    { "id": "hatchet", "seed": 5102, "prompt": "small wood-handled hatchet" },
+    { "id": "cudgel", "seed": 5103, "prompt": "knotted wooden cudgel" },
+    { "id": "broad-blade", "seed": 5104, "prompt": "broad steel sword" },
+    { "id": "padded-vest", "seed": 5105, "prompt": "quilted padded cloth vest" },
+    { "id": "studded-jerkin", "seed": 5106, "prompt": "leather jerkin with metal studs" },
+    { "id": "ring-hauberk", "seed": 5107, "prompt": "chainmail shirt" },
+    { "id": "leather-hood", "seed": 5108, "prompt": "brown leather hood" },
+    { "id": "iron-pot-helm", "seed": 5109, "prompt": "round iron pot helmet" },
+    { "id": "plank-shield", "seed": 5110, "prompt": "round shield made of wooden planks" },
+    { "id": "banded-buckler", "seed": 5111, "prompt": "small round buckler with iron bands" },
+    { "id": "copper-band", "seed": 5112, "prompt": "plain copper ring" },
+    { "id": "bone-charm", "seed": 5113, "prompt": "carved bone charm on a cord" },
+    { "id": "healing-draught", "seed": 5114, "prompt": "small glass flask of red liquid" },
+    { "id": "mana-draught", "seed": 5115, "prompt": "small glass flask of blue liquid" },
+    { "id": "gold", "seed": 5116, "prompt": "small pile of gold coins" }
+  ]
+}

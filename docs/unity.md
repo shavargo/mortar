@@ -51,3 +51,28 @@ pwsh -File tools/unity/run-method.ps1 -Method Mortar.Unity.EditorTools.SampleSce
 | Esc | Close a screen, or pause |
 
 In the inventory, left-click an item to hold it and left-click a bag cell, equipment slot, or belt slot to place it. Left-click the world to drop it. Right-click equips, unequips, or belts a potion.
+
+## Placeholder art
+
+`tools/art` generates the placeholder sprites with Cloudflare Workers AI (FLUX-1 schnell) and Pillow.
+
+1. Copy `.env.example` to `.env` at the repo root and fill in `CF_API_TOKEN` and `CF_ACCOUNT_ID`. `.env` is gitignored; environment variables with the same names take precedence.
+2. Create the environment:
+
+   ```powershell
+   py -3 -m venv tools/art/.venv
+   tools/art/.venv/Scripts/python -m pip install -r tools/art/requirements.txt
+   ```
+
+3. Generate (from `tools/art`):
+
+   ```powershell
+   .venv/Scripts/python generate.py --kind all --sheet
+   ```
+
+   Existing sprites are skipped unless you pass `--force`. `--only actors/warrior` limits the run to one entry; `--reroll` with `--only` bumps that entry's seed in `prompts.json` and regenerates every variant. `--reprocess` rebuilds sprites from the raw images in `tools/art/out/raw` without calling the API. Contact sheets go to `tools/art/out/sheets`.
+4. In Unity, run `Mortar/Rebuild Sprite Catalog` (or `run-method.ps1 -Method Mortar.Unity.EditorTools.SpriteCatalogBuilder.RebuildFromCommandLine`).
+
+Sprites are stills: one front-facing image per actor, reused for all eight directions with a horizontal flip and a facing arrow. Tiles are seamless textures projected onto 64×32 diamonds, or 64×64 blocks for walls and trees.
+
+Run the art tool tests from `tools/art` with `.venv/Scripts/python -m pytest`.
