@@ -18,6 +18,7 @@ namespace Mortar.Unity
         private SortingGroup _sorting = null!;
         private SpriteRenderer _body = null!;
         private SpriteRenderer _arrow = null!;
+        private ClipSet? _clips;
         private Vector3 _from;
         private Vector3 _to;
         private Vector3 _target;
@@ -25,13 +26,17 @@ namespace Mortar.Unity
         private ActionKind _action;
         private int _elapsed;
         private int _duration;
+        private int _hitTick;
         private Direction _facing;
         private float _flashUntil = -1f;
+        private float _hitAt = float.NegativeInfinity;
         private float _diedAt = -1f;
 
         public int ActorId { get; private set; }
 
         public bool IsCorpse { get; private set; }
+
+        public bool IsBaked => _clips != null;
 
         public Vector3 GroundPosition { get; private set; }
 
@@ -41,15 +46,16 @@ namespace Mortar.Unity
 
         public SpriteRenderer Body => _body;
 
-        public static ActorView Create(Transform parent, Actor actor, Sprite sprite, CellSpace space)
+        public static ActorView Create(Transform parent, Actor actor, Sprite sprite, ClipSet? clips, CellSpace space)
         {
             var go = new GameObject($"Actor {actor.Id}");
             go.transform.SetParent(parent, false);
             var view = go.AddComponent<ActorView>();
             view._sorting = go.AddComponent<SortingGroup>();
             view._sorting.sortingOrder = LevelView.WorldOrder;
+            view._clips = clips;
             view._body = SpriteObjects.Create(go.transform, "Body", sprite, 0);
-            view._body.transform.localScale = Vector3.one * BodyScale;
+            view._body.transform.localScale = Vector3.one * (clips != null ? 1f : BodyScale);
             view._arrow = SpriteObjects.Create(go.transform, "Facing", GeneratedSprites.Arrow, -1);
             view._arrow.color = ArrowColor;
             view.ActorId = actor.Id;
@@ -75,6 +81,7 @@ namespace Mortar.Unity
             _action = actor.Action;
             _elapsed = actor.ActionElapsed;
             _duration = actor.ActionDuration;
+            _hitTick = actor.Profile.Timings.HitFrame;
             _facing = actor.Facing;
             var target = actor.Action == ActionKind.Attacking ? level.Find(actor.ActionTargetId) : null;
             _target = target != null ? space.Center(target.Cell) : _to;
@@ -91,24 +98,54 @@ namespace Mortar.Unity
             var action = IsCorpse ? ActionKind.Idle : _action;
             GroundPosition = ActorPose.Ground(action, progress, _from, _to);
             transform.position = GroundPosition;
-            _body.transform.localPosition = ActorPose.Body(action, progress, _from, _to, _target) - GroundPosition;
-            _body.flipX = ActorPose.FacesLeft(_facing);
             _arrow.enabled = !IsCorpse;
             _arrow.transform.localRotation = Quaternion.Euler(0f, 0f, ActorPose.ArrowDegrees(_facing));
+            if (IsCorpse)
+            {
+                _sorting.sortingOrder = LevelView.FloorOrder + 3;
+            }
+            if (_clips != null)
+            {
+                RenderClip(_clips, alpha, now);
+                return;
+            }
+            RenderStill(action, progress, now);
+        }
+
+        public void Flash(float now)
+        {
+            _flashUntil = now + FlashSeconds;
+            _hitAt = now;
+        }
+
+        public bool Covers(Vector3 point) => !IsCorpse && SpriteObjects.Covers(_body, point);
+
+        private void RenderClip(ClipSet clips, float alpha, float now)
+        {
+            var moment = new AnimMoment
+            {
+                Action = _action, Elapsed = _elapsed, Duration = _duration, HitTick = _hitTick,
+                Alpha = alpha, Now = now, HitAt = _hitAt, DiedAt = _diedAt, IsDead = IsCorpse,
+            };
+            var frame = ActorAnimator.Pick(clips, moment);
+            _body.sprite = clips.Get(frame.Name).Frame(_facing, frame.Index);
+            _body.transform.localPosition = Vector3.zero;
+            _body.color = !IsCorpse && now < _flashUntil ? HitColor : Color.white;
+        }
+
+        private void RenderStill(ActionKind action, float progress, float now)
+        {
+            _body.transform.localPosition = ActorPose.Body(action, progress, _from, _to, _target) - GroundPosition;
+            _body.flipX = ActorPose.FacesLeft(_facing);
             if (IsCorpse)
             {
                 var fall = Mathf.Clamp01((now - _diedAt) / FallSeconds);
                 _body.transform.localRotation = Quaternion.Euler(0f, 0f, 90f * fall * (_body.flipX ? -1f : 1f));
                 _body.color = CorpseColor;
-                _sorting.sortingOrder = LevelView.FloorOrder + 3;
                 return;
             }
             _body.transform.localRotation = Quaternion.identity;
             _body.color = now < _flashUntil ? HitColor : Color.white;
         }
-
-        public void Flash(float now) => _flashUntil = now + FlashSeconds;
-
-        public bool Covers(Vector3 point) => !IsCorpse && SpriteObjects.Covers(_body, point);
     }
 }

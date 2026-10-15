@@ -37,8 +37,14 @@ namespace Mortar.Unity
                 {
                     continue;
                 }
-                var prop = SpriteObjects.Create(parent, $"Prop {marker.Kind}", catalog.Actor(spriteId), LevelView.WorldOrder);
+                var idle = catalog.Clip(spriteId, ClipNames.Idle);
+                var sprite = idle != null ? idle.Frame(Direction.South, 0) : catalog.Actor(spriteId);
+                var prop = SpriteObjects.Create(parent, $"Prop {marker.Kind}", sprite, LevelView.WorldOrder);
                 prop.transform.position = space.Center(new Cell(marker.X, marker.Y)) + Vector3.up * PropLift;
+                if (idle != null)
+                {
+                    PropAnimator.Attach(prop, idle);
+                }
                 into.Add(prop.gameObject);
             }
         }

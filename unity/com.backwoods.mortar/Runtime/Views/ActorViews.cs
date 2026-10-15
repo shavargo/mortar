@@ -32,7 +32,7 @@ namespace Mortar.Unity
             {
                 if (!_views.TryGetValue(actor.Id, out var view))
                 {
-                    view = ActorView.Create(transform, actor, catalog.Actor(SpriteSetOf(world, actor)), space);
+                    view = CreateView(world, actor, space, catalog);
                     _views.Add(actor.Id, view);
                 }
                 view.Sync(actor, level, space);
@@ -51,6 +51,14 @@ namespace Mortar.Unity
                 Destroy(_views[id].gameObject);
                 _views.Remove(id);
             }
+        }
+
+        private ActorView CreateView(World world, Actor actor, CellSpace space, SpriteCatalog catalog)
+        {
+            var spriteSet = SpriteSetOf(world, actor);
+            var clips = ClipSet.For(catalog, spriteSet);
+            var sprite = clips != null ? clips.Get(ClipNames.Idle).Frame(actor.Facing, 0) : catalog.Actor(spriteSet);
+            return ActorView.Create(transform, actor, sprite, clips, space);
         }
 
         public void Clear()
