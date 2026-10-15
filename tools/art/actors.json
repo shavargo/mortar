@@ -1,0 +1,42 @@
+{
+  "actors": [
+    {
+      "id": "warrior",
+      "model": "kaykit-adventurers/Knight.glb",
+      "hide": [
+        "2H_Sword",
+        "1H_Sword_Offhand",
+        "Rectangle_Shield",
+        "Round_Shield",
+        "Spike_Shield"
+      ],
+      "clips": {
+        "idle": "Idle",
+        "walk": "Walking_A",
+        "attack": "1H_Melee_Attack_Chop",
+        "hit": "Hit_A",
+        "death": "Death_A"
+      },
+      "attackHitSeconds": 0.67,
+      "scale": 0.6,
+      "facing": 0,
+      "tint": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    }
+  ],
+  "files": {
+    "kaykit-adventurers/Barbarian.glb": "cefc311a0e10c7858b6141f5ada7e33268727564fb8ac1347aab97d000669cc6",
+    "kaykit-adventurers/Knight.glb": "60428e3abc09ba83e595d256e3af8c5c976b46cdae599f0802fc82b4a3445168",
+    "kaykit-adventurers/Mage.glb": "cf898585da33fab50c724d31605fb931eb2912e6d2280092141e98ca81ad507d",
+    "kaykit-adventurers/Rogue_Hooded.glb": "93e6e25213009952276d9cf34f5d96a243767334c66f280db0433ddfabb91545",
+    "kaykit-skeletons/Skeleton_Minion.glb": "6ffc003f895bed0b074791e0e490846210a2e2f8fc7da300aba53cc185f95968",
+    "kaykit-skeletons/Skeleton_Warrior.glb": "178b6fda810b814c250d8a2010c24dfd9b458b9006dd323353e620b7ff118bbe",
+    "quaternius/Bat.glb": "ff20d0c0d68be4ed4ba3a402b8ceaeaf54de5d0c9dc3968117749214aee63c9b",
+    "quaternius/BlueDemon.glb": "6a8e743deba6f43f0f9b1e702016b04ddba1d3bf73b7101d2c86d64ae526f87c",
+    "quaternius/Demon.glb": "7da854e1d43428b89b1afca0feca3f323b869b1d8ed7df74d17354260b607262",
+    "quaternius/Zombie.glb": "3afd2837b117f264afd037a350759b96d6f837fc9b381cca35cf6796b4bab09d"
+  }
+}
