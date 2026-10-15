@@ -51,6 +51,38 @@ namespace Mortar.Unity.Tests
         }
 
         [Test]
+        public void PlacingKeepsTheCellTheItemWasGrabbedBy()
+        {
+            var topLeft = KnifeCell;
+            var grabbed = new Cell(topLeft.X, topLeft.Y + 1);
+            _cursor.ClickBag(grabbed, _gear.Inventory);
+
+            var command = (MoveItemCommand)_cursor.ClickBag(grabbed, _gear.Inventory)!;
+
+            Assert.AreEqual(topLeft, command.To);
+        }
+
+        [Test]
+        public void GrabbedByALowerCellMovesRelativeToTheGrab()
+        {
+            _cursor.ClickBag(new Cell(KnifeCell.X, KnifeCell.Y + 1), _gear.Inventory);
+
+            Run(_cursor.ClickBag(new Cell(5, 1), _gear.Inventory));
+
+            Assert.AreEqual(new Cell(5, 0), KnifeCell);
+        }
+
+        [Test]
+        public void ClickingASlotThatDoesNotFitKeepsHolding()
+        {
+            _cursor.ClickBag(KnifeCell, _gear.Inventory);
+
+            Assert.IsNull(_cursor.ClickEquipment(EquipmentSlot.Head, _gear.Equipment));
+            Assert.AreEqual(_knife.Id, _cursor.HeldItemId);
+            Assert.IsInstanceOf<EquipCommand>(_cursor.ClickEquipment(EquipmentSlot.Weapon, _gear.Equipment));
+        }
+
+        [Test]
         public void ClickingAnEquipmentSlotWhileHoldingEquips()
         {
             _cursor.ClickBag(KnifeCell, _gear.Inventory);

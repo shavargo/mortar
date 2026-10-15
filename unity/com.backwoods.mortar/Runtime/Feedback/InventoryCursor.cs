@@ -7,11 +7,14 @@ namespace Mortar.Unity
 {
     public sealed class InventoryCursor
     {
-        public int HeldItemId { get; private set; }
+        private Item? _held;
+        private Cell _grabOffset;
 
-        public bool IsHolding => HeldItemId != 0;
+        public int HeldItemId => _held != null ? _held.Id : 0;
 
-        public void Release() => HeldItemId = 0;
+        public bool IsHolding => _held != null;
+
+        public void Release() => _held = null;
 
         public void Validate(Inventory inventory)
         {
@@ -25,9 +28,12 @@ namespace Mortar.Unity
         {
             if (IsHolding)
             {
-                return Take(id => new MoveItemCommand(id, cell));
+                var target = new Cell(cell.X - _grabOffset.X, cell.Y - _grabOffset.Y);
+                return Take(id => new MoveItemCommand(id, target));
             }
-            HeldItemId = inventory.ItemAt(cell);
+            var stored = inventory.Find(inventory.ItemAt(cell));
+            _held = stored != null ? stored.Item : null;
+            _grabOffset = stored != null ? new Cell(cell.X - stored.Cell.X, cell.Y - stored.Cell.Y) : new Cell(0, 0);
             return null;
         }
 
@@ -36,9 +42,9 @@ namespace Mortar.Unity
 
         public Command? ClickEquipment(EquipmentSlot slot, Equipment equipment)
         {
-            if (IsHolding)
+            if (_held != null)
             {
-                return Take(id => new EquipCommand(id));
+                return Equipment.Accepts(slot, _held.Definition) ? Take(id => new EquipCommand(id)) : null;
             }
             return equipment.Get(slot) != null ? new UnequipCommand(slot) : null;
         }

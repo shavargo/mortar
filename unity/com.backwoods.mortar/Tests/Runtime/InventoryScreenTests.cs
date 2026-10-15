@@ -65,6 +65,7 @@ namespace Mortar.Unity.Tests
             _game.RunTick();
             _screen.Open();
             _screen.Cursor.ClickBag(Gear.Inventory.Items[0].Cell, Gear.Inventory);
+            Assert.IsTrue(_screen.Cursor.IsHolding);
 
             _screen.Toggle();
 
