@@ -7,7 +7,7 @@ namespace Mortar.Unity
     [Serializable]
     public sealed class ActorClip
     {
-        public const float PixelsPerUnit = 128f;
+        public const float PixelsPerUnit = 64f;
 
         [SerializeField] private string _key = "";
         [SerializeField] private Texture2D? _sheet;

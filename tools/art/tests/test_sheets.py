@@ -36,7 +36,7 @@ def test_finishing_keeps_edge_colours_instead_of_darkening_them():
 
 
 def test_finishing_rejects_the_wrong_render_size():
-    with pytest.raises(ValueError, match="416x416"):
+    with pytest.raises(ValueError, match="208x208"):
         sheets.finish_frame(Image.new("RGBA", (100, 100)))
 
 

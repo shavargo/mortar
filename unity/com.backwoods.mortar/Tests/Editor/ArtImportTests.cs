@@ -1,3 +1,4 @@
+using System.Linq;
 using Mortar.Unity.EditorTools;
 using NUnit.Framework;
 using UnityEditor;
@@ -77,6 +78,25 @@ namespace Mortar.Unity.Tests
         public void OnlyActorArtCanBeASheet(string path)
         {
             Assert.IsFalse(ArtImport.IsSheet(path, candidate => true));
+        }
+
+        [Test]
+        public void BakedSheetsImportCompressedAndReadable()
+        {
+            var sheets = AssetDatabase.FindAssets("t:Texture2D", new[] { "Assets/Art/actors" })
+                .Select(AssetDatabase.GUIDToAssetPath)
+                .Where(path => ArtImport.IsSheet(path))
+                .ToList();
+            if (sheets.Count == 0)
+            {
+                Assert.Ignore("no baked sheets imported");
+            }
+            foreach (var path in sheets)
+            {
+                var sheet = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+                Assert.AreEqual(TextureFormat.DXT5, sheet.format, path);
+                Assert.IsTrue(sheet.isReadable, path);
+            }
         }
     }
 }

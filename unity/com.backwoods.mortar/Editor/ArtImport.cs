@@ -10,7 +10,7 @@ namespace Mortar.Unity.EditorTools
         public const int MaxSheetSize = 8192;
         public const string GlyphAtlasPath = "Packages/com.backwoods.mortar/Runtime/Resources/Mortar/GlyphAtlas.png";
 
-        public override uint GetVersion() => 1;
+        public override uint GetVersion() => 2;
 
         private void OnPreprocessTexture()
         {
@@ -79,7 +79,7 @@ namespace Mortar.Unity.EditorTools
             importer.alphaIsTransparency = true;
             importer.npotScale = TextureImporterNPOTScale.None;
             importer.maxTextureSize = MaxSheetSize;
-            importer.textureCompression = TextureImporterCompression.Uncompressed;
+            importer.textureCompression = TextureImporterCompression.Compressed;
             importer.filterMode = FilterMode.Bilinear;
             importer.wrapMode = TextureWrapMode.Clamp;
         }

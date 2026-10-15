@@ -146,6 +146,23 @@ namespace Mortar.Unity.Tests
         }
 
         [Test]
+        public void CompressedSheetsKeepOutlinePicking()
+        {
+            Object.Destroy(_catalog);
+            _catalog = ScriptableObject.CreateInstance<SpriteCatalog>();
+            var sheet = _clips.InstallOutlined(_catalog, "warrior", compressed: true);
+            _actors.Sync(World, _space, _catalog);
+            var view = _actors.Find(Actor.PlayerId)!;
+            view.Render(0f, Time.time);
+
+            Assert.AreEqual(TextureFormat.DXT5, sheet.format);
+            Assert.IsFalse(view.Covers(PixelPoint(view, 2, 2)), "a transparent frame corner should not pick the actor");
+            Assert.IsTrue(
+                view.Covers(PixelPoint(view, TestClips.OutlinedWidth / 2, TestClips.OutlinedHeight / 2)),
+                "the opaque centre should pick the actor");
+        }
+
+        [Test]
         public void TownNpcsWithAnIdleClipAreAnimated()
         {
             _clips.InstallNpc(_catalog, "smith");

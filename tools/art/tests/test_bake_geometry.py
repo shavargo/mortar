@@ -14,7 +14,7 @@ def test_the_origin_lands_on_the_foot_pivot():
 
 @pytest.mark.parametrize(
     ("dx", "dy", "expected"),
-    [(1, 0, (64, 32)), (0, 1, (-64, 32)), (1, 1, (0, 64)), (-1, -1, (0, -64)), (-1, 0, (-64, -32))],
+    [(1, 0, (32, 16)), (0, 1, (-32, 16)), (1, 1, (0, 32)), (-1, -1, (0, -32)), (-1, 0, (-32, -16))],
 )
 def test_one_grid_step_matches_the_unity_isometric_grid(dx, dy, expected):
     origin = geo.project((0.0, 0.0, 0.0))
@@ -52,13 +52,13 @@ def test_the_camera_rotation_looks_at_the_origin():
         assert forward[axis] == pytest.approx(-location[axis] / distance)
 
 
-def test_the_camera_keeps_128_pixels_per_tile_with_the_pivot_shift():
-    assert geo.ortho_scale() == pytest.approx(208 / 128 * math.sqrt(2))
-    assert geo.camera_shift() == pytest.approx((0.0, 56 / 208))
+def test_the_camera_keeps_64_pixels_per_tile_with_the_pivot_shift():
+    assert geo.ortho_scale() == pytest.approx(104 / 64 * math.sqrt(2))
+    assert geo.camera_shift() == pytest.approx((0.0, 28 / 104))
 
 
 def test_renders_are_twice_the_frame_size():
-    assert geo.render_size() == (416, 416)
+    assert geo.render_size() == (208, 208)
 
 
 def test_looping_clips_do_not_repeat_their_first_pose():

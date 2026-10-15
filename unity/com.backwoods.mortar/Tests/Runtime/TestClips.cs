@@ -36,7 +36,7 @@ namespace Mortar.Unity.Tests
             catalog.SetClips(clips);
         }
 
-        public void InstallOutlined(SpriteCatalog catalog, string spriteSet)
+        public Texture2D InstallOutlined(SpriteCatalog catalog, string spriteSet, bool compressed = false)
         {
             var texture = NewTexture(OutlinedWidth, OutlinedHeight * 8);
             var pixels = texture.GetPixels32();
@@ -51,9 +51,14 @@ namespace Mortar.Unity.Tests
             }
             texture.SetPixels32(pixels);
             texture.Apply();
+            if (compressed)
+            {
+                texture.Compress(false);
+            }
             var json = Json(1, 8, true, 0, OutlinedWidth, OutlinedHeight, OutlinedPivotX, OutlinedPivotY);
             var idle = new ActorClip(SpriteKeys.Clip(spriteSet, ClipNames.Idle), texture, ClipInfo.FromJson(json));
             catalog.SetClips(new List<ActorClip>(catalog.Clips) { idle });
+            return texture;
         }
 
         public void Dispose()
