@@ -21,7 +21,11 @@ namespace Mortar.Unity
 
         public CellSpace Space { get; private set; } = null!;
 
-        public int TileCount { get; private set; }
+        public int FloorTileCount => CountTiles(_floor);
+
+        public int RaisedTileCount => CountTiles(_raised);
+
+        public int TileCount => FloorTileCount + RaisedTileCount;
 
         public IReadOnlyList<GameObject> Props => _props;
 
@@ -65,7 +69,6 @@ namespace Mortar.Unity
             }
             floor.ApplyTo(_floor);
             raised.ApplyTo(_raised);
-            TileCount = floor.Count + raised.Count;
             MarkerProps.Place(level, Space, _catalog, transform, hasLevelAbove, _props);
         }
 
@@ -78,7 +81,6 @@ namespace Mortar.Unity
                 Destroy(prop);
             }
             _props.Clear();
-            TileCount = 0;
         }
 
         private Tile TileFor(Sprite sprite)
@@ -102,6 +104,19 @@ namespace Mortar.Unity
             _tiles.Clear();
         }
 
+        private static int CountTiles(Tilemap tilemap)
+        {
+            var count = 0;
+            foreach (var position in tilemap.cellBounds.allPositionsWithin)
+            {
+                if (tilemap.HasTile(position))
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
+
         private static Tilemap CreateTilemap(Transform parent, string name, int order, TilemapRenderer.Mode mode)
         {
             var go = new GameObject(name);
@@ -117,8 +132,6 @@ namespace Mortar.Unity
         {
             private readonly List<Vector3Int> _positions = new List<Vector3Int>();
             private readonly List<TileBase> _tiles = new List<TileBase>();
-
-            public int Count => _positions.Count;
 
             public void Add(Vector3Int position, TileBase tile)
             {
