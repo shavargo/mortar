@@ -13,6 +13,8 @@ namespace Mortar.Unity
 
         public Camera Camera { get; private set; } = null!;
 
+        public AsciiFilter Filter { get; private set; } = null!;
+
         public static CameraFollow Create(Transform parent)
         {
             var go = new GameObject("Camera");
@@ -23,7 +25,7 @@ namespace Mortar.Unity
             camera.orthographic = true;
             camera.orthographicSize = Size;
             camera.clearFlags = CameraClearFlags.SolidColor;
-            camera.backgroundColor = new Color(0.07f, 0.07f, 0.08f);
+            camera.backgroundColor = Color.black;
             camera.transparencySortMode = TransparencySortMode.CustomAxis;
             camera.transparencySortAxis = Vector3.up;
             camera.nearClipPlane = 0.1f;
@@ -31,6 +33,7 @@ namespace Mortar.Unity
             go.AddComponent<AudioListener>();
             var follow = go.AddComponent<CameraFollow>();
             follow.Camera = camera;
+            follow.Filter = AsciiFilter.Attach(camera, AsciiResources.Load());
             return follow;
         }
 

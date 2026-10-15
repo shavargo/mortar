@@ -118,7 +118,18 @@ namespace Mortar.Unity.Tests
             var feet = _app.Level.Space.Center(World.Player.Cell);
             var block = _app.Level.Space.Center(wall);
             var point = new Vector3(feet.x + 0.2f * (block.x - feet.x), Mathf.Max(feet.y, block.y) + 0.2f, 0f);
-            return Render(_app.CameraRig.Camera, point);
+            var filter = _app.CameraRig.Filter;
+            var filtered = filter.IsOn;
+            if (filtered)
+            {
+                filter.Toggle();
+            }
+            var pixel = Render(_app.CameraRig.Camera, point);
+            if (filtered)
+            {
+                filter.Toggle();
+            }
+            return pixel;
         }
 
         private static Color32 Render(Camera camera, Vector3 point)

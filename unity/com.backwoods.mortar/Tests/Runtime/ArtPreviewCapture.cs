@@ -28,16 +28,24 @@ namespace Mortar.Unity.Tests
 
             app.StartNewGame();
             yield return null;
-            Capture(app.CameraRig.Camera, "town");
+            Capture(app, "town");
             Journeys.TakeStairsDown(app.Game);
             yield return null;
-            Capture(app.CameraRig.Camera, "cathedral");
+            Capture(app, "cathedral");
 
             Object.Destroy(host);
             TestPaths.Delete(folder);
         }
 
-        private static void Capture(Camera camera, string name)
+        private static void Capture(MortarApp app, string name)
+        {
+            CaptureCamera(app.CameraRig.Camera, name);
+            app.CameraRig.Filter.Toggle();
+            CaptureCamera(app.CameraRig.Camera, name + "-raw");
+            app.CameraRig.Filter.Toggle();
+        }
+
+        private static void CaptureCamera(Camera camera, string name)
         {
             var target = new RenderTexture(Width, Height, 24);
             var image = new Texture2D(Width, Height, TextureFormat.RGB24, false);
