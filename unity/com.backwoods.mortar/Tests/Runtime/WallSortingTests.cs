@@ -117,7 +117,7 @@ namespace Mortar.Unity.Tests
             _app.CameraRig.Snap();
             var feet = _app.Level.Space.Center(World.Player.Cell);
             var block = _app.Level.Space.Center(wall);
-            var point = new Vector3(feet.x + 0.3f * (block.x - feet.x), Mathf.Max(feet.y, block.y) + 0.2f, 0f);
+            var point = new Vector3(feet.x + 0.2f * (block.x - feet.x), Mathf.Max(feet.y, block.y) + 0.2f, 0f);
             return Render(_app.CameraRig.Camera, point);
         }
 
@@ -126,13 +126,15 @@ namespace Mortar.Unity.Tests
             var target = new RenderTexture(Size, Size, 24);
             var image = new Texture2D(Size, Size, TextureFormat.RGBA32, false);
             camera.targetTexture = target;
+            camera.aspect = 1f;
             camera.Render();
+            var viewport = camera.WorldToViewportPoint(point);
             RenderTexture.active = target;
             image.ReadPixels(new Rect(0, 0, Size, Size), 0, 0);
             image.Apply();
             camera.targetTexture = null;
+            camera.ResetAspect();
             RenderTexture.active = null;
-            var viewport = camera.WorldToViewportPoint(point);
             var pixel = image.GetPixel((int)(viewport.x * Size), (int)(viewport.y * Size));
             Object.Destroy(image);
             target.Release();

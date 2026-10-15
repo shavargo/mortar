@@ -68,10 +68,12 @@ namespace Mortar.Unity.Tests
                 _actors.Sync(World, _space, _catalog);
             }
 
-            _actors.Find(Actor.PlayerId)!.Render(0f, Time.time);
+            var view = _actors.Find(Actor.PlayerId)!;
+            view.Render(0f, Time.time);
 
             var expected = _space.Center(World.Player.Cell);
-            Assert.AreEqual(expected, _actors.Find(Actor.PlayerId)!.transform.position);
+            Assert.AreEqual(expected, view.transform.position);
+            Assert.AreEqual(expected, view.Body.transform.position);
         }
 
         [Test]
