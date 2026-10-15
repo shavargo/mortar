@@ -75,8 +75,7 @@ namespace Mortar.Unity
 
         public int LivingMonsterAt(World world, Vector3 point, Vector3 sortAxis)
         {
-            var picked = 0;
-            var nearest = float.MaxValue;
+            ActorView? picked = null;
             foreach (var view in _views.Values)
             {
                 var actor = world.Level.Find(view.ActorId);
@@ -84,14 +83,27 @@ namespace Mortar.Unity
                 {
                     continue;
                 }
-                var depth = Vector3.Dot(view.GroundPosition, sortAxis);
-                if (depth < nearest)
+                if (picked == null || IsNearer(view, picked, sortAxis))
                 {
-                    nearest = depth;
-                    picked = view.ActorId;
+                    picked = view;
                 }
             }
-            return picked;
+            return picked != null ? picked.ActorId : 0;
+        }
+
+        private static bool IsNearer(ActorView view, ActorView other, Vector3 sortAxis)
+        {
+            var depth = Vector3.Dot(view.GroundPosition, sortAxis);
+            var otherDepth = Vector3.Dot(other.GroundPosition, sortAxis);
+            if (depth != otherDepth)
+            {
+                return depth < otherDepth;
+            }
+            if (view.GroundPosition.x != other.GroundPosition.x)
+            {
+                return view.GroundPosition.x < other.GroundPosition.x;
+            }
+            return view.ActorId < other.ActorId;
         }
 
         public static string SpriteSetOf(World world, Actor actor)

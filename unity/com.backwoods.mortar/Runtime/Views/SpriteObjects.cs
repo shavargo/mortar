@@ -1,9 +1,12 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Mortar.Unity
 {
     public static class SpriteObjects
     {
+        private static readonly Dictionary<Sprite, Vector2[]> Outlines = new Dictionary<Sprite, Vector2[]>();
+
         public static SpriteRenderer Create(Transform parent, string name, Sprite sprite, int sortingOrder)
         {
             var go = new GameObject(name);
@@ -27,16 +30,31 @@ namespace Mortar.Unity
             var transform = renderer.transform;
             var local = transform.InverseTransformPoint(new Vector3(point.x, point.y, transform.position.z));
             var spot = new Vector2(renderer.flipX ? -local.x : local.x, renderer.flipY ? -local.y : local.y);
-            var vertices = sprite.vertices;
-            var triangles = sprite.triangles;
-            for (var i = 0; i + 2 < triangles.Length; i += 3)
+            var corners = CornersOf(sprite);
+            for (var i = 0; i + 2 < corners.Length; i += 3)
             {
-                if (InTriangle(spot, vertices[triangles[i]], vertices[triangles[i + 1]], vertices[triangles[i + 2]]))
+                if (InTriangle(spot, corners[i], corners[i + 1], corners[i + 2]))
                 {
                     return true;
                 }
             }
             return false;
+        }
+
+        private static Vector2[] CornersOf(Sprite sprite)
+        {
+            if (!Outlines.TryGetValue(sprite, out var corners))
+            {
+                var vertices = sprite.vertices;
+                var triangles = sprite.triangles;
+                corners = new Vector2[triangles.Length];
+                for (var i = 0; i < triangles.Length; i++)
+                {
+                    corners[i] = vertices[triangles[i]];
+                }
+                Outlines.Add(sprite, corners);
+            }
+            return corners;
         }
 
         private static bool InTriangle(Vector2 point, Vector2 a, Vector2 b, Vector2 c)
