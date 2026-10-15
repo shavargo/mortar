@@ -45,12 +45,13 @@ namespace Mortar.Unity.Tests
         }
 
         [TestCase(0f, 1f)]
-        [TestCase(0.55f, 1f)]
+        [TestCase(0.35f, 1f)]
         [TestCase(1f, 0f)]
         [TestCase(2f, 0f)]
         public void LightFallsOffFromTheInnerRadiusToTheEdge(float distance, float expected)
         {
             Assert.AreEqual(expected, LightFalloff.At(distance), 1e-5f);
+            Assert.AreEqual(1f, LightFalloff.At(AsciiSettings.LightInner), 1e-5f);
         }
 
         [Test]

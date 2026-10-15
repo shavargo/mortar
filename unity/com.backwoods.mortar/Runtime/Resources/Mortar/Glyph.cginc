@@ -14,6 +14,8 @@ float _Saturation;
 float _DarkThreshold;
 float _StrokeScale;
 float _StrokeSpeed;
+float _FigureLift;
+float _FigureFloor;
 sampler2D _BloomTex;
 float _BloomStrength;
 
@@ -59,17 +61,36 @@ float Noise(float2 p)
 
 float StrokeSlot(float2 cell)
 {
-    float wave = Noise(cell * _StrokeScale + float2(_Time.y * _StrokeSpeed, 0.0));
-    return FirstEdgeSlot + floor(frac(wave * 2.0) * 4.0);
+    // Prefer - / \ over | so travelling lean reads as wind, not contour bands.
+    float2 wind = float2(1.0, 0.35);
+    float phase = dot(cell * _StrokeScale, wind) - _Time.y * _StrokeSpeed;
+    float gust = 0.5 + 0.5 * sin(phase * 6.2831853);
+    float ripples = Noise(cell * _StrokeScale * 2.0 + float2(_Time.y * _StrokeSpeed * 0.4, 0.0));
+    float lean = saturate(gust * 0.65 + ripples * 0.25 + Hash(cell) * 0.2);
+    float band = lean * 3.0;
+    if (band < 1.0)
+    {
+        return FirstEdgeSlot;
+    }
+    if (band < 2.0)
+    {
+        return FirstEdgeSlot + 1.0;
+    }
+    return FirstEdgeSlot + 3.0;
 }
 
 float ChooseSlot(float2 cell, float luma)
 {
+    float4 mask = Fetch(_MaskTex, CellUv(cell));
+    if (mask.b > 0.5 && luma > 0.0)
+    {
+        luma = saturate(max(luma * _FigureLift, _FigureFloor));
+    }
     if (luma < _DarkThreshold)
     {
         return 0.0;
     }
-    if (Fetch(_MaskTex, CellUv(cell)).r > 0.5)
+    if (mask.r > 0.5)
     {
         return StrokeSlot(cell);
     }

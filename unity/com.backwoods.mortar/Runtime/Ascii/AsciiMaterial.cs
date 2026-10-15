@@ -19,6 +19,8 @@ namespace Mortar.Unity
             material.SetFloat("_DarkThreshold", AsciiSettings.DarkThreshold);
             material.SetFloat("_StrokeScale", AsciiSettings.StrokeScale);
             material.SetFloat("_StrokeSpeed", AsciiSettings.StrokeSpeed);
+            material.SetFloat("_FigureLift", AsciiSettings.FigureLift);
+            material.SetFloat("_FigureFloor", AsciiSettings.FigureFloor);
             material.SetFloat("_BloomThreshold", AsciiSettings.BloomThreshold);
             material.SetFloat("_BloomStrength", AsciiSettings.BloomStrength);
             material.SetFloat("_GlowBoost", AsciiSettings.GlowBoost);

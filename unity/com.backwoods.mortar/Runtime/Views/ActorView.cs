@@ -56,6 +56,10 @@ namespace Mortar.Unity
             view._clips = clips;
             view._body = SpriteObjects.Create(go.transform, "Body", sprite, 0);
             view._body.transform.localScale = Vector3.one * (clips != null ? 1f : BodyScale);
+            if (MaskMaterials.Figure != null)
+            {
+                view._body.sharedMaterial = MaskMaterials.Figure;
+            }
             view._arrow = SpriteObjects.Create(go.transform, "Facing", GeneratedSprites.Arrow, -1);
             view._arrow.color = ArrowColor;
             view.ActorId = actor.Id;
@@ -89,6 +93,7 @@ namespace Mortar.Unity
             {
                 IsCorpse = true;
                 _diedAt = Time.time;
+                _body.sharedMaterial = null;
             }
         }
 

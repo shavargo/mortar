@@ -36,14 +36,35 @@ namespace Mortar.Unity
             }
         }
 
-        private static Material? Create(string path)
+        public const string FigureShaderPath = "Mortar/FigureSprite";
+
+        private static Material? _figure;
+
+        public static Material? Figure
+        {
+            get
+            {
+                if (_figure == null)
+                {
+                    _figure = Create(FigureShaderPath, AsciiSettings.FigureBoost);
+                }
+                return _figure;
+            }
+        }
+
+        private static Material? Create(string path, float boost = 0f)
         {
             var shader = Resources.Load<Shader>(path);
             if (shader == null || !shader.isSupported)
             {
                 return null;
             }
-            return new Material(shader) { name = shader.name, hideFlags = HideFlags.DontSave };
+            var material = new Material(shader) { name = shader.name, hideFlags = HideFlags.DontSave };
+            if (boost > 0f)
+            {
+                material.SetFloat("_Boost", boost);
+            }
+            return material;
         }
     }
 }

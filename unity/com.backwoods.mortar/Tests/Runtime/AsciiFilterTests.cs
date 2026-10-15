@@ -193,5 +193,18 @@ namespace Mortar.Unity.Tests
             Assert.AreEqual(255, _scene.Read(_filter.MaskTexture!)[30 * 200 + 99].g, "glow sprites mark the mask green");
             Assert.Greater(_scene.LitPixels(101, 30), 0, "glow should light the neighbouring cell");
         }
+
+        [Test]
+        public void FigureSpritesStayReadableWhenDimUnderTheLight()
+        {
+            _scene.AddCells(90, 25, 20, 10, new Color(0.12f, 0.12f, 0.12f), MaskMaterials.Figure);
+            _filter.Ambient = 0f;
+            _filter.Lights.Add(new AsciiLight(Vector3.zero, 3f, 1f));
+
+            _scene.Render();
+
+            Assert.AreEqual(255, _scene.Read(_filter.MaskTexture!)[30 * 200 + 100].b, "figures mark the mask blue");
+            Assert.Greater(_scene.LitPixels(100, 30), 0, "dark figures keep glyphs inside the light");
+        }
     }
 }
