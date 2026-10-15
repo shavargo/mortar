@@ -167,13 +167,13 @@ namespace Mortar.Unity.Tests
         public void TownIsLitAndDungeonsOnlyAroundThePlayer()
         {
             _app.StartNewGame();
-            _app.RefreshFrame();
+            _app.RefreshLights();
 
             Assert.AreEqual(1f, _app.CameraRig.Filter.Ambient);
             Assert.AreEqual(1, _app.CameraRig.Filter.Lights.Count);
 
             Journeys.TakeStairsDown(_app.Game);
-            _app.RefreshFrame();
+            _app.RefreshLights();
 
             Assert.AreEqual(0f, _app.CameraRig.Filter.Ambient);
             Assert.AreEqual(1, _app.CameraRig.Filter.Lights.Count);

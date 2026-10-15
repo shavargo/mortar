@@ -6,6 +6,7 @@ using UnityEngine.UIElements;
 
 namespace Mortar.Unity
 {
+    [DefaultExecutionOrder(100)]
     public sealed class MortarApp : MonoBehaviour
     {
         [SerializeField] private SpriteCatalog? _catalog;
@@ -110,7 +111,6 @@ namespace Mortar.Unity
                 return;
             }
             var world = session.World;
-            PlayerLight.Apply(CameraRig.Filter, world.Depth, PlayerPosition());
             var hovered = Controls.CellUnderPointer();
             var hover = hovered.HasValue ? HoverText.Describe(world, hovered.Value, Controls.MonsterUnderPointer()) : null;
             Hud.Refresh(world, Presenter.Messages.Visible(Time.time), hover);
@@ -232,5 +232,17 @@ namespace Mortar.Unity
         }
 
         private void Update() => RefreshFrame();
+
+        private void LateUpdate() => RefreshLights();
+
+        public void RefreshLights()
+        {
+            var session = Game.Session;
+            if (session == null)
+            {
+                return;
+            }
+            PlayerLight.Apply(CameraRig.Filter, session.World.Depth, PlayerPosition());
+        }
     }
 }
