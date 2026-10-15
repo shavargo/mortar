@@ -8,9 +8,17 @@ namespace Mortar.Unity.EditorTools
     public sealed class ArtImport : AssetPostprocessor
     {
         public const int MaxSheetSize = 8192;
+        public const string GlyphAtlasPath = "Packages/com.backwoods.mortar/Runtime/Resources/Mortar/GlyphAtlas.png";
+
+        public override uint GetVersion() => 1;
 
         private void OnPreprocessTexture()
         {
+            if (assetPath == GlyphAtlasPath)
+            {
+                ConfigureAtlas((TextureImporter)assetImporter);
+                return;
+            }
             if (SpriteCatalogBuilder.KeyFor(assetPath, SpriteCatalogBuilder.ArtRoot) == null)
             {
                 return;
@@ -73,6 +81,18 @@ namespace Mortar.Unity.EditorTools
             importer.maxTextureSize = MaxSheetSize;
             importer.textureCompression = TextureImporterCompression.Uncompressed;
             importer.filterMode = FilterMode.Bilinear;
+            importer.wrapMode = TextureWrapMode.Clamp;
+        }
+
+        private static void ConfigureAtlas(TextureImporter importer)
+        {
+            importer.textureType = TextureImporterType.Default;
+            importer.sRGBTexture = false;
+            importer.alphaSource = TextureImporterAlphaSource.FromInput;
+            importer.mipmapEnabled = false;
+            importer.npotScale = TextureImporterNPOTScale.None;
+            importer.textureCompression = TextureImporterCompression.Uncompressed;
+            importer.filterMode = FilterMode.Point;
             importer.wrapMode = TextureWrapMode.Clamp;
         }
     }

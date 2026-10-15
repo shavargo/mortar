@@ -1,5 +1,6 @@
 using Mortar.Unity.EditorTools;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEngine;
 
 namespace Mortar.Unity.Tests
@@ -12,6 +13,19 @@ namespace Mortar.Unity.Tests
         public void KeysAreArtRelativePathsWithoutExtension(string path, string expected)
         {
             Assert.AreEqual(expected, SpriteCatalogBuilder.KeyFor(path, SpriteCatalogBuilder.ArtRoot));
+        }
+
+        [Test]
+        public void TheGlyphAtlasImportsUncompressedWithPointFiltering()
+        {
+            var atlas = AssetDatabase.LoadAssetAtPath<Texture2D>(ArtImport.GlyphAtlasPath);
+
+            Assert.IsNotNull(atlas, "run glyphs.py atlas first");
+            Assert.AreEqual(AsciiSettings.CellWidth * AsciiSettings.Slots, atlas.width);
+            Assert.AreEqual(AsciiSettings.CellHeight, atlas.height);
+            Assert.AreEqual(FilterMode.Point, atlas.filterMode);
+            Assert.AreEqual(TextureFormat.RGBA32, atlas.format);
+            Assert.AreEqual(1, atlas.mipmapCount);
         }
 
         [TestCase("Assets/Other/actors/warrior.png")]
