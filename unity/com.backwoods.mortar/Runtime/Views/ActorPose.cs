@@ -12,13 +12,16 @@ namespace Mortar.Unity
         public static float Progress(int elapsed, int duration, float alpha) =>
             duration <= 0 ? 1f : Mathf.Clamp01((elapsed + alpha) / duration);
 
+        public static Vector3 Ground(ActionKind action, float progress, Vector3 from, Vector3 to) =>
+            action == ActionKind.Moving ? Vector3.Lerp(from, to, progress) : to;
+
         public static Vector3 Body(ActionKind action, float progress, Vector3 from, Vector3 to, Vector3 target)
         {
             var arc = Mathf.Sin(Mathf.PI * progress);
             switch (action)
             {
                 case ActionKind.Moving:
-                    return Vector3.Lerp(from, to, progress) + Vector3.up * (BobHeight * arc);
+                    return Ground(action, progress, from, to) + Vector3.up * (BobHeight * arc);
                 case ActionKind.Attacking:
                     var toward = target - to;
                     return toward.sqrMagnitude < 1e-6f ? to : to + toward.normalized * (LungeDistance * arc);

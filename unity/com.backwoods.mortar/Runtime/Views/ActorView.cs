@@ -30,6 +30,8 @@ namespace Mortar.Unity
 
         public bool IsCorpse { get; private set; }
 
+        public Vector3 GroundPosition { get; private set; }
+
         public Color Tint => _body.color;
 
         public static ActorView Create(Transform parent, Actor actor, Sprite sprite, CellSpace space)
@@ -42,6 +44,7 @@ namespace Mortar.Unity
             view._arrow.color = ArrowColor;
             view._cell = actor.Cell;
             view._from = view._to = view._target = space.Center(actor.Cell);
+            view.GroundPosition = view._to;
             return view;
         }
 
@@ -73,7 +76,9 @@ namespace Mortar.Unity
         public void Render(float alpha, float now)
         {
             var progress = ActorPose.Progress(_elapsed, _duration, alpha);
-            transform.position = ActorPose.Body(IsCorpse ? ActionKind.Idle : _action, progress, _from, _to, _target);
+            var action = IsCorpse ? ActionKind.Idle : _action;
+            GroundPosition = ActorPose.Ground(action, progress, _from, _to);
+            transform.position = ActorPose.Body(action, progress, _from, _to, _target);
             _body.flipX = ActorPose.FacesLeft(_facing);
             _arrow.enabled = !IsCorpse;
             _arrow.transform.localRotation = Quaternion.Euler(0f, 0f, ActorPose.ArrowDegrees(_facing));

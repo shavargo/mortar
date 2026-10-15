@@ -31,6 +31,19 @@ namespace Mortar.Unity.Tests
         }
 
         [Test]
+        public void RepeatingTheLatestMessageRefreshesIt()
+        {
+            var log = new MessageLog();
+            log.Add("other", 0f);
+            log.Add("again", 0f);
+
+            log.Add("again", 3f);
+
+            CollectionAssert.AreEqual(new[] { "other", "again" }, log.Visible(1f));
+            CollectionAssert.AreEqual(new[] { "again" }, log.Visible(MessageLog.LifetimeSeconds + 0.5f));
+        }
+
+        [Test]
         public void ClearRemovesEverything()
         {
             var log = new MessageLog();

@@ -11,6 +11,12 @@ namespace Mortar.Unity
 
         public void Add(string text, float now)
         {
+            var last = _entries.Count - 1;
+            if (last >= 0 && _entries[last].Key == text)
+            {
+                _entries[last] = new KeyValuePair<string, float>(text, now);
+                return;
+            }
             _entries.Add(new KeyValuePair<string, float>(text, now));
             if (_entries.Count > Capacity)
             {

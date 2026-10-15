@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace Mortar.Unity
 {
+    [DefaultExecutionOrder(100)]
     public sealed class CameraFollow : MonoBehaviour
     {
         public const float Size = 5.5f;

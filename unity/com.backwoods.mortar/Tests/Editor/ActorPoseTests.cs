@@ -49,6 +49,13 @@ namespace Mortar.Unity.Tests
         }
 
         [Test]
+        public void GroundIgnoresTheBobAndTheLunge()
+        {
+            Assert.AreEqual(new Vector3(0.5f, 0f, 0f), ActorPose.Ground(ActionKind.Moving, 0.5f, From, To));
+            Assert.AreEqual(To, ActorPose.Ground(ActionKind.Attacking, 0.5f, To, To));
+        }
+
+        [Test]
         public void IdleStaysOnItsCell()
         {
             Assert.AreEqual(To, ActorPose.Body(ActionKind.Idle, 0.4f, From, To, To));

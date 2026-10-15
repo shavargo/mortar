@@ -161,7 +161,7 @@ namespace Mortar.Unity
                 return null;
             }
             var view = Actors.Find(Actor.PlayerId);
-            return view != null ? view.transform.position : (Vector3?)null;
+            return view != null ? view.GroundPosition : (Vector3?)null;
         }
 
         private void BeginOrReport(GameSession? session, string? error)
