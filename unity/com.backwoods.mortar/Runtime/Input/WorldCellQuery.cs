@@ -1,4 +1,3 @@
-using Mortar.Core.Model;
 using Mortar.Game;
 using Mortar.Game.Simulation;
 
@@ -36,7 +35,7 @@ namespace Mortar.Unity
         {
             foreach (var marker in _world.Level.Layout.Markers)
             {
-                if (IsStairsKind(marker.Kind) && marker.X == cell.X && marker.Y == cell.Y)
+                if (marker.X == cell.X && marker.Y == cell.Y && StairsWalk.IsStairs(_world, marker.Kind))
                 {
                     return true;
                 }
@@ -45,7 +44,5 @@ namespace Mortar.Unity
         }
 
         public bool IsWalkable(Cell cell) => _world.Level.IsWalkable(cell);
-
-        public static bool IsStairsKind(string kind) => kind == MarkerKinds.Entrance || kind == MarkerKinds.Exit;
     }
 }

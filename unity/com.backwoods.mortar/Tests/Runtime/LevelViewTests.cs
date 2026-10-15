@@ -93,7 +93,7 @@ namespace Mortar.Unity.Tests
         }
 
         private void Show(World world) =>
-            _view.Show(world.Level, LevelView.TilesetFor(TestContent.Content, world.Level), world.Depth > world.Content.ShallowestLevel);
+            _view.Show(world.Level, LevelView.TilesetFor(TestContent.Content, world.Level), StairsWalk.HasLevelAbove(world));
 
         private static int NonVoidCells(LevelState level)
         {

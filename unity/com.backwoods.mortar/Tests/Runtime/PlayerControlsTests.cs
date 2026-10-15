@@ -80,6 +80,15 @@ namespace Mortar.Unity.Tests
         }
 
         [Test]
+        public void TheTownEntranceIsNotStairs()
+        {
+            var entrance = Journeys.MarkerCell(World, MarkerKinds.Entrance);
+
+            Assert.IsFalse(new WorldCellQuery(World).IsStairs(entrance));
+            Assert.AreNotEqual(ClickKind.Stairs, _input.Click(entrance));
+        }
+
+        [Test]
         public void ClickingAWallDoesNothing()
         {
             var wall = FindWall(World);

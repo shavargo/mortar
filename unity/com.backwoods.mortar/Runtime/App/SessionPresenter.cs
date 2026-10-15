@@ -75,7 +75,7 @@ namespace Mortar.Unity
             Popups.Clear();
             _app.Actors.Clear();
             _app.Items.Clear();
-            _app.Level.Show(world.Level, LevelView.TilesetFor(session.Content, world.Level), world.Depth > world.Content.ShallowestLevel);
+            _app.Level.Show(world.Level, LevelView.TilesetFor(session.Content, world.Level), StairsWalk.HasLevelAbove(world));
             SyncViews(session);
             _app.Actors.RenderNow();
             _app.CameraRig.Snap();
