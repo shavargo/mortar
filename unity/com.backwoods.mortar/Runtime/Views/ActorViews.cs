@@ -1,0 +1,95 @@
+using System.Collections.Generic;
+using Mortar.Game.Simulation;
+using UnityEngine;
+
+namespace Mortar.Unity
+{
+    public sealed class ActorViews : MonoBehaviour
+    {
+        private readonly Dictionary<int, ActorView> _views = new Dictionary<int, ActorView>();
+        private readonly HashSet<int> _seen = new HashSet<int>();
+        private readonly List<int> _stale = new List<int>();
+        private MortarGame? _game;
+
+        public int Count => _views.Count;
+
+        public static ActorViews Create(Transform parent, MortarGame? game)
+        {
+            var go = new GameObject("Actors");
+            go.transform.SetParent(parent, false);
+            var views = go.AddComponent<ActorViews>();
+            views._game = game;
+            return views;
+        }
+
+        public ActorView? Find(int actorId) => _views.TryGetValue(actorId, out var view) ? view : null;
+
+        public void Sync(World world, CellSpace space, SpriteCatalog catalog)
+        {
+            var level = world.Level;
+            _seen.Clear();
+            foreach (var actor in level.Actors)
+            {
+                if (!_views.TryGetValue(actor.Id, out var view))
+                {
+                    view = ActorView.Create(transform, actor, catalog.Actor(SpriteSetOf(world, actor)), space);
+                    _views.Add(actor.Id, view);
+                }
+                view.Sync(actor, level, space);
+                _seen.Add(actor.Id);
+            }
+            _stale.Clear();
+            foreach (var id in _views.Keys)
+            {
+                if (!_seen.Contains(id))
+                {
+                    _stale.Add(id);
+                }
+            }
+            foreach (var id in _stale)
+            {
+                Destroy(_views[id].gameObject);
+                _views.Remove(id);
+            }
+        }
+
+        public void Clear()
+        {
+            foreach (var view in _views.Values)
+            {
+                Destroy(view.gameObject);
+            }
+            _views.Clear();
+        }
+
+        public void Flash(int actorId)
+        {
+            var view = Find(actorId);
+            if (view != null)
+            {
+                view.Flash(Time.time);
+            }
+        }
+
+        public void RenderNow() => LateUpdate();
+
+        public static string SpriteSetOf(World world, Actor actor)
+        {
+            if (actor.Kind == ActorKind.Player)
+            {
+                return world.PlayerClass.SpriteSet;
+            }
+            return world.Content.TryGetMonster(actor.DefinitionId, out var monster) ? monster.SpriteSet : actor.DefinitionId;
+        }
+
+        private void LateUpdate()
+        {
+            var alpha = _game != null ? _game.Alpha : 0f;
+            var now = Time.time;
+            foreach (var view in _views.Values)
+            {
+                view.Render(alpha, now);
+            }
+        }
+    }
+}
