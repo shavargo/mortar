@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 
@@ -14,7 +15,7 @@ namespace Mortar.Unity.EditorTools
         public static void RebuildFromMenu()
         {
             var catalog = Rebuild();
-            Debug.Log($"Mortar: sprite catalog has {catalog.Count} entries");
+            Debug.Log($"Mortar: sprite catalog has {catalog.Count} sprites and {catalog.ClipCount} clips");
         }
 
         public static void RebuildFromCommandLine()
@@ -32,6 +33,15 @@ namespace Mortar.Unity.EditorTools
                 catalog = ScriptableObject.CreateInstance<SpriteCatalog>();
                 AssetDatabase.CreateAsset(catalog, CatalogPath);
             }
+            catalog.SetEntries(FindSprites());
+            catalog.SetClips(FindClips());
+            EditorUtility.SetDirty(catalog);
+            AssetDatabase.SaveAssets();
+            return catalog;
+        }
+
+        private static List<SpriteEntry> FindSprites()
+        {
             var entries = new List<SpriteEntry>();
             foreach (var guid in AssetDatabase.FindAssets("t:Sprite", new[] { ArtRoot }))
             {
@@ -43,10 +53,29 @@ namespace Mortar.Unity.EditorTools
                     entries.Add(new SpriteEntry(key, sprite));
                 }
             }
-            catalog.SetEntries(entries);
-            EditorUtility.SetDirty(catalog);
-            AssetDatabase.SaveAssets();
-            return catalog;
+            return entries;
+        }
+
+        private static List<ActorClip> FindClips()
+        {
+            var clips = new List<ActorClip>();
+            foreach (var guid in AssetDatabase.FindAssets("t:TextAsset", new[] { ArtRoot }))
+            {
+                var jsonPath = AssetDatabase.GUIDToAssetPath(guid);
+                var sheetPath = Path.ChangeExtension(jsonPath, ".png").Replace('\\', '/');
+                if (!jsonPath.EndsWith(".json", StringComparison.OrdinalIgnoreCase) || !ArtImport.IsSheet(sheetPath))
+                {
+                    continue;
+                }
+                var key = KeyFor(sheetPath, ArtRoot);
+                var sheet = AssetDatabase.LoadAssetAtPath<Texture2D>(sheetPath);
+                var text = AssetDatabase.LoadAssetAtPath<TextAsset>(jsonPath);
+                if (key != null && sheet != null && text != null)
+                {
+                    clips.Add(new ActorClip(key, sheet, ClipInfo.FromJson(text.text)));
+                }
+            }
+            return clips;
         }
 
         public static string? KeyFor(string assetPath, string root)

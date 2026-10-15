@@ -75,6 +75,19 @@ namespace Mortar.Unity.Tests
             Assert.AreSame(GeneratedSprites.Icon, _catalog.Icon("gold"));
         }
 
+        [Test]
+        public void ClipsResolveBySpriteSetAndName()
+        {
+            var idle = new ActorClip("actors/warrior/idle", null, TestClipInfo.Make(2, 8, loop: true));
+            _catalog.SetClips(new[] { idle });
+
+            Assert.AreSame(idle, _catalog.Clip("warrior", ClipNames.Idle));
+            Assert.IsNull(_catalog.Clip("warrior", ClipNames.Walk));
+            Assert.IsNull(_catalog.Clip("zombie", ClipNames.Idle));
+            Assert.AreEqual(1, _catalog.ClipCount);
+            LogAssert.NoUnexpectedReceived();
+        }
+
         private static Sprite MakeSprite()
         {
             var texture = new Texture2D(4, 4);

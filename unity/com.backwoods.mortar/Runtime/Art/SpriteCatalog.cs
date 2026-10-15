@@ -26,13 +26,38 @@ namespace Mortar.Unity
     public sealed class SpriteCatalog : ScriptableObject
     {
         [SerializeField] private List<SpriteEntry> _entries = new List<SpriteEntry>();
+        [SerializeField] private List<ActorClip> _clips = new List<ActorClip>();
 
         private readonly HashSet<string> _warned = new HashSet<string>();
         private Dictionary<string, Sprite>? _lookup;
+        private Dictionary<string, ActorClip>? _clipLookup;
 
         public int Count => _entries.Count;
 
         public IReadOnlyList<SpriteEntry> Entries => _entries;
+
+        public int ClipCount => _clips.Count;
+
+        public IReadOnlyList<ActorClip> Clips => _clips;
+
+        public void SetClips(IEnumerable<ActorClip> clips)
+        {
+            _clips = clips.OrderBy(clip => clip.Key, StringComparer.Ordinal).ToList();
+            _clipLookup = null;
+        }
+
+        public ActorClip? Clip(string spriteSet, string clipName)
+        {
+            if (_clipLookup == null)
+            {
+                _clipLookup = new Dictionary<string, ActorClip>(StringComparer.Ordinal);
+                foreach (var clip in _clips)
+                {
+                    _clipLookup[clip.Key] = clip;
+                }
+            }
+            return _clipLookup.TryGetValue(SpriteKeys.Clip(spriteSet, clipName), out var found) ? found : null;
+        }
 
         public void SetEntries(IEnumerable<SpriteEntry> entries)
         {
@@ -89,6 +114,10 @@ namespace Mortar.Unity
             return placeholder;
         }
 
-        private void OnValidate() => _lookup = null;
+        private void OnValidate()
+        {
+            _lookup = null;
+            _clipLookup = null;
+        }
     }
 }

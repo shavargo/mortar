@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 
@@ -6,6 +7,8 @@ namespace Mortar.Unity.EditorTools
 {
     public sealed class ArtImport : AssetPostprocessor
     {
+        public const int MaxSheetSize = 8192;
+
         private void OnPreprocessTexture()
         {
             if (SpriteCatalogBuilder.KeyFor(assetPath, SpriteCatalogBuilder.ArtRoot) == null)
@@ -13,6 +16,11 @@ namespace Mortar.Unity.EditorTools
                 return;
             }
             var importer = (TextureImporter)assetImporter;
+            if (IsSheet(assetPath))
+            {
+                ConfigureSheet(importer);
+                return;
+            }
             importer.GetSourceTextureWidthAndHeight(out var width, out var height);
             importer.textureType = TextureImporterType.Sprite;
             importer.mipmapEnabled = false;
@@ -26,6 +34,15 @@ namespace Mortar.Unity.EditorTools
             settings.spritePivot = PivotFor(assetPath, width, height);
             settings.spritePixelsPerUnit = GeneratedSprites.PixelsPerUnit;
             importer.SetTextureSettings(settings);
+        }
+
+        public static bool IsSheet(string assetPath) => IsSheet(assetPath, File.Exists);
+
+        public static bool IsSheet(string assetPath, Func<string, bool> fileExists)
+        {
+            var key = SpriteCatalogBuilder.KeyFor(assetPath, SpriteCatalogBuilder.ArtRoot);
+            return key != null && key.StartsWith("actors/", StringComparison.Ordinal)
+                && fileExists(Path.ChangeExtension(assetPath, ".json"));
         }
 
         public static Vector2 PivotFor(string assetPath, int width, int height)
@@ -44,6 +61,19 @@ namespace Mortar.Unity.EditorTools
                 return new Vector2(0.5f, 4f / height);
             }
             return new Vector2(0.5f, 0.5f);
+        }
+
+        private static void ConfigureSheet(TextureImporter importer)
+        {
+            importer.textureType = TextureImporterType.Default;
+            importer.isReadable = true;
+            importer.mipmapEnabled = false;
+            importer.alphaIsTransparency = true;
+            importer.npotScale = TextureImporterNPOTScale.None;
+            importer.maxTextureSize = MaxSheetSize;
+            importer.textureCompression = TextureImporterCompression.Uncompressed;
+            importer.filterMode = FilterMode.Bilinear;
+            importer.wrapMode = TextureWrapMode.Clamp;
         }
     }
 }

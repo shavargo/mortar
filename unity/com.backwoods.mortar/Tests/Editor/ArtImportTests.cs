@@ -45,5 +45,24 @@ namespace Mortar.Unity.Tests
         {
             Assert.AreEqual(new Vector2(0.5f, 0.5f), ArtImport.PivotFor("Assets/Art/icons/gold.png", 64, 64));
         }
+
+        [Test]
+        public void ActorPngsWithAJsonSidecarAreSheets()
+        {
+            Assert.IsTrue(ArtImport.IsSheet("Assets/Art/actors/warrior/idle.png", path => path == "Assets/Art/actors/warrior/idle.json"));
+        }
+
+        [Test]
+        public void PngsWithoutASidecarAreNotSheets()
+        {
+            Assert.IsFalse(ArtImport.IsSheet("Assets/Art/actors/warrior.png", path => false));
+        }
+
+        [TestCase("Assets/Art/icons/gold.png")]
+        [TestCase("Assets/Other/actors/warrior/idle.png")]
+        public void OnlyActorArtCanBeASheet(string path)
+        {
+            Assert.IsFalse(ArtImport.IsSheet(path, candidate => true));
+        }
     }
 }
