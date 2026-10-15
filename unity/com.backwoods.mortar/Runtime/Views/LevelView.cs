@@ -13,10 +13,13 @@ namespace Mortar.Unity
         public const int FloorOrder = -10;
         public const int WorldOrder = 0;
 
+        private static readonly HashSet<string> StrokeGrounds = new HashSet<string> { "grass", "water" };
+
         private readonly Dictionary<Sprite, Tile> _tiles = new Dictionary<Sprite, Tile>();
         private readonly List<GameObject> _props = new List<GameObject>();
         private SpriteCatalog _catalog = null!;
         private Tilemap _floor = null!;
+        private Tilemap _strokes = null!;
         private Tilemap _raised = null!;
 
         public CellSpace Space { get; private set; } = null!;
@@ -25,7 +28,9 @@ namespace Mortar.Unity
 
         public int RaisedTileCount => CountTiles(_raised);
 
-        public int TileCount => FloorTileCount + RaisedTileCount;
+        public int StrokeTileCount => CountTiles(_strokes);
+
+        public int TileCount => FloorTileCount + RaisedTileCount + StrokeTileCount;
 
         public IReadOnlyList<GameObject> Props => _props;
 
@@ -37,12 +42,15 @@ namespace Mortar.Unity
             view._catalog = catalog;
             var grid = CellSpace.CreateGrid(go.transform);
             view.Space = new CellSpace(grid);
-            view._floor = CreateTilemap(grid.transform, "Floor", FloorOrder, TilemapRenderer.Mode.Chunk);
-            view._raised = CreateTilemap(grid.transform, "Raised", WorldOrder, TilemapRenderer.Mode.Individual);
+            view._floor = CreateTilemap(grid.transform, "Floor", FloorOrder, TilemapRenderer.Mode.Chunk, null);
+            view._strokes = CreateTilemap(grid.transform, "Strokes", FloorOrder, TilemapRenderer.Mode.Chunk, MaskMaterials.Stroke);
+            view._raised = CreateTilemap(grid.transform, "Raised", WorldOrder, TilemapRenderer.Mode.Individual, null);
             return view;
         }
 
         public static Tileset TilesetFor(GameContent content, LevelState level) => content.Areas[level.Layout.AreaId].Tileset;
+
+        public static bool IsStroke(string ground) => StrokeGrounds.Contains(ground);
 
         public void Show(LevelState level, Tileset tileset, bool hasLevelAbove)
         {
@@ -50,6 +58,7 @@ namespace Mortar.Unity
             var cells = level.Layout.Cells;
             var theme = TileTheme.For(level.Layout.AreaId);
             var floor = new TileBatch();
+            var strokes = new TileBatch();
             var raised = new TileBatch();
             for (var y = 0; y < cells.Height; y++)
             {
@@ -64,10 +73,12 @@ namespace Mortar.Unity
                     var isRaised = index >= 0 && tileset.Grounds[index].BlocksSight;
                     var variant = cells.TileAt(x, y) == ground ? cells.VariantAt(x, y) : 0;
                     var tile = TileFor(_catalog.Tile(theme, ground, variant, isRaised));
-                    (isRaised ? raised : floor).Add(IsoMath.ToTileCell(new Cell(x, y)), tile);
+                    var batch = isRaised ? raised : IsStroke(ground) ? strokes : floor;
+                    batch.Add(IsoMath.ToTileCell(new Cell(x, y)), tile);
                 }
             }
             floor.ApplyTo(_floor);
+            strokes.ApplyTo(_strokes);
             raised.ApplyTo(_raised);
             MarkerProps.Place(level, Space, _catalog, transform, hasLevelAbove, _props);
         }
@@ -75,6 +86,7 @@ namespace Mortar.Unity
         public void Clear()
         {
             _floor.ClearAllTiles();
+            _strokes.ClearAllTiles();
             _raised.ClearAllTiles();
             foreach (var prop in _props)
             {
@@ -117,7 +129,7 @@ namespace Mortar.Unity
             return count;
         }
 
-        private static Tilemap CreateTilemap(Transform parent, string name, int order, TilemapRenderer.Mode mode)
+        private static Tilemap CreateTilemap(Transform parent, string name, int order, TilemapRenderer.Mode mode, Material? material)
         {
             var go = new GameObject(name);
             go.transform.SetParent(parent, false);
@@ -125,6 +137,10 @@ namespace Mortar.Unity
             var renderer = go.AddComponent<TilemapRenderer>();
             renderer.sortingOrder = order;
             renderer.mode = mode;
+            if (material != null)
+            {
+                renderer.sharedMaterial = material;
+            }
             return tilemap;
         }
 

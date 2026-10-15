@@ -14,5 +14,8 @@ namespace Mortar.Unity
         public const float Saturation = 0.85f;
         public const float LightRadiusTiles = 6f;
         public const float LightInner = 0.55f;
+        public const float StrokeScale = 0.15f;
+        public const float StrokeSpeed = 0.6f;
     }
 }
+

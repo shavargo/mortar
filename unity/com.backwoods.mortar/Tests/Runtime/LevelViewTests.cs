@@ -42,6 +42,27 @@ namespace Mortar.Unity.Tests
         }
 
         [Test]
+        public void TownGrassAndWaterUseTheStrokeTilemap()
+        {
+            var world = TestContent.NewSession().World;
+
+            Show(world);
+
+            var cells = world.Level.Layout.Cells;
+            var expected = 0;
+            for (var y = 0; y < cells.Height; y++)
+            {
+                for (var x = 0; x < cells.Width; x++)
+                {
+                    if (LevelView.IsStroke(cells.GroundAt(x, y))) expected++;
+                }
+            }
+            Assert.Greater(expected, 0, "the town should have grass or water");
+            Assert.AreEqual(expected, _view.StrokeTileCount);
+            Assert.AreEqual(NonVoidCells(world.Level), _view.TileCount);
+        }
+
+        [Test]
         public void TownShowsStairsDownAndNpcsButNoStairsUp()
         {
             var world = TestContent.NewSession().World;

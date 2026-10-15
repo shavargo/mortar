@@ -99,7 +99,7 @@ namespace Mortar.Unity.Tests
         {
             LogAssert.Expect(LogType.Warning, new Regex("ASCII filter off.*did not load"));
             Object.DestroyImmediate(_filter);
-            var broken = AsciiFilter.Attach(_scene.Camera, new AsciiResources(null, null));
+            var broken = AsciiFilter.Attach(_scene.Camera, new AsciiResources(null, null, null));
             _scene.AddCells(0, 0, 100, 60, Color.white);
 
             _scene.Render();
@@ -107,6 +107,35 @@ namespace Mortar.Unity.Tests
             Assert.IsFalse(broken.IsUsable);
             StringAssert.Contains("did not load", broken.Problem);
             Assert.AreEqual(255, _scene.Pixel(300, 300).r);
+        }
+
+        [Test]
+        public void StrokeSpritesMarkTheMaskUnlessSomethingCoversThem()
+        {
+            _scene.AddCells(0, 0, 100, 60, Color.white, MaskMaterials.Stroke);
+            _scene.AddCells(20, 0, 20, 60, Color.white, null, 1);
+            _scene.AddCells(100, 0, 100, 60, Color.white);
+
+            _scene.Render();
+
+            var mask = _filter.MaskTexture!;
+            var pixels = _scene.Read(mask);
+            Assert.AreEqual(new CellGrid(AsciiScene.Width, AsciiScene.Height).Columns, mask.width);
+            Assert.AreEqual(255, pixels[30 * mask.width + 50].r, "the stroke sprite marks its cells");
+            Assert.AreEqual(0, pixels[30 * mask.width + 30].r, "a sprite in front clears the mask");
+            Assert.AreEqual(0, pixels[30 * mask.width + 150].r, "plain sprites never mark the mask");
+        }
+
+        [Test]
+        public void StrokeCellsDrawThinDashesInsteadOfDenseGlyphs()
+        {
+            _scene.AddCells(0, 0, 100, 60, Color.white, MaskMaterials.Stroke);
+            _scene.AddCells(100, 0, 100, 60, Color.white);
+
+            _scene.Render();
+
+            Assert.Greater(_scene.LitPixels(50, 30), 0);
+            Assert.Less(_scene.LitPixels(50, 30) * 2, _scene.LitPixels(150, 30));
         }
 
         [Test]

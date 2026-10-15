@@ -17,6 +17,8 @@ namespace Mortar.Unity
             material.SetFloat("_Normalize", AsciiSettings.Normalize);
             material.SetFloat("_Saturation", AsciiSettings.Saturation);
             material.SetFloat("_DarkThreshold", AsciiSettings.DarkThreshold);
+            material.SetFloat("_StrokeScale", AsciiSettings.StrokeScale);
+            material.SetFloat("_StrokeSpeed", AsciiSettings.StrokeSpeed);
             return material;
         }
 

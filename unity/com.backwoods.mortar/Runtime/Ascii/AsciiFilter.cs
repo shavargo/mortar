@@ -14,6 +14,7 @@ namespace Mortar.Unity
 
         private static readonly int CellCountId = Shader.PropertyToID("_CellCount");
         private static readonly int CellTexId = Shader.PropertyToID("_CellTex");
+        private static readonly int MaskTexId = Shader.PropertyToID("_MaskTex");
         private static readonly int AmbientId = Shader.PropertyToID("_Ambient");
         private static readonly int LightCountId = Shader.PropertyToID("_LightCount");
         private static readonly int LightsId = Shader.PropertyToID("_Lights");
@@ -23,6 +24,7 @@ namespace Mortar.Unity
         private InputAction _toggle = null!;
         private Camera _camera = null!;
         private Material? _material;
+        private AsciiMask? _mask;
 
         public bool IsUsable => _material != null;
 
@@ -33,6 +35,8 @@ namespace Mortar.Unity
         public float Ambient { get; set; } = 1f;
 
         public List<AsciiLight> Lights { get; } = new List<AsciiLight>();
+
+        public RenderTexture? MaskTexture => _mask?.Texture;
 
         public static AsciiFilter Attach(Camera camera, AsciiResources resources)
         {
@@ -52,6 +56,7 @@ namespace Mortar.Unity
                 return;
             }
             _material = AsciiMaterial.Create(resources.Shader!, resources.Atlas!, _owned);
+            _mask = new AsciiMask(_camera, resources.MaskShader!);
         }
 
         private void Awake()
@@ -68,6 +73,7 @@ namespace Mortar.Unity
         private void OnDestroy()
         {
             _toggle.Dispose();
+            _mask?.Dispose();
             foreach (var item in _owned)
             {
                 if (item != null) Destroy(item);
@@ -77,13 +83,14 @@ namespace Mortar.Unity
 
         private void OnRenderImage(RenderTexture source, RenderTexture destination)
         {
-            if (_material == null || !IsOn)
+            if (_material == null || _mask == null || !IsOn)
             {
                 Graphics.Blit(source, destination);
                 return;
             }
             var grid = new CellGrid(source.width, source.height);
             _material.SetVector(CellCountId, new Vector4(grid.Columns, grid.Rows, 0f, 0f));
+            _material.SetTexture(MaskTexId, _mask.Render(_camera, grid));
             ApplyLights(_material, source.width, source.height);
             var cells = CellTexture(grid);
             Graphics.Blit(source, cells, _material, DownsamplePass);
