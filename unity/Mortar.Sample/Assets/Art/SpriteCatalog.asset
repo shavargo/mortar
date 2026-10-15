@@ -12,4 +12,90 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63e6828ceb05bc24089a427ff561c1db, type: 3}
   m_Name: SpriteCatalog
   m_EditorClassIdentifier: Mortar.Unity::Mortar.Unity.SpriteCatalog
-  _entries: []
+  _entries:
+  - _key: actors/carrion-bat
+    _sprite: {fileID: 21300000, guid: 313b5900e1827e54fbe2abd51f99538f, type: 3}
+  - _key: actors/gravewarden
+    _sprite: {fileID: 21300000, guid: 0f6ddb883fa07c44599906c16bbb8701, type: 3}
+  - _key: actors/healer
+    _sprite: {fileID: 21300000, guid: 291028bb94d1c0747be9c7fa2efd5e1f, type: 3}
+  - _key: actors/imp
+    _sprite: {fileID: 21300000, guid: 05d134b2fb166fc458ae3dd22769b801, type: 3}
+  - _key: actors/imp-chieftain
+    _sprite: {fileID: 21300000, guid: 9744e433ae02c2b4e8821832b4a16bf6, type: 3}
+  - _key: actors/sage
+    _sprite: {fileID: 21300000, guid: 221465983ca7b4e48b7b6ed920e0f6bf, type: 3}
+  - _key: actors/skeleton
+    _sprite: {fileID: 21300000, guid: 4f54eac9e0ea2af4f8ef2bd61da2b1fe, type: 3}
+  - _key: actors/smith
+    _sprite: {fileID: 21300000, guid: fd7f89d7521ffd14fbf004927352fd7a, type: 3}
+  - _key: actors/stairs-down
+    _sprite: {fileID: 21300000, guid: 90d434a3411109e438b37b3dc779198d, type: 3}
+  - _key: actors/stairs-up
+    _sprite: {fileID: 21300000, guid: 2885d89fe803f4a4e84ad366503791f4, type: 3}
+  - _key: actors/warrior
+    _sprite: {fileID: 21300000, guid: c997ccff42008e4458e3c0ef461bd363, type: 3}
+  - _key: actors/zombie
+    _sprite: {fileID: 21300000, guid: 222448bbf39fc374eb4fa2676c9cb479, type: 3}
+  - _key: icons/banded-buckler
+    _sprite: {fileID: 21300000, guid: f1175b2abeaf3494f846c3af1033e757, type: 3}
+  - _key: icons/bone-charm
+    _sprite: {fileID: 21300000, guid: d024a1c0e70b42e42a8e6e4d3a78b0d8, type: 3}
+  - _key: icons/broad-blade
+    _sprite: {fileID: 21300000, guid: 426603c8d26e03d46bef1a4242b9b04c, type: 3}
+  - _key: icons/copper-band
+    _sprite: {fileID: 21300000, guid: b6bff2e420f37b848a3091ae10542315, type: 3}
+  - _key: icons/cudgel
+    _sprite: {fileID: 21300000, guid: 6dabcc6387a400f4aac86fc532baee49, type: 3}
+  - _key: icons/gold
+    _sprite: {fileID: 21300000, guid: a603d0bb2f26cc54ca54ebb42f6ab1e8, type: 3}
+  - _key: icons/hatchet
+    _sprite: {fileID: 21300000, guid: 3ba99ff88482f864e8a219b0e37e23d7, type: 3}
+  - _key: icons/healing-draught
+    _sprite: {fileID: 21300000, guid: 6d08b37f7dbeddd44a597821b2e25f32, type: 3}
+  - _key: icons/iron-knife
+    _sprite: {fileID: 21300000, guid: d0a81dae91c8e2a43a71518685c5a0f2, type: 3}
+  - _key: icons/iron-pot-helm
+    _sprite: {fileID: 21300000, guid: 941081ba76992724c8b4ab57568dd937, type: 3}
+  - _key: icons/leather-hood
+    _sprite: {fileID: 21300000, guid: 222839e4edfa9284088a1efc9fc909e2, type: 3}
+  - _key: icons/mana-draught
+    _sprite: {fileID: 21300000, guid: 3eb372c9c23b1a54eabcc96b0afec299, type: 3}
+  - _key: icons/padded-vest
+    _sprite: {fileID: 21300000, guid: 3e2db5f33d7feb54aa585f8129f30b1a, type: 3}
+  - _key: icons/plank-shield
+    _sprite: {fileID: 21300000, guid: 5e592c256a7b9b54d9409b606158dcb4, type: 3}
+  - _key: icons/ring-hauberk
+    _sprite: {fileID: 21300000, guid: 4a1be165e7dd59f4b8d90f5f29748c3a, type: 3}
+  - _key: icons/studded-jerkin
+    _sprite: {fileID: 21300000, guid: 4628ddcce96d52549b0f7f63b1696be6, type: 3}
+  - _key: tiles/cathedral/floor-0
+    _sprite: {fileID: 21300000, guid: b55bb6e7ebec16541b2a056f5c2310c6, type: 3}
+  - _key: tiles/cathedral/floor-1
+    _sprite: {fileID: 21300000, guid: 1fced394fcdcb7a47b08ddc66db696e2, type: 3}
+  - _key: tiles/cathedral/floor-2
+    _sprite: {fileID: 21300000, guid: e388ea6ce46ed4846b8792f8adfea1eb, type: 3}
+  - _key: tiles/cathedral/wall-0
+    _sprite: {fileID: 21300000, guid: cbf1b4135ecd9974b93abce5f0bcd7c6, type: 3}
+  - _key: tiles/cathedral/wall-1
+    _sprite: {fileID: 21300000, guid: 5c74c31c3c906a342a2fee5eb4b52de5, type: 3}
+  - _key: tiles/cathedral/wall-2
+    _sprite: {fileID: 21300000, guid: ce8e650b86286f9478b014184dee8137, type: 3}
+  - _key: tiles/town/floor-0
+    _sprite: {fileID: 21300000, guid: 5e7c8a6c5917b3740b773fc3f5d0e4c4, type: 3}
+  - _key: tiles/town/floor-1
+    _sprite: {fileID: 21300000, guid: 7cb2ea403252f744aaa2ac6f261b3837, type: 3}
+  - _key: tiles/town/grass-0
+    _sprite: {fileID: 21300000, guid: b29a2eff6e136b64886725f899d04800, type: 3}
+  - _key: tiles/town/grass-1
+    _sprite: {fileID: 21300000, guid: 7d2ab21c498126a4a92e5f3ac0a04972, type: 3}
+  - _key: tiles/town/grass-2
+    _sprite: {fileID: 21300000, guid: 27d63451505018b458eff1addddc8671, type: 3}
+  - _key: tiles/town/road-0
+    _sprite: {fileID: 21300000, guid: 94503d7e5e5921347946f7dccd3f823e, type: 3}
+  - _key: tiles/town/tree-0
+    _sprite: {fileID: 21300000, guid: 94db3243bc25b16448a440c1502e9994, type: 3}
+  - _key: tiles/town/wall-0
+    _sprite: {fileID: 21300000, guid: ca595f11abf229b47827857fa5667e40, type: 3}
+  - _key: tiles/town/water-0
+    _sprite: {fileID: 21300000, guid: e6883ee8cdc3c4540bd241bfb57dbd19, type: 3}
