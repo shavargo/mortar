@@ -1,0 +1,6 @@
+<linker>
+  <assembly fullname="Mortar.Core" preserve="all" />
+  <assembly fullname="Mortar.Game" preserve="all" />
+  <assembly fullname="Mortar.Json" preserve="all" />
+  <assembly fullname="System.Text.Json" preserve="all" />
+</linker>
