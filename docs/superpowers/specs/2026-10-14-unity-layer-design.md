@@ -126,15 +126,16 @@ Input System actions asset:
   monster → `AttackCommand`; ground item → `PickUpCommand`; stairs → walk next
   to them, then `UseStairsCommand`; walkable floor → `MoveCommand`. Holding the
   button keeps moving toward the cursor.
-- `1`–`4` → `UseBeltCommand`; `I` inventory; `C` character sheet; `Esc` menu.
+- `1`–`8` → `UseBeltCommand`; `I` inventory; `C` character sheet; `Esc` menu.
 
-UI Toolkit (UXML/USS in the package):
+UI Toolkit, built in C# with one theme file:
 
-- HUD: life and mana orbs with circular fill, 4-slot belt with hotkey labels,
+- HUD: life and mana orbs with circular fill, 8-slot belt with hotkey labels,
   experience bar, message line.
-- Inventory: the bag grid and equipment slots. Click to equip or unequip, drag
-  to move within the grid (`MoveItemCommand`), drag to the belt
-  (`PutInBeltCommand`), drag out of the window to drop (`DropItemCommand`).
+- Inventory: the bag grid and equipment slots. Left-click an item to hold it,
+  then left-click a bag cell (`MoveItemCommand`), an equipment slot
+  (`EquipCommand`), a belt slot (`PutInBeltCommand`), or the world
+  (`DropItemCommand`). Right-click equips, unequips, or belts in one step.
   Tooltips show name, affixes and stats.
 - Character sheet: level, experience, stats, and "+" buttons that send
   `SpendStatPointCommand` while points are available.

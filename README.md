@@ -6,9 +6,9 @@ Mortar is free and open source under the MIT license.
 
 ## Status
 
-Version 0.1 generates **indoor** levels by stitching hand-made rooms along a landmark graph. Outdoor generation and the Unity package are planned (see `docs/design.md`).
+Version 0.1 generates **indoor** levels by stitching hand-made rooms along a landmark graph. Outdoor generation is planned (see `docs/design.md`).
 
-Mortar is growing into a full action-RPG framework for Unity (see `docs/superpowers/specs/2026-10-14-arpg-framework-design.md`). `Mortar.Game` already runs a deterministic, engine-independent game simulation: a warrior, melee combat, monsters with AI, and stairs between four dungeon levels, all driven by the data in `content/` (see `docs/content.md`). Items with magic affixes, an inventory and potion belt, monster loot, and save files (see `docs/saves.md`) complete the first milestone; a hand-drawn town above four generated cathedral levels starts each game; more classes come next.
+Mortar is growing into a full action-RPG framework for Unity (see `docs/superpowers/specs/2026-10-14-arpg-framework-design.md`). `Mortar.Game` already runs a deterministic, engine-independent game simulation: a warrior, melee combat, monsters with AI, and stairs between four dungeon levels, all driven by the data in `content/` (see `docs/content.md`). Items with magic affixes, an inventory and potion belt, monster loot, and save files (see `docs/saves.md`) complete the first milestone; a hand-drawn town above four generated cathedral levels starts each game; more classes come next. The Unity package (`unity/com.backwoods.mortar`) and its sample project make that first milestone playable with generated placeholder art (see `docs/unity.md`).
 
 ## Quick start
 
@@ -52,6 +52,10 @@ if (result.Succeeded)
 | `src/Mortar.Json` | Reads tileset, room, and area files; writes and reads layout files. |
 | `src/Mortar.Game` | The game simulation: world, actors, combat, AI, and stairs. No engine dependencies. |
 | `content/` | Game data: rules, classes, monsters, levels, and the town and cathedral areas. |
+| `unity/com.backwoods.mortar` | The Unity package: views, input, UI, and editor tools over the simulation. |
+| `unity/Mortar.Sample` | A Unity 6 sample project with the playable scene and placeholder art. |
+| `tools/unity` | Scripts that sync the simulation into Unity and run Unity tests headless. |
+| `tools/art` | Placeholder art generator (Workers AI and Pillow). |
 | `src/Mortar.Cli` | The `mortar` command-line tool. |
 | `samples/` | A sample tileset, rooms, and the `crypt` indoor area. |
 | `tests/` | Unit, determinism snapshot, walkability, and success-rate tests. |
