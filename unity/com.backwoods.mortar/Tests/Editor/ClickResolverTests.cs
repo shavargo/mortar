@@ -21,6 +21,25 @@ namespace Mortar.Unity.Tests
         }
 
         [Test]
+        public void PickedMonsterWinsOverTheCell()
+        {
+            var query = new FakeQuery { Monster = 9, Item = 5, Stairs = true, Walkable = true };
+
+            var action = ClickResolver.Resolve(query, Spot, 4)!.Value;
+
+            Assert.AreEqual(ClickKind.Attack, action.Kind);
+            Assert.AreEqual(4, action.TargetId);
+        }
+
+        [Test]
+        public void NoPickFallsBackToTheCell()
+        {
+            var query = new FakeQuery { Item = 5, Walkable = true };
+
+            Assert.AreEqual(ClickKind.PickUp, ClickResolver.Resolve(query, Spot, 0)!.Value.Kind);
+        }
+
+        [Test]
         public void GroundItemWinsOverStairsAndFloor()
         {
             var query = new FakeQuery { Item = 5, Stairs = true, Walkable = true };

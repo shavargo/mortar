@@ -106,5 +106,7 @@ namespace Mortar.Unity
         }
 
         public void Flash(float now) => _flashUntil = now + FlashSeconds;
+
+        public bool Covers(Vector3 point) => !IsCorpse && SpriteObjects.Covers(_body, point);
     }
 }

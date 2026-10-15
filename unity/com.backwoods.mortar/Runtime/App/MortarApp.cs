@@ -111,7 +111,7 @@ namespace Mortar.Unity
             }
             var world = session.World;
             var hovered = Controls.CellUnderPointer();
-            var hover = hovered.HasValue ? HoverText.Describe(world, hovered.Value) : null;
+            var hover = hovered.HasValue ? HoverText.Describe(world, hovered.Value, Controls.MonsterUnderPointer()) : null;
             Hud.Refresh(world, Presenter.Messages.Visible(Time.time), hover);
             Inventory.Refresh(world.Belongings);
             Character.Refresh(world);
@@ -149,6 +149,7 @@ namespace Mortar.Unity
             Controls.MenuRequested += OnMenuRequested;
             Controls.IsOverUi = Ui.IsPointerOverUi;
             Controls.InterceptWorldClick = Inventory.DropHeld;
+            Controls.MonsterAt = MonsterAt;
             Hud.Belt.SlotClicked += slot => Game.Enqueue(Inventory.Cursor.ClickBelt(slot));
             Presenter.PlayerDied += OnPlayerDied;
             CameraRig.Follow(PlayerPosition);
@@ -162,6 +163,12 @@ namespace Mortar.Unity
             }
             var view = Actors.Find(Actor.PlayerId);
             return view != null ? view.GroundPosition : (Vector3?)null;
+        }
+
+        private int MonsterAt(Vector3 point)
+        {
+            var session = Game.Session;
+            return session == null ? 0 : Actors.LivingMonsterAt(session.World, point, CameraRig.Camera.transparencySortAxis);
         }
 
         private void BeginOrReport(GameSession? session, string? error)

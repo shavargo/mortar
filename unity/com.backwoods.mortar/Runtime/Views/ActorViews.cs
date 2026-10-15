@@ -73,6 +73,27 @@ namespace Mortar.Unity
 
         public void RenderNow() => LateUpdate();
 
+        public int LivingMonsterAt(World world, Vector3 point, Vector3 sortAxis)
+        {
+            var picked = 0;
+            var nearest = float.MaxValue;
+            foreach (var view in _views.Values)
+            {
+                var actor = world.Level.Find(view.ActorId);
+                if (actor == null || actor.Kind != ActorKind.Monster || !actor.IsAlive || !view.Covers(point))
+                {
+                    continue;
+                }
+                var depth = Vector3.Dot(view.GroundPosition, sortAxis);
+                if (depth < nearest)
+                {
+                    nearest = depth;
+                    picked = view.ActorId;
+                }
+            }
+            return picked;
+        }
+
         public static string SpriteSetOf(World world, Actor actor)
         {
             if (actor.Kind == ActorKind.Player)

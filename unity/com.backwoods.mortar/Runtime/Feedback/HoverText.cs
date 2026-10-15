@@ -5,13 +5,12 @@ namespace Mortar.Unity
 {
     public static class HoverText
     {
-        public static string? Describe(World world, Cell cell)
+        public static string? Describe(World world, Cell cell, int pickedMonsterId = 0)
         {
             var query = new WorldCellQuery(world);
-            var monsterId = query.LivingMonsterAt(cell);
-            if (monsterId != 0)
+            var monster = world.Level.Find(pickedMonsterId != 0 ? pickedMonsterId : query.LivingMonsterAt(cell));
+            if (monster != null)
             {
-                var monster = world.Level.Find(monsterId)!;
                 var name = world.Content.TryGetMonster(monster.DefinitionId, out var definition) ? definition.Name : monster.DefinitionId;
                 return $"{name} ({monster.Life}/{monster.Profile.MaxLife})";
             }

@@ -5,9 +5,9 @@ namespace Mortar.Unity
 {
     public static class ClickResolver
     {
-        public static ClickAction? Resolve(ICellQuery query, Cell cell)
+        public static ClickAction? Resolve(ICellQuery query, Cell cell, int pickedMonsterId = 0)
         {
-            var monster = query.LivingMonsterAt(cell);
+            var monster = pickedMonsterId != 0 ? pickedMonsterId : query.LivingMonsterAt(cell);
             if (monster != 0)
             {
                 return new ClickAction(ClickKind.Attack, cell, monster);

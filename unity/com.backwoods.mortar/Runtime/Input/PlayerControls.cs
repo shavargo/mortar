@@ -36,6 +36,8 @@ namespace Mortar.Unity
 
         public Func<bool> InterceptWorldClick { get; set; } = () => false;
 
+        public Func<Vector3, int> MonsterAt { get; set; } = point => 0;
+
         public bool HasPendingStairs => _pendingStairs.HasValue;
 
         public static PlayerControls Create(Transform parent, MortarGame game, Func<CellSpace?> space, Camera? camera)
@@ -51,7 +53,13 @@ namespace Mortar.Unity
             return input;
         }
 
-        public ClickKind? Click(Cell cell)
+        public ClickKind? ClickAt(Vector3 world)
+        {
+            var space = _space();
+            return space == null ? (ClickKind?)null : Click(space.CellAt(world), MonsterAt(world));
+        }
+
+        public ClickKind? Click(Cell cell, int pickedMonsterId = 0)
         {
             var session = _game.Session;
             _pendingStairs = null;
@@ -59,7 +67,7 @@ namespace Mortar.Unity
             {
                 return null;
             }
-            var action = ClickResolver.Resolve(new WorldCellQuery(session.World), cell);
+            var action = ClickResolver.Resolve(new WorldCellQuery(session.World), cell, pickedMonsterId);
             if (action == null)
             {
                 return null;
@@ -80,6 +88,13 @@ namespace Mortar.Unity
         {
             var screen = _point.ReadValue<Vector2>();
             return IsOverUi(screen) ? null : CellUnder(screen);
+        }
+
+        public int MonsterUnderPointer()
+        {
+            var screen = _point.ReadValue<Vector2>();
+            var world = IsOverUi(screen) ? null : WorldUnder(screen);
+            return world.HasValue ? MonsterAt(world.Value) : 0;
         }
 
         private void Awake()
@@ -175,8 +190,8 @@ namespace Mortar.Unity
                 {
                     return;
                 }
-                var cell = CellUnder(screen);
-                _holdingMove = cell.HasValue && Click(cell.Value) == ClickKind.Move;
+                var world = WorldUnder(screen);
+                _holdingMove = world.HasValue && ClickAt(world.Value) == ClickKind.Move;
                 return;
             }
             if (!_holdingMove || !_click.IsPressed())
@@ -220,12 +235,17 @@ namespace Mortar.Unity
         private Cell? CellUnder(Vector2 screen)
         {
             var space = _space();
-            if (space == null || _camera == null)
+            var world = WorldUnder(screen);
+            return space == null || !world.HasValue ? (Cell?)null : space.CellAt(world.Value);
+        }
+
+        private Vector3? WorldUnder(Vector2 screen)
+        {
+            if (_camera == null)
             {
                 return null;
             }
-            var world = _camera.ScreenToWorldPoint(new Vector3(screen.x, screen.y, -_camera.transform.position.z));
-            return space.CellAt(world);
+            return _camera.ScreenToWorldPoint(new Vector3(screen.x, screen.y, -_camera.transform.position.z));
         }
     }
 }
