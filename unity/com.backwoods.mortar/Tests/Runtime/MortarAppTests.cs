@@ -98,7 +98,7 @@ namespace Mortar.Unity.Tests
             Journeys.TakeStairsDown(_app.Game);
             _app.Actors.RenderNow();
 
-            var player = _app.Actors.Find(Actor.PlayerId)!.GetComponent<SpriteRenderer>();
+            var player = _app.Actors.Find(Actor.PlayerId)!.Sorting;
             var stairs = _app.Level.Props.First(prop => prop.name == "Prop entrance").GetComponent<SpriteRenderer>();
             Assert.AreEqual(stairs.sortingLayerID, player.sortingLayerID);
             Assert.AreEqual(stairs.sortingOrder, player.sortingOrder);

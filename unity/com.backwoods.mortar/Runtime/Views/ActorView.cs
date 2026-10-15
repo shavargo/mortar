@@ -1,6 +1,7 @@
 using Mortar.Game;
 using Mortar.Game.Simulation;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Mortar.Unity
 {
@@ -13,6 +14,7 @@ namespace Mortar.Unity
         private static readonly Color CorpseColor = new Color(0.45f, 0.45f, 0.45f);
         private static readonly Color ArrowColor = new Color(1f, 0.85f, 0.3f, 0.8f);
 
+        private SortingGroup _sorting = null!;
         private SpriteRenderer _body = null!;
         private SpriteRenderer _arrow = null!;
         private Vector3 _from;
@@ -34,17 +36,25 @@ namespace Mortar.Unity
 
         public Color Tint => _body.color;
 
+        public SortingGroup Sorting => _sorting;
+
+        public SpriteRenderer Body => _body;
+
         public static ActorView Create(Transform parent, Actor actor, Sprite sprite, CellSpace space)
         {
-            var body = SpriteObjects.Create(parent, $"Actor {actor.Id}", sprite, LevelView.WorldOrder);
-            var view = body.gameObject.AddComponent<ActorView>();
-            view._body = body;
-            view.ActorId = actor.Id;
-            view._arrow = SpriteObjects.Create(body.transform, "Facing", GeneratedSprites.Arrow, LevelView.FloorOrder + 2);
+            var go = new GameObject($"Actor {actor.Id}");
+            go.transform.SetParent(parent, false);
+            var view = go.AddComponent<ActorView>();
+            view._sorting = go.AddComponent<SortingGroup>();
+            view._sorting.sortingOrder = LevelView.WorldOrder;
+            view._body = SpriteObjects.Create(go.transform, "Body", sprite, 0);
+            view._arrow = SpriteObjects.Create(go.transform, "Facing", GeneratedSprites.Arrow, -1);
             view._arrow.color = ArrowColor;
+            view.ActorId = actor.Id;
             view._cell = actor.Cell;
             view._from = view._to = view._target = space.Center(actor.Cell);
             view.GroundPosition = view._to;
+            go.transform.position = view._to;
             return view;
         }
 
@@ -78,19 +88,20 @@ namespace Mortar.Unity
             var progress = ActorPose.Progress(_elapsed, _duration, alpha);
             var action = IsCorpse ? ActionKind.Idle : _action;
             GroundPosition = ActorPose.Ground(action, progress, _from, _to);
-            transform.position = ActorPose.Body(action, progress, _from, _to, _target);
+            transform.position = GroundPosition;
+            _body.transform.localPosition = ActorPose.Body(action, progress, _from, _to, _target) - GroundPosition;
             _body.flipX = ActorPose.FacesLeft(_facing);
             _arrow.enabled = !IsCorpse;
             _arrow.transform.localRotation = Quaternion.Euler(0f, 0f, ActorPose.ArrowDegrees(_facing));
             if (IsCorpse)
             {
                 var fall = Mathf.Clamp01((now - _diedAt) / FallSeconds);
-                transform.rotation = Quaternion.Euler(0f, 0f, 90f * fall * (_body.flipX ? -1f : 1f));
+                _body.transform.localRotation = Quaternion.Euler(0f, 0f, 90f * fall * (_body.flipX ? -1f : 1f));
                 _body.color = CorpseColor;
-                _body.sortingOrder = LevelView.FloorOrder + 3;
+                _sorting.sortingOrder = LevelView.FloorOrder + 3;
                 return;
             }
-            transform.rotation = Quaternion.identity;
+            _body.transform.localRotation = Quaternion.identity;
             _body.color = now < _flashUntil ? HitColor : Color.white;
         }
 

@@ -11,6 +11,7 @@ namespace Mortar.Unity
             var renderer = go.AddComponent<SpriteRenderer>();
             renderer.sprite = sprite;
             renderer.sortingOrder = sortingOrder;
+            renderer.spriteSortPoint = SpriteSortPoint.Pivot;
             return renderer;
         }
     }
