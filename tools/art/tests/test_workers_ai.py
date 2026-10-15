@@ -105,6 +105,29 @@ def test_cloudflare_error_messages_are_redacted():
     assert_hides_credentials(raised, "secret-token", "acct-123")
 
 
+def test_redaction_happens_before_truncation():
+    message = "x" * 189 + " secret-token"
+    body = json.dumps({"errors": [{"message": message}]}).encode("utf-8")
+
+    def failing(request, timeout):
+        raise urllib.error.HTTPError(request.full_url, 400, "Bad Request", None, io.BytesIO(body))
+
+    with pytest.raises(ArtError) as raised:
+        generate_image(CREDENTIALS, MODEL, "p", 1, opener=failing)
+
+    assert "secret-tok" not in str(raised.value)
+
+
+def test_successful_responses_without_an_image_redact_errors():
+    payload = {"success": False, "errors": [{"message": "acct-123 cannot use secret-token"}]}
+
+    with pytest.raises(ArtError) as raised:
+        generate_image(CREDENTIALS, MODEL, "p", 1, opener=opener_returning(payload))
+
+    assert "secret-token" not in str(raised.value)
+    assert "acct-123" not in str(raised.value)
+
+
 def test_connection_failures_name_only_the_error_type():
     with pytest.raises(ArtError) as raised:
         generate_image(CREDENTIALS, MODEL, "p", 1, opener=opener_raising(urllib.error.URLError("no route to acct-123")))
