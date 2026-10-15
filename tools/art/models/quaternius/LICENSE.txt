@@ -1,0 +1,9 @@
+Models by Quaternius
+Demon.glb: https://poly.pizza/m/LnfIziKv4o (Ultimate Monsters Bundle)
+BlueDemon.glb: https://poly.pizza/m/S7jYW6Amye (Ultimate Monsters Bundle)
+Bat.glb: https://poly.pizza/m/hNO9XvjlKa
+Zombie.glb: https://poly.pizza/m/VlXjG0N8Eg (Post Apocalypse Pack)
+Licence: CC0 1.0 Universal (public domain dedication)
+https://creativecommons.org/publicdomain/zero/1.0/
+
+Files here are unmodified copies used as bake inputs.
