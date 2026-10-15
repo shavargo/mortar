@@ -139,6 +139,21 @@ namespace Mortar.Unity.Tests
         }
 
         [Test]
+        public void WaterSpritesMarkTheMaskHalfwayAndStayThinDashes()
+        {
+            _scene.AddCells(0, 0, 100, 60, Color.white, MaskMaterials.Water);
+            _scene.AddCells(100, 0, 100, 60, Color.white);
+
+            _scene.Render();
+
+            var mask = _filter.MaskTexture!;
+            var red = _scene.Read(mask)[30 * mask.width + 50].r;
+            Assert.That(red, Is.InRange(100, 150), "water marks the mask at half red, not full grass red");
+            Assert.Greater(_scene.LitPixels(50, 30), 0);
+            Assert.Less(_scene.LitPixels(50, 30) * 2, _scene.LitPixels(150, 30));
+        }
+
+        [Test]
         public void InTheDarkOnlyTheLightRadiusShowsGlyphs()
         {
             _scene.AddCells(0, 0, 200, 60, Color.white);

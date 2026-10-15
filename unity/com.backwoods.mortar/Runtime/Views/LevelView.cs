@@ -13,13 +13,15 @@ namespace Mortar.Unity
         public const int FloorOrder = -10;
         public const int WorldOrder = 0;
 
-        private static readonly HashSet<string> StrokeGrounds = new HashSet<string> { "grass", "water" };
+        private static readonly HashSet<string> GrassGrounds = new HashSet<string> { "grass" };
+        private static readonly HashSet<string> WaterGrounds = new HashSet<string> { "water" };
 
         private readonly Dictionary<Sprite, Tile> _tiles = new Dictionary<Sprite, Tile>();
         private readonly List<GameObject> _props = new List<GameObject>();
         private SpriteCatalog _catalog = null!;
         private Tilemap _floor = null!;
-        private Tilemap _strokes = null!;
+        private Tilemap _grass = null!;
+        private Tilemap _water = null!;
         private Tilemap _raised = null!;
 
         public CellSpace Space { get; private set; } = null!;
@@ -28,7 +30,11 @@ namespace Mortar.Unity
 
         public int RaisedTileCount => CountTiles(_raised);
 
-        public int StrokeTileCount => CountTiles(_strokes);
+        public int GrassTileCount => CountTiles(_grass);
+
+        public int WaterTileCount => CountTiles(_water);
+
+        public int StrokeTileCount => GrassTileCount + WaterTileCount;
 
         public int TileCount => FloorTileCount + RaisedTileCount + StrokeTileCount;
 
@@ -43,14 +49,19 @@ namespace Mortar.Unity
             var grid = CellSpace.CreateGrid(go.transform);
             view.Space = new CellSpace(grid);
             view._floor = CreateTilemap(grid.transform, "Floor", FloorOrder, TilemapRenderer.Mode.Chunk, null);
-            view._strokes = CreateTilemap(grid.transform, "Strokes", FloorOrder, TilemapRenderer.Mode.Chunk, MaskMaterials.Stroke);
+            view._grass = CreateTilemap(grid.transform, "Grass", FloorOrder, TilemapRenderer.Mode.Chunk, MaskMaterials.Stroke);
+            view._water = CreateTilemap(grid.transform, "Water", FloorOrder, TilemapRenderer.Mode.Chunk, MaskMaterials.Water);
             view._raised = CreateTilemap(grid.transform, "Raised", WorldOrder, TilemapRenderer.Mode.Individual, null);
             return view;
         }
 
         public static Tileset TilesetFor(GameContent content, LevelState level) => content.Areas[level.Layout.AreaId].Tileset;
 
-        public static bool IsStroke(string ground) => StrokeGrounds.Contains(ground);
+        public static bool IsGrass(string ground) => GrassGrounds.Contains(ground);
+
+        public static bool IsWater(string ground) => WaterGrounds.Contains(ground);
+
+        public static bool IsStroke(string ground) => IsGrass(ground) || IsWater(ground);
 
         public void Show(LevelState level, Tileset tileset, bool hasLevelAbove)
         {
@@ -58,7 +69,8 @@ namespace Mortar.Unity
             var cells = level.Layout.Cells;
             var theme = TileTheme.For(level.Layout.AreaId);
             var floor = new TileBatch();
-            var strokes = new TileBatch();
+            var grass = new TileBatch();
+            var water = new TileBatch();
             var raised = new TileBatch();
             for (var y = 0; y < cells.Height; y++)
             {
@@ -73,12 +85,13 @@ namespace Mortar.Unity
                     var isRaised = index >= 0 && tileset.Grounds[index].BlocksSight;
                     var variant = cells.TileAt(x, y) == ground ? cells.VariantAt(x, y) : 0;
                     var tile = TileFor(_catalog.Tile(theme, ground, variant, isRaised));
-                    var batch = isRaised ? raised : IsStroke(ground) ? strokes : floor;
+                    var batch = BatchFor(isRaised, ground, raised, grass, water, floor);
                     batch.Add(IsoMath.ToTileCell(new Cell(x, y)), tile);
                 }
             }
             floor.ApplyTo(_floor);
-            strokes.ApplyTo(_strokes);
+            grass.ApplyTo(_grass);
+            water.ApplyTo(_water);
             raised.ApplyTo(_raised);
             MarkerProps.Place(level, Space, _catalog, transform, hasLevelAbove, _props);
         }
@@ -86,13 +99,32 @@ namespace Mortar.Unity
         public void Clear()
         {
             _floor.ClearAllTiles();
-            _strokes.ClearAllTiles();
+            _grass.ClearAllTiles();
+            _water.ClearAllTiles();
             _raised.ClearAllTiles();
             foreach (var prop in _props)
             {
                 Destroy(prop);
             }
             _props.Clear();
+        }
+
+        private static TileBatch BatchFor(
+            bool isRaised, string ground, TileBatch raised, TileBatch grass, TileBatch water, TileBatch floor)
+        {
+            if (isRaised)
+            {
+                return raised;
+            }
+            if (IsGrass(ground))
+            {
+                return grass;
+            }
+            if (IsWater(ground))
+            {
+                return water;
+            }
+            return floor;
         }
 
         private Tile TileFor(Sprite sprite)

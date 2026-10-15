@@ -14,6 +14,8 @@ float _Saturation;
 float _DarkThreshold;
 float _StrokeScale;
 float _StrokeSpeed;
+float _WaterStrokeScale;
+float _WaterStrokeSpeed;
 float _FigureLift;
 float _FigureFloor;
 sampler2D _BloomTex;
@@ -59,7 +61,7 @@ float Noise(float2 p)
     return lerp(bottom, top, u.y);
 }
 
-float StrokeSlot(float2 cell)
+float WindSlot(float2 cell)
 {
     // Prefer - / \ over | so travelling lean reads as wind, not contour bands.
     float2 wind = float2(1.0, 0.35);
@@ -79,6 +81,15 @@ float StrokeSlot(float2 cell)
     return FirstEdgeSlot + 3.0;
 }
 
+float WaterSlot(float2 cell)
+{
+    // Horizontal ripples travel along Y — not the grass wind lean.
+    float phase = cell.y * _WaterStrokeScale - _Time.y * _WaterStrokeSpeed;
+    float wave = 0.5 + 0.5 * sin(phase * 6.2831853);
+    float chop = Noise(float2(cell.x * _WaterStrokeScale * 1.5, phase));
+    return wave + chop > 1.35 ? FirstEdgeSlot + 1.0 : FirstEdgeSlot;
+}
+
 float ChooseSlot(float2 cell, float luma)
 {
     float4 mask = Fetch(_MaskTex, CellUv(cell));
@@ -90,9 +101,13 @@ float ChooseSlot(float2 cell, float luma)
     {
         return 0.0;
     }
-    if (mask.r > 0.5)
+    if (mask.r > 0.75)
     {
-        return StrokeSlot(cell);
+        return WindSlot(cell);
+    }
+    if (mask.r > 0.25)
+    {
+        return WaterSlot(cell);
     }
     float gx = (CellLuma(cell + float2(1.0, 0.0)) - CellLuma(cell - float2(1.0, 0.0))) * 0.5;
     float gy = (CellLuma(cell + float2(0.0, 1.0)) - CellLuma(cell - float2(0.0, 1.0))) * 0.5;

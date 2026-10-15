@@ -42,23 +42,35 @@ namespace Mortar.Unity.Tests
         }
 
         [Test]
-        public void TownGrassAndWaterUseTheStrokeTilemap()
+        public void TownGrassAndWaterUseSeparateStrokeTilemaps()
         {
             var world = TestContent.NewSession().World;
 
             Show(world);
 
             var cells = world.Level.Layout.Cells;
-            var expected = 0;
+            var grass = 0;
+            var water = 0;
             for (var y = 0; y < cells.Height; y++)
             {
                 for (var x = 0; x < cells.Width; x++)
                 {
-                    if (LevelView.IsStroke(cells.GroundAt(x, y))) expected++;
+                    var ground = cells.GroundAt(x, y);
+                    if (LevelView.IsGrass(ground))
+                    {
+                        grass++;
+                    }
+                    if (LevelView.IsWater(ground))
+                    {
+                        water++;
+                    }
                 }
             }
-            Assert.Greater(expected, 0, "the town should have grass or water");
-            Assert.AreEqual(expected, _view.StrokeTileCount);
+            Assert.Greater(grass, 0, "the town should have grass");
+            Assert.Greater(water, 0, "the town should have water");
+            Assert.AreEqual(grass, _view.GrassTileCount);
+            Assert.AreEqual(water, _view.WaterTileCount);
+            Assert.AreEqual(grass + water, _view.StrokeTileCount);
             Assert.AreEqual(NonVoidCells(world.Level), _view.TileCount);
         }
 

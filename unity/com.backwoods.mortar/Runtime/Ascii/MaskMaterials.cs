@@ -20,6 +20,22 @@ namespace Mortar.Unity
             }
         }
 
+        public const string WaterShaderPath = "Mortar/WaterSprite";
+
+        private static Material? _water;
+
+        public static Material? Water
+        {
+            get
+            {
+                if (_water == null)
+                {
+                    _water = Create(WaterShaderPath);
+                }
+                return _water;
+            }
+        }
+
         public const string GlowShaderPath = "Mortar/GlowSprite";
 
         private static Material? _glow;
