@@ -1,4 +1,7 @@
+using System.Linq;
+using Mortar.Game.Commands;
 using Mortar.Game.Content;
+using Mortar.Game.Items;
 using Mortar.Game.Simulation;
 using NUnit.Framework;
 using UnityEngine;
@@ -99,6 +102,37 @@ namespace Mortar.Unity.Tests
             _app.TogglePause();
             Assert.IsFalse(_app.Game.Paused);
             Assert.IsFalse(_app.Menus.AnyOpen);
+        }
+
+        [Test]
+        public void LoadWithoutASaveReportsOnThePauseMenu()
+        {
+            _app.StartNewGame();
+            _app.TogglePause();
+
+            _app.ContinueGame();
+
+            Assert.IsTrue(_app.Menus.IsPauseOpen);
+            Assert.AreEqual("No saved game", _app.Menus.PauseMessage);
+            Assert.IsTrue(_app.Game.Paused);
+        }
+
+        [Test]
+        public void WorldClickDropsTheHeldItem()
+        {
+            _app.StartNewGame();
+            _app.Game.Enqueue(new UnequipCommand(EquipmentSlot.Weapon));
+            _app.Game.RunTick();
+            var inventory = World.Belongings.Inventory;
+            var stored = inventory.Items[0];
+            _app.Inventory.Open();
+            _app.Inventory.Cursor.ClickBag(stored.Cell, inventory);
+
+            Assert.IsTrue(_app.Controls.InterceptWorldClick());
+            _app.Game.RunTick();
+
+            Assert.IsNull(inventory.Find(stored.Item.Id));
+            Assert.IsTrue(World.Level.GroundItems.Any(ground => ground.Item != null && ground.Item.Id == stored.Item.Id));
         }
 
         [Test]

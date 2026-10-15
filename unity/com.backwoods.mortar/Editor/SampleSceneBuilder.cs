@@ -1,3 +1,4 @@
+using System;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -10,13 +11,21 @@ namespace Mortar.Unity.EditorTools
         public const string ScenePath = "Assets/Scenes/Game.unity";
         public const string PanelSettingsPath = "Assets/Settings/MortarPanelSettings.asset";
         public const string ThemePath = "Packages/com.backwoods.mortar/Runtime/UI/MortarTheme.tss";
+        public const string DefaultThemeFolder = "Assets/UI Toolkit";
+        public const string DefaultThemeSubfolder = DefaultThemeFolder + "/UnityThemes";
+        public const string DefaultThemePath = DefaultThemeSubfolder + "/UnityDefaultRuntimeTheme.tss";
 
         [MenuItem("Mortar/Build Sample Scene")]
         public static void Build()
         {
-            var catalog = SpriteCatalogBuilder.Rebuild();
-            var settings = PanelSettingsAsset();
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            SpriteCatalogBuilder.Rebuild();
+            var catalog = AssetDatabase.LoadAssetAtPath<SpriteCatalog>(SpriteCatalogBuilder.CatalogPath);
+            var settings = PanelSettingsAsset();
+            if (catalog == null || settings == null)
+            {
+                throw new InvalidOperationException($"[Mortar] Sample scene needs {SpriteCatalogBuilder.CatalogPath} and {PanelSettingsPath}");
+            }
             var app = new GameObject("Mortar").AddComponent<MortarApp>();
             var serialized = new SerializedObject(app);
             serialized.FindProperty("_catalog").objectReferenceValue = catalog;
@@ -26,6 +35,7 @@ namespace Mortar.Unity.EditorTools
             EditorSceneManager.SaveScene(scene, ScenePath);
             EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(ScenePath, true) };
             AssetDatabase.SaveAssets();
+            DeleteDefaultTheme();
             Debug.Log($"[Mortar] Sample scene written to {ScenePath}");
         }
 
@@ -41,6 +51,21 @@ namespace Mortar.Unity.EditorTools
             settings.themeStyleSheet = AssetDatabase.LoadAssetAtPath<ThemeStyleSheet>(ThemePath);
             EditorUtility.SetDirty(settings);
             return settings;
+        }
+
+        private static void DeleteDefaultTheme()
+        {
+            AssetDatabase.DeleteAsset(DefaultThemePath);
+            DeleteIfEmpty(DefaultThemeSubfolder);
+            DeleteIfEmpty(DefaultThemeFolder);
+        }
+
+        private static void DeleteIfEmpty(string folder)
+        {
+            if (AssetDatabase.IsValidFolder(folder) && AssetDatabase.FindAssets("", new[] { folder }).Length == 0)
+            {
+                AssetDatabase.DeleteAsset(folder);
+            }
         }
     }
 }

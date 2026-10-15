@@ -65,7 +65,7 @@ namespace Mortar.Unity
         {
             if (Content == null || Game.Slot == null || !CanContinue)
             {
-                Menus.ShowMain(LoadError ?? "No saved game", CanContinue);
+                ReportFailure(LoadError ?? "No saved game");
                 return;
             }
             var session = GameSession.Load(Content, Game.Slot, out var error);
@@ -168,13 +168,30 @@ namespace Mortar.Unity
         {
             if (session == null)
             {
-                Menus.ShowMain(error, CanContinue);
+                ReportFailure(error);
                 return;
             }
             Menus.HideAll();
             CloseScreens();
             Hud.Show(true);
             Game.Begin(session);
+        }
+
+        private void ReportFailure(string? message)
+        {
+            var session = Game.Session;
+            if (session != null && !session.World.IsGameOver)
+            {
+                Game.Paused = true;
+                CloseScreens();
+                Menus.ShowPause(message);
+                return;
+            }
+            if (session != null)
+            {
+                QuitToMenu();
+            }
+            Menus.ShowMain(message, CanContinue);
         }
 
         private void OnMenuRequested()

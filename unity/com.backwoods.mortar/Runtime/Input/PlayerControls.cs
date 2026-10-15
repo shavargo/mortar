@@ -74,7 +74,11 @@ namespace Mortar.Unity
             return action.Value.Kind;
         }
 
-        public Cell? CellUnderPointer() => CellUnder(_point.ReadValue<Vector2>());
+        public Cell? CellUnderPointer()
+        {
+            var screen = _point.ReadValue<Vector2>();
+            return IsOverUi(screen) ? null : CellUnder(screen);
+        }
 
         private void Awake()
         {
