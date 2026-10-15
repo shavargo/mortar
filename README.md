@@ -44,6 +44,10 @@ if (result.Succeeded)
 
 `Mortar.Core` and `Mortar.Json` target .NET Standard 2.1, so they also run inside Unity.
 
+## Unity
+
+`unity/com.backwoods.mortar` is a Unity 6 package that renders and controls the `Mortar.Game` simulation, and `unity/Mortar.Sample` is a playable project built on it. See `docs/unity.md` for setup, syncing the simulation into Unity, running the Unity tests, and the controls.
+
 ## Repository layout
 
 | Path | Purpose |

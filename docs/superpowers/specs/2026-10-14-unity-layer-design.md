@@ -36,7 +36,7 @@ unity/
   com.backwoods.mortar/          UPM package
     package.json                 unity 6000.3
     Plugins/                     Mortar.*.dll + needed dependency DLLs (gitignored)
-    Runtime/                     Mortar.Unity assembly (+ UI/ UXML and USS)
+    Runtime/                     Mortar.Unity assembly (UI built in C#, one theme file)
     Editor/                      Mortar.Unity.Editor assembly (catalog builder)
     Tests/Editor/                edit-mode tests
     Tests/Runtime/               play-mode tests
@@ -113,14 +113,15 @@ Plain C# helpers keep MonoBehaviours thin and testable: `IsoMath`
   walk bobs, attack lunges toward the target, hit flashes red, death tips over
   and darkens and stays as a corpse, idle is static.
 - Ground items: the icon at half scale on the floor, name on hover.
-- Markers: stairs sprites for entrance and exit; static NPC stills at the town
+- Markers: stairs down at the exit, stairs up at the entrance only when a
+  level exists above (the town entrance is not stairs); static NPC stills at the town
   smith, healer and sage markers (decorative until vendors exist).
 - Camera: orthographic, follows the player's interpolated position at a fixed
   zoom.
 
 ## UI and input
 
-Input System actions asset:
+Input System actions created in code (no actions asset):
 
 - Left click resolves the cell under the cursor in priority order: living
   monster → `AttackCommand`; ground item → `PickUpCommand`; stairs → walk next
@@ -149,9 +150,11 @@ UI Toolkit, built in C# with one theme file:
   environment at `tools/art/.venv` (gitignored).
 - `prompts.json` (committed): a shared style prefix and entries for tiles
   (tileset, ground type, variant count), actors (`spriteSet`, including town
-  NPCs and stairs props) and icons (`iconId`). Each entry records its seed so
-  rerolls are reproducible. Prompts never name protected games or styles.
-- `generate.py --kind tiles|actors|icons [--only <id>] [--reroll]` calls
+  NPCs and stairs props) and icons (`iconId`). Each entry's seed is only a
+  reroll counter: FLUX-1 schnell on Workers AI rejects a `seed` input, so
+  output is not reproducible. Prompts never name protected games or styles.
+- `generate.py [--kind all|tiles|actors|icons] [--only <entry>] [--reroll]
+  [--force] [--reprocess] [--sheet]` calls
   `@cf/black-forest-labs/flux-1-schnell`, saves raw images to
   `tools/art/out/raw/` (gitignored), then post-processes:
   - tiles: make seamless, project into 64×32 diamonds; walls and trees become

@@ -52,6 +52,8 @@ pwsh -File tools/unity/run-method.ps1 -Method Mortar.Unity.EditorTools.SampleSce
 
 In the inventory, left-click an item to hold it and left-click a bag cell, equipment slot, or belt slot to place it. Left-click the world to drop it. Right-click equips, unequips, or belts a potion.
 
+The game saves to `saves/slot1.json` under `Application.persistentDataPath` on every level change and from the pause menu.
+
 ## Placeholder art
 
 `tools/art` generates the placeholder sprites with Cloudflare Workers AI (FLUX-1 schnell) and Pillow.
