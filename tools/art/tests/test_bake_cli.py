@@ -72,8 +72,21 @@ def test_one_failure_does_not_stop_the_others(cli, capsys):
     assert "smith: no clip named 'Idle'" in capsys.readouterr().err
 
 
-def test_rehash_records_hashes_and_bakes_nothing(cli, monkeypatch):
+def test_rehash_records_hashes_and_bakes_nothing(cli, monkeypatch, capsys):
     monkeypatch.setattr(bake.actors, "record_hashes", lambda: 3)
 
     assert bake.main(["--rehash"]) == 0
     assert cli["baked"] == []
+    assert "Recorded 3 file hashes" in capsys.readouterr().out
+
+
+def test_an_actor_without_its_json_sidecar_is_not_baked(monkeypatch, tmp_path):
+    actor = actors.parse_manifest(DATA).actors["smith"]
+    folder = tmp_path / "actors" / "smith"
+    folder.mkdir(parents=True)
+    (folder / "idle.png").write_bytes(b"")
+    monkeypatch.setattr(bake, "ART_ROOT", tmp_path)
+
+    assert not bake.is_baked(actor)
+    (folder / "idle.json").write_text("{}", encoding="utf-8")
+    assert bake.is_baked(actor)

@@ -31,7 +31,7 @@ def main() -> None:
             list_files(job["files"])
         else:
             bake(job)
-    except (BakeFailure, ValueError) as failure:
+    except (BakeFailure, ValueError, RuntimeError, KeyError) as failure:
         print(f"[BAKE-ERROR] {failure}", flush=True)
         sys.exit(2)
 

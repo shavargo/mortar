@@ -20,7 +20,8 @@ REVIEW_PATH = REPO_ROOT / "tools" / "art" / "out" / "sheets" / "actors-baked.png
 def parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--only", help="bake one actor id, e.g. warrior")
-    parser.add_argument("--force", action="store_true", help="re-bake actors whose sheets already exist")
+    parser.add_argument("--force", action="store_true",
+                        help="re-bake actors whose sheets already exist (needed after editing actors.json)")
     parser.add_argument("--sheet", action="store_true", help="write a review contact sheet to tools/art/out/sheets")
     parser.add_argument("--list-clips", nargs="+", metavar="FILE",
                         help="print the clips and objects in files under tools/art/models")
@@ -43,7 +44,7 @@ def main(argv: list[str] | None = None) -> int:
         failures = bake_all(manifest, selected, args.force)
         if args.sheet:
             write_review(selected)
-    except (actors.ManifestError, BlenderError, bake_runner.BakeError) as error:
+    except (actors.ManifestError, BlenderError, bake_runner.BakeError, OSError) as error:
         print(f"[ERROR] {error}", file=sys.stderr)
         return 1
     return 1 if failures else 0
@@ -58,7 +59,10 @@ def select(manifest: actors.Manifest, only: str | None) -> list[actors.ActorSpec
 
 
 def is_baked(actor: actors.ActorSpec) -> bool:
-    return all((ART_ROOT / "actors" / actor.id / f"{name}.png").is_file() for name in actor.wanted)
+    folder = ART_ROOT / "actors" / actor.id
+    return all(
+        (folder / f"{name}{suffix}").is_file() for name in actor.wanted for suffix in (".png", ".json")
+    )
 
 
 def bake_all(manifest: actors.Manifest, selected: list[actors.ActorSpec], force: bool) -> list[str]:
