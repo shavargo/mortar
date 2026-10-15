@@ -52,6 +52,34 @@ namespace Mortar.Unity.Tests
         }
 
         [Test]
+        public void PendingStairsDoNotCarryIntoTheNextSession()
+        {
+            var folder = TestPaths.FreshSaveFolder();
+            try
+            {
+                Journeys.WalkNextTo(_game, MarkerKinds.Exit);
+                var slot = new SaveSlot(folder);
+                Assert.IsNull(slot.Write(World));
+                Assert.AreEqual(ClickKind.Stairs, _input.Click(Journeys.MarkerCell(World, MarkerKinds.Exit)));
+
+                var loaded = GameSession.Load(TestContent.Content, slot, out var error);
+                Assert.IsNotNull(loaded, error);
+                _game.Begin(loaded!);
+                Assert.IsFalse(_input.HasPendingStairs);
+                for (var i = 0; i < 5; i++)
+                {
+                    _game.RunTick();
+                }
+
+                Assert.AreEqual(0, World.Depth);
+            }
+            finally
+            {
+                TestPaths.Delete(folder);
+            }
+        }
+
+        [Test]
         public void ClickingAWallDoesNothing()
         {
             var wall = FindWall(World);

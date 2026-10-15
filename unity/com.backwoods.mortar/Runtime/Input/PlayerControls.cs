@@ -24,6 +24,7 @@ namespace Mortar.Unity
         private InputAction _menu = null!;
         private bool _holdingMove;
         private int _framesSinceMove;
+        private Cell? _pendingStairs;
 
         public event Action? InventoryToggled;
 
@@ -35,7 +36,7 @@ namespace Mortar.Unity
 
         public Func<bool> InterceptWorldClick { get; set; } = () => false;
 
-        public bool HasPendingStairs { get; private set; }
+        public bool HasPendingStairs => _pendingStairs.HasValue;
 
         public static PlayerControls Create(Transform parent, MortarGame game, Func<CellSpace?> space, Camera? camera)
         {
@@ -46,13 +47,14 @@ namespace Mortar.Unity
             input._space = space;
             input._camera = camera;
             game.Ticked += input.OnTicked;
+            game.SessionStarted += input.OnSessionStarted;
             return input;
         }
 
         public ClickKind? Click(Cell cell)
         {
             var session = _game.Session;
-            HasPendingStairs = false;
+            _pendingStairs = null;
             if (session == null)
             {
                 return null;
@@ -64,7 +66,7 @@ namespace Mortar.Unity
             }
             if (action.Value.Kind == ClickKind.Stairs)
             {
-                HasPendingStairs = true;
+                _pendingStairs = cell;
                 _game.Enqueue(new MoveCommand(cell));
             }
             else
@@ -127,6 +129,7 @@ namespace Mortar.Unity
             if (_game != null)
             {
                 _game.Ticked -= OnTicked;
+                _game.SessionStarted -= OnSessionStarted;
             }
             foreach (var action in Actions())
             {
@@ -196,15 +199,22 @@ namespace Mortar.Unity
         private void OnTicked(IReadOnlyList<GameEvent> events)
         {
             var session = _game.Session;
-            if (!HasPendingStairs || session == null || !StairsWalk.IsSettled(session.World.Player))
+            if (!_pendingStairs.HasValue || session == null || !StairsWalk.IsSettled(session.World.Player))
             {
                 return;
             }
-            HasPendingStairs = false;
-            if (StairsWalk.IsNextToStairs(session.World))
+            var stairs = _pendingStairs.Value;
+            _pendingStairs = null;
+            if (StairsWalk.IsWithinReach(session.World.Player, stairs))
             {
                 _game.Enqueue(new UseStairsCommand());
             }
+        }
+
+        private void OnSessionStarted(GameSession session)
+        {
+            _pendingStairs = null;
+            _holdingMove = false;
         }
 
         private Cell? CellUnder(Vector2 screen)
