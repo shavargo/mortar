@@ -9,6 +9,7 @@ namespace Mortar.Unity
     {
         public const float FlashSeconds = 0.15f;
         public const float FallSeconds = 0.3f;
+        public const float BodyScale = 0.8f;
 
         private static readonly Color HitColor = new Color(1f, 0.35f, 0.35f);
         private static readonly Color CorpseColor = new Color(0.45f, 0.45f, 0.45f);
@@ -48,6 +49,7 @@ namespace Mortar.Unity
             view._sorting = go.AddComponent<SortingGroup>();
             view._sorting.sortingOrder = LevelView.WorldOrder;
             view._body = SpriteObjects.Create(go.transform, "Body", sprite, 0);
+            view._body.transform.localScale = Vector3.one * BodyScale;
             view._arrow = SpriteObjects.Create(go.transform, "Facing", GeneratedSprites.Arrow, -1);
             view._arrow.color = ArrowColor;
             view.ActorId = actor.Id;

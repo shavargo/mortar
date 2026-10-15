@@ -75,6 +75,19 @@ namespace Mortar.Unity.Tests
         }
 
         [Test]
+        public void ActorBodiesAreScaledDownAboutTheirFeet()
+        {
+            _actors.Sync(World, _space, _catalog);
+            var view = _actors.Find(Actor.PlayerId)!;
+            view.Render(0f, Time.time);
+
+            var body = view.Body;
+            Assert.Less(body.bounds.size.x, body.sprite.bounds.size.x);
+            Assert.AreEqual(ActorView.BodyScale * body.sprite.bounds.size.x, body.bounds.size.x, 1e-4f);
+            Assert.AreEqual(_space.Center(World.Player.Cell), body.transform.position);
+        }
+
+        [Test]
         public void DroppedItemGetsAGroundView()
         {
             var potion = World.Belongings.Belt.Get(0)!;
