@@ -108,5 +108,30 @@ namespace Mortar.Unity.Tests
             StringAssert.Contains("did not load", broken.Problem);
             Assert.AreEqual(255, _scene.Pixel(300, 300).r);
         }
+
+        [Test]
+        public void InTheDarkOnlyTheLightRadiusShowsGlyphs()
+        {
+            _scene.AddCells(0, 0, 200, 60, Color.white);
+            _filter.Ambient = 0f;
+            _filter.Lights.Add(new AsciiLight(Vector3.zero, 2f, 1f));
+
+            _scene.Render();
+
+            Assert.Greater(_scene.LitPixels(100, 30), 0, "the lit centre should draw glyphs");
+            Assert.AreEqual(0, _scene.LitPixels(100, 52), "the light is half as tall as it is wide");
+            Assert.AreEqual(0, _scene.LitPixels(0, 0), "outside the light is blank");
+        }
+
+        [Test]
+        public void FullAmbientLightsEverything()
+        {
+            _scene.AddCells(0, 0, 200, 60, Color.white);
+            _filter.Ambient = 1f;
+
+            _scene.Render();
+
+            Assert.Greater(_scene.LitPixels(1, 1), 0);
+        }
     }
 }

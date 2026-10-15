@@ -6,6 +6,7 @@ namespace Mortar.Unity
     {
         public const int RampWidth = 256;
         public const int EdgeSize = 64;
+        public const int FalloffWidth = 64;
         public const int SlotStep = 255 / (AsciiSettings.Slots - 1);
 
         public static Texture2D Ramp(float darkThreshold)
@@ -29,6 +30,16 @@ namespace Mortar.Unity
                 }
             }
             return Create(EdgeSize, EdgeSize, values, FilterMode.Point, "Mortar Edge Lookup");
+        }
+
+        public static Texture2D Falloff()
+        {
+            var values = new byte[FalloffWidth];
+            for (var i = 0; i < FalloffWidth; i++)
+            {
+                values[i] = (byte)Mathf.RoundToInt(LightFalloff.At((float)i / (FalloffWidth - 1)) * 255f);
+            }
+            return Create(FalloffWidth, 1, values, FilterMode.Bilinear, "Mortar Light Falloff");
         }
 
         public static float Gradient(int texel) => (texel + 0.5f) / EdgeSize * 2f - 1f;

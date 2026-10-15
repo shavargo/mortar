@@ -12,5 +12,7 @@ namespace Mortar.Unity
         public const float Background = 0.04f;
         public const float Normalize = 0.5f;
         public const float Saturation = 0.85f;
+        public const float LightRadiusTiles = 6f;
+        public const float LightInner = 0.55f;
     }
 }

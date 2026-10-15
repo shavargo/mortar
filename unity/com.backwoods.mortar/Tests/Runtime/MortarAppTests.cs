@@ -162,5 +162,22 @@ namespace Mortar.Unity.Tests
             Assert.AreEqual($"Strength: {World.Progress.BaseStats.Strength}", _app.Character.StatText(StatKind.Strength));
             Assert.IsFalse(_app.Character.CanSpend);
         }
+
+        [Test]
+        public void TownIsLitAndDungeonsOnlyAroundThePlayer()
+        {
+            _app.StartNewGame();
+            _app.RefreshFrame();
+
+            Assert.AreEqual(1f, _app.CameraRig.Filter.Ambient);
+            Assert.AreEqual(1, _app.CameraRig.Filter.Lights.Count);
+
+            Journeys.TakeStairsDown(_app.Game);
+            _app.RefreshFrame();
+
+            Assert.AreEqual(0f, _app.CameraRig.Filter.Ambient);
+            Assert.AreEqual(1, _app.CameraRig.Filter.Lights.Count);
+            Assert.AreEqual(PlayerLight.RadiusUnits, _app.CameraRig.Filter.Lights[0].Radius);
+        }
     }
 }

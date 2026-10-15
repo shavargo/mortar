@@ -110,6 +110,7 @@ namespace Mortar.Unity
                 return;
             }
             var world = session.World;
+            PlayerLight.Apply(CameraRig.Filter, world.Depth, PlayerPosition());
             var hovered = Controls.CellUnderPointer();
             var hover = hovered.HasValue ? HoverText.Describe(world, hovered.Value, Controls.MonsterUnderPointer()) : null;
             Hud.Refresh(world, Presenter.Messages.Visible(Time.time), hover);

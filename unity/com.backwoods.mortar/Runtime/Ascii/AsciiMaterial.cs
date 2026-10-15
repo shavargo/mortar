@@ -12,6 +12,7 @@ namespace Mortar.Unity
             material.SetTexture("_GlyphAtlas", atlas);
             material.SetTexture("_RampLut", Own(GlyphLookups.Ramp(AsciiSettings.DarkThreshold), owned));
             material.SetTexture("_EdgeLut", Own(GlyphLookups.Edges(AsciiSettings.EdgeThreshold), owned));
+            material.SetTexture("_FalloffLut", Own(GlyphLookups.Falloff(), owned));
             material.SetFloat("_Background", AsciiSettings.Background);
             material.SetFloat("_Normalize", AsciiSettings.Normalize);
             material.SetFloat("_Saturation", AsciiSettings.Saturation);
