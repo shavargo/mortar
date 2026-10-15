@@ -52,13 +52,13 @@ def test_the_camera_rotation_looks_at_the_origin():
         assert forward[axis] == pytest.approx(-location[axis] / distance)
 
 
-def test_the_camera_frames_one_and_a_half_tiles_high_with_the_pivot_shift():
-    assert geo.ortho_scale() == pytest.approx(1.5 * math.sqrt(2))
-    assert geo.camera_shift() == pytest.approx((0.0, 80 / 192))
+def test_the_camera_keeps_128_pixels_per_tile_with_the_pivot_shift():
+    assert geo.ortho_scale() == pytest.approx(208 / 128 * math.sqrt(2))
+    assert geo.camera_shift() == pytest.approx((0.0, 56 / 208))
 
 
 def test_renders_are_twice_the_frame_size():
-    assert geo.render_size() == (256, 384)
+    assert geo.render_size() == (416, 416)
 
 
 def test_looping_clips_do_not_repeat_their_first_pose():

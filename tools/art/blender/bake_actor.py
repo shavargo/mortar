@@ -17,6 +17,7 @@ from mortar_art import bake_geometry as geo  # noqa: E402
 KEY_LIGHT = ("Key", 4.0, (math.radians(50.0), 0.0, math.radians(10.0)))
 FILL_LIGHT = ("Fill", 1.0, (math.radians(70.0), 0.0, math.radians(200.0)))
 AMBIENT = (0.32, 0.32, 0.36, 1.0)
+IN_PLACE = frozenset({"death"})
 
 
 class BakeFailure(Exception):
@@ -68,6 +69,8 @@ def bake(job: dict) -> None:
         for obj in import_file(path):
             bpy.data.objects.remove(obj, do_unlink=True)
     out = Path(job["out"])
+    bodies = [obj for obj in pivot.children_recursive
+              if obj.type == "MESH" and not obj.hide_render and obj.find_armature() is not None]
     summary = {"directions": job["directions"], "animations": {}}
     for animation, clip_name in job["clips"].items():
         action = find_action(clip_name)
@@ -77,8 +80,13 @@ def bake(job: dict) -> None:
         play(armature, action)
         for direction in job["directions"]:
             pivot.rotation_euler = (0.0, 0.0, math.radians(geo.model_rotation_degrees(direction, job["facing"])))
+            start = None
             for index, seconds in enumerate(times):
-                render_frame(scene, action, seconds, out / animation / str(direction) / f"{index:02d}.png")
+                pose(scene, action, seconds)
+                if animation in IN_PLACE:
+                    start = keep_in_place(pivot, bodies, start)
+                render_frame(scene, out / animation / str(direction) / f"{index:02d}.png")
+            pivot.location = (0.0, 0.0, 0.0)
         hit = geo.hit_frame_index(job["attackHitSeconds"], len(times)) if animation == "attack" else 0
         summary["animations"][animation] = {"frames": len(times), "hitFrame": hit}
     (out / "frames.json").write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
@@ -132,10 +140,38 @@ def play(armature, action) -> None:
         data.action_slot = slot
 
 
-def render_frame(scene, action, seconds: float, path: Path) -> None:
+def pose(scene, action, seconds: float) -> None:
     frame = action.frame_range[0] + seconds * scene_fps()
     whole = math.floor(frame)
     scene.frame_set(whole, subframe=frame - whole)
+
+
+def keep_in_place(pivot, bodies: list, start: tuple | None) -> tuple:
+    pivot.location = (0.0, 0.0, 0.0)
+    bpy.context.view_layer.update()
+    centre = ground_centre(bodies)
+    start = centre if start is None else start
+    pivot.location = (start[0] - centre[0], start[1] - centre[1], 0.0)
+    return start
+
+
+def ground_centre(bodies: list) -> tuple:
+    depsgraph = bpy.context.evaluated_depsgraph_get()
+    xs, ys = [], []
+    for obj in bodies:
+        evaluated = obj.evaluated_get(depsgraph)
+        mesh = evaluated.to_mesh()
+        for vertex in mesh.vertices:
+            point = evaluated.matrix_world @ vertex.co
+            xs.append(point.x)
+            ys.append(point.y)
+        evaluated.to_mesh_clear()
+    if not xs:
+        raise BakeFailure("no visible meshes follow the armature")
+    return (min(xs) + max(xs)) / 2, (min(ys) + max(ys)) / 2
+
+
+def render_frame(scene, path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     scene.render.filepath = str(path)
     bpy.ops.render.render(write_still=True)

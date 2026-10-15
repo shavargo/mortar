@@ -12,12 +12,12 @@ DIRECTION_DELTAS = ((0, 1), (-1, 1), (-1, 0), (-1, -1), (0, -1), (1, -1), (1, 0)
 ANIMATIONS = ("idle", "walk", "attack", "hit", "death")
 LOOPING = frozenset({"idle", "walk"})
 
-FRAME_WIDTH = 128
-FRAME_HEIGHT = 192
+FRAME_WIDTH = 208
+FRAME_HEIGHT = 208
 RENDER_SCALE = 2
 TILE_PIXELS = 128
-PIVOT_X = 64
-PIVOT_FROM_BOTTOM = 16
+PIVOT_X = 104
+PIVOT_FROM_BOTTOM = 48
 SAMPLE_FPS = 10
 
 CAMERA_PITCH_DEGREES = 30.0
