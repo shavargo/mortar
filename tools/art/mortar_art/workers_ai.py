@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import base64
 import binascii
+import http.client
 import json
 import urllib.error
 import urllib.request
@@ -42,18 +43,38 @@ def generate_image(
     timeout: float = 120.0,
     opener: Callable[..., Any] = urllib.request.urlopen,
 ) -> bytes:
-    request = build_request(credentials, model, prompt, seed, steps)
     try:
+        request = build_request(credentials, model, prompt, seed, steps)
         with opener(request, timeout=timeout) as response:
             payload = json.loads(response.read().decode("utf-8"))
     except urllib.error.HTTPError as error:
-        error.close()
-        raise ArtError(f"Workers AI returned HTTP {error.code}") from None
-    except (urllib.error.URLError, OSError) as error:
-        raise ArtError(f"Workers AI request failed ({type(error).__name__})") from None
+        message = f"Workers AI returned HTTP {error.code}" + _redact(_http_error_detail(error), credentials)
+    except (urllib.error.URLError, OSError, http.client.HTTPException) as error:
+        message = f"Workers AI request failed ({type(error).__name__})"
     except json.JSONDecodeError:
-        raise ArtError("Workers AI returned invalid JSON") from None
-    return _decode_image(payload)
+        message = "Workers AI returned invalid JSON"
+    except ValueError as error:
+        message = f"Workers AI request was rejected before sending ({type(error).__name__})"
+    else:
+        return _decode_image(payload)
+    raise ArtError(message) from None
+
+
+def _http_error_detail(error: urllib.error.HTTPError) -> str:
+    try:
+        payload = json.loads(error.read().decode("utf-8"))
+    except (OSError, ValueError, http.client.HTTPException):
+        payload = None
+    finally:
+        error.close()
+    return _first_error(payload)
+
+
+def _redact(text: str, credentials: Credentials) -> str:
+    for secret in (credentials.api_token, credentials.account_id):
+        if secret:
+            text = text.replace(secret, "[redacted]")
+    return text
 
 
 def _decode_image(payload: Any) -> bytes:

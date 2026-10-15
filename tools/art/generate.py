@@ -31,15 +31,10 @@ def parse_args(argv: list[str] | None) -> argparse.Namespace:
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     try:
+        if args.reroll and not args.only:
+            raise jobs.JobError("--reroll needs --only")
         spec = jobs.load_spec()
-        if args.reroll:
-            if not args.only:
-                raise jobs.JobError("--reroll needs --only")
-            jobs.reroll(spec, args.only)
-            jobs.save_spec(spec)
-        selected = jobs.select(jobs.build_jobs(spec, args.kind), args.only)
-        if not selected:
-            raise jobs.JobError("no jobs match")
+        selected = choose_jobs(spec, args)
         if args.reprocess:
             reprocess(selected)
         else:
@@ -50,6 +45,18 @@ def main(argv: list[str] | None = None) -> int:
         print(f"[ERROR] {error}", file=sys.stderr)
         return 1
     return 0
+
+
+def choose_jobs(spec: jobs.Spec, args: argparse.Namespace) -> list[jobs.Job]:
+    selected = jobs.select(jobs.build_jobs(spec, args.kind), args.only)
+    if not selected:
+        raise jobs.JobError("no jobs match")
+    if not args.reroll:
+        return selected
+    entries = {job.entry for job in selected}
+    jobs.reroll(spec, args.only)
+    jobs.save_spec(spec)
+    return [job for job in jobs.build_jobs(spec, args.kind) if job.entry in entries]
 
 
 def generate(selected: list[jobs.Job], spec: jobs.Spec, force: bool) -> None:

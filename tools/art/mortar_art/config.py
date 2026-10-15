@@ -35,8 +35,15 @@ def load_credentials(environ: Mapping[str, str], env_file: Path | None) -> Crede
     values: dict[str, str] = {}
     if env_file is not None and env_file.is_file():
         values.update(parse_env_file(env_file.read_text(encoding="utf-8")))
-    values.update({key: environ[key] for key in REQUIRED_KEYS if environ.get(key)})
+    values.update({key: environ[key].strip() for key in REQUIRED_KEYS if environ.get(key, "").strip()})
     missing = [key for key in REQUIRED_KEYS if not values.get(key)]
     if missing:
         raise ConfigError(f"Missing {', '.join(missing)}; set them in the environment or in .env")
+    malformed = [key for key in REQUIRED_KEYS if not _is_clean(values[key])]
+    if malformed:
+        raise ConfigError(f"{', '.join(malformed)} must not contain whitespace or control characters")
     return Credentials(account_id=values["CF_ACCOUNT_ID"], api_token=values["CF_API_TOKEN"])
+
+
+def _is_clean(value: str) -> bool:
+    return all(character.isprintable() and not character.isspace() for character in value)
