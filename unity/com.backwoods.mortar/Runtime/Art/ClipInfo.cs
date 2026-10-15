@@ -40,12 +40,30 @@ namespace Mortar.Unity
         public static ClipInfo FromJson(string json)
         {
             var info = JsonUtility.FromJson<ClipInfo>(json);
-            if (info == null || info.frames < 1 || (info.directions != 1 && info.directions != 8)
-                || info.fps <= 0f || info.frameWidth < 1 || info.frameHeight < 1)
+            if (info == null || !info.IsValid())
             {
-                throw new FormatException("sprite sheet metadata needs frames >= 1, 1 or 8 directions, fps > 0 and a frame size");
+                throw new FormatException(
+                    "sprite sheet metadata needs frames >= 1, 1 or 8 directions, fps > 0, a frame size, "
+                    + "a hit frame inside the clip and a pivot inside the frame");
             }
             return info;
         }
+
+        public void CheckSheet(int width, int height, string path)
+        {
+            if (width != frames * frameWidth || height != directions * frameHeight)
+            {
+                throw new FormatException(
+                    $"sprite sheet '{path}' is {width}x{height} but its metadata expects "
+                    + $"{frames * frameWidth}x{directions * frameHeight}");
+            }
+        }
+
+        private bool IsValid() =>
+            frames >= 1 && (directions == 1 || directions == 8) && fps > 0f
+            && frameWidth >= 1 && frameHeight >= 1
+            && hitFrame >= 0 && hitFrame < frames
+            && pivotX >= 0 && pivotX <= frameWidth
+            && pivotY >= 0 && pivotY <= frameHeight;
     }
 }

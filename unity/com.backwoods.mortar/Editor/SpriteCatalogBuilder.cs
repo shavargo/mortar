@@ -72,7 +72,9 @@ namespace Mortar.Unity.EditorTools
                 var text = AssetDatabase.LoadAssetAtPath<TextAsset>(jsonPath);
                 if (key != null && sheet != null && text != null)
                 {
-                    clips.Add(new ActorClip(key, sheet, ClipInfo.FromJson(text.text)));
+                    var info = ClipInfo.FromJson(text.text);
+                    info.CheckSheet(sheet.width, sheet.height, sheetPath);
+                    clips.Add(new ActorClip(key, sheet, info));
                 }
             }
             return clips;

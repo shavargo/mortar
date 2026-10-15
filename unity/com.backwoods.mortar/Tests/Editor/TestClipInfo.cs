@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace Mortar.Unity.Tests
 {
     public static class TestClipInfo
@@ -7,7 +9,8 @@ namespace Mortar.Unity.Tests
 
         public static ClipInfo Make(int frames, int directions, int hitFrame = 0, bool loop = false, float fps = 10f) =>
             ClipInfo.FromJson(
-                $"{{\"frames\":{frames},\"directions\":{directions},\"fps\":{fps},\"loop\":{(loop ? "true" : "false")}," +
-                $"\"hitFrame\":{hitFrame},\"frameWidth\":{FrameWidth},\"frameHeight\":{FrameHeight},\"pivotX\":2,\"pivotY\":1}}");
+                $"{{\"frames\":{frames},\"directions\":{directions},\"fps\":{fps.ToString(CultureInfo.InvariantCulture)}," +
+                $"\"loop\":{(loop ? "true" : "false")},\"hitFrame\":{hitFrame},\"frameWidth\":{FrameWidth}," +
+                $"\"frameHeight\":{FrameHeight},\"pivotX\":2,\"pivotY\":1}}");
     }
 }

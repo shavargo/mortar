@@ -64,7 +64,7 @@ namespace Mortar.Unity
             var height = _info.FrameHeight;
             var rect = new Rect(column * width, sheet.height - (row + 1) * height, width, height);
             var pivot = new Vector2((float)_info.PivotX / width, (float)_info.PivotY / height);
-            var sprite = Sprite.Create(sheet, rect, pivot, PixelsPerUnit);
+            var sprite = Sprite.Create(sheet, rect, pivot, PixelsPerUnit, 0, SpriteMeshType.FullRect);
             sprite.name = $"{_key}/{row}/{column}";
             return sprite;
         }
