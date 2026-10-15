@@ -91,6 +91,22 @@ namespace Mortar.Unity.Tests
         }
 
         [Test]
+        public void ArrivingPlayerIsDrawnInFrontOfTheStairs()
+        {
+            _app.StartNewGame();
+
+            Journeys.TakeStairsDown(_app.Game);
+            _app.Actors.RenderNow();
+
+            var player = _app.Actors.Find(Actor.PlayerId)!.GetComponent<SpriteRenderer>();
+            var stairs = _app.Level.Props.First(prop => prop.name == "Prop entrance").GetComponent<SpriteRenderer>();
+            Assert.AreEqual(stairs.sortingLayerID, player.sortingLayerID);
+            Assert.AreEqual(stairs.sortingOrder, player.sortingOrder);
+            var axis = _app.CameraRig.Camera.transparencySortAxis;
+            Assert.Less(Vector3.Dot(player.transform.position, axis), Vector3.Dot(stairs.transform.position, axis));
+        }
+
+        [Test]
         public void TogglePauseShowsAndHidesThePauseMenu()
         {
             _app.StartNewGame();

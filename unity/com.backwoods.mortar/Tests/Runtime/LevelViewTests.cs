@@ -88,7 +88,7 @@ namespace Mortar.Unity.Tests
             Show(world);
 
             var exit = _view.Props.First(prop => prop.name == "Prop exit");
-            var expected = _view.Space.Center(Journeys.MarkerCell(world, MarkerKinds.Exit));
+            var expected = _view.Space.Center(Journeys.MarkerCell(world, MarkerKinds.Exit)) + Vector3.up * MarkerProps.PropLift;
             Assert.AreEqual(expected, exit.transform.position);
         }
 

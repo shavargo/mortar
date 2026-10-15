@@ -8,6 +8,8 @@ namespace Mortar.Unity
 {
     public static class MarkerProps
     {
+        public const float PropLift = 0.01f;
+
         public static string? SpriteFor(string markerKind, bool hasLevelAbove)
         {
             switch (markerKind)
@@ -36,7 +38,7 @@ namespace Mortar.Unity
                     continue;
                 }
                 var prop = SpriteObjects.Create(parent, $"Prop {marker.Kind}", catalog.Actor(spriteId), LevelView.WorldOrder);
-                prop.transform.position = space.Center(new Cell(marker.X, marker.Y));
+                prop.transform.position = space.Center(new Cell(marker.X, marker.Y)) + Vector3.up * PropLift;
                 into.Add(prop.gameObject);
             }
         }
