@@ -3,6 +3,7 @@ using Mortar.Game.Simulation;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
+using UnityEngine.UIElements;
 
 namespace Mortar.Unity.Tests
 {
@@ -76,6 +77,19 @@ namespace Mortar.Unity.Tests
             yield return null;
 
             Assert.IsFalse(_ui.IsPointerOverUi(new Vector2(Screen.width / 2f, Screen.height / 2f)));
+        }
+
+        [UnityTest]
+        public IEnumerator BeltSlotCentreIsUi()
+        {
+            _hud.Refresh(_world, new string[0], null);
+            yield return null;
+
+            var panelSize = RuntimePanelUtils.ScreenToPanel(_ui.Root.panel, new Vector2(Screen.width, Screen.height));
+            var scale = new Vector2(Screen.width / panelSize.x, Screen.height / panelSize.y);
+            var centre = Vector2.Scale(_ui.Root.Q("belt-1").worldBound.center, scale);
+
+            Assert.IsTrue(_ui.IsPointerOverUi(new Vector2(centre.x, Screen.height - centre.y)));
         }
     }
 }
