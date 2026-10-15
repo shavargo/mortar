@@ -57,6 +57,10 @@ namespace Mortar.Unity
             {
                 return;
             }
+            if (_camera != null)
+            {
+                _camera.targetTexture = null;
+            }
             Texture.Release();
             Object.Destroy(Texture);
             Texture = null;
