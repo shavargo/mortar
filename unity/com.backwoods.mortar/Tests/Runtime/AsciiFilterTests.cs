@@ -162,5 +162,36 @@ namespace Mortar.Unity.Tests
 
             Assert.Greater(_scene.LitPixels(1, 1), 0);
         }
+
+        [Test]
+        public void BrightCellsBleedIntoTheirNeighbours()
+        {
+            _scene.AddCells(99, 29, 2, 2, Color.white);
+
+            _scene.Render();
+
+            Assert.Greater(_scene.LitPixels(101, 30), 0, "bloom should light the cell beside a bright one");
+        }
+
+        [Test]
+        public void DimCellsDoNotBloom()
+        {
+            _scene.AddCells(99, 29, 2, 2, new Color(0.5f, 0.5f, 0.5f));
+
+            _scene.Render();
+
+            Assert.AreEqual(0, _scene.LitPixels(101, 30));
+        }
+
+        [Test]
+        public void GlowingSpritesBloomEvenWhenDim()
+        {
+            _scene.AddCells(99, 29, 2, 2, new Color(0.4f, 0.4f, 0.4f), MaskMaterials.Glow);
+
+            _scene.Render();
+
+            Assert.AreEqual(255, _scene.Read(_filter.MaskTexture!)[30 * 200 + 99].g, "glow sprites mark the mask green");
+            Assert.Greater(_scene.LitPixels(101, 30), 0, "glow should light the neighbouring cell");
+        }
     }
 }

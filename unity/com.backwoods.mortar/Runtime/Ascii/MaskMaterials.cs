@@ -20,6 +20,22 @@ namespace Mortar.Unity
             }
         }
 
+        public const string GlowShaderPath = "Mortar/GlowSprite";
+
+        private static Material? _glow;
+
+        public static Material? Glow
+        {
+            get
+            {
+                if (_glow == null)
+                {
+                    _glow = Create(GlowShaderPath);
+                }
+                return _glow;
+            }
+        }
+
         private static Material? Create(string path)
         {
             var shader = Resources.Load<Shader>(path);

@@ -29,6 +29,28 @@ Shader "Hidden/Mortar/Ascii"
             #include "Glyph.cginc"
             ENDCG
         }
+
+        Pass
+        {
+            Name "BloomAcross"
+            CGPROGRAM
+            #pragma vertex vert_img
+            #pragma fragment FragBloomAcross
+            #pragma target 3.0
+            #include "Bloom.cginc"
+            ENDCG
+        }
+
+        Pass
+        {
+            Name "BloomDown"
+            CGPROGRAM
+            #pragma vertex vert_img
+            #pragma fragment FragBloomDown
+            #pragma target 3.0
+            #include "Bloom.cginc"
+            ENDCG
+        }
     }
     Fallback Off
 }

@@ -16,6 +16,9 @@ namespace Mortar.Unity
         public const float LightInner = 0.55f;
         public const float StrokeScale = 0.15f;
         public const float StrokeSpeed = 0.6f;
+        public const float BloomThreshold = 0.6f;
+        public const float BloomStrength = 0.8f;
+        public const float GlowBoost = 1.5f;
     }
 }
 

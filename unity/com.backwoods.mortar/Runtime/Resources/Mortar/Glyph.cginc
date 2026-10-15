@@ -14,6 +14,8 @@ float _Saturation;
 float _DarkThreshold;
 float _StrokeScale;
 float _StrokeSpeed;
+sampler2D _BloomTex;
+float _BloomStrength;
 
 static const float2 CellPixels = float2(6.0, 10.0);
 static const float Slots = 16.0;
@@ -101,7 +103,8 @@ fixed4 FragGlyph(v2f_img i) : SV_Target
 #endif
     float2 pixel = floor(uv * abs(_MainTex_TexelSize.zw));
     float2 cell = floor(pixel / CellPixels);
-    float3 color = Fetch(_CellTex, CellUv(cell)).rgb;
+    float2 cellUv = CellUv(cell);
+    float3 color = saturate(Fetch(_CellTex, cellUv).rgb + Fetch(_BloomTex, cellUv).rgb * _BloomStrength);
     float slot = ChooseSlot(cell, dot(color, Luma));
     float ink = Ink(slot, pixel - cell * CellPixels);
     return fixed4(lerp(_Background.xxx, Tint(color), ink), 1.0);

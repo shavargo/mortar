@@ -11,10 +11,13 @@ namespace Mortar.Unity
 
         private const int DownsamplePass = 0;
         private const int GlyphPass = 1;
+        private const int BloomAcrossPass = 2;
+        private const int BloomDownPass = 3;
 
         private static readonly int CellCountId = Shader.PropertyToID("_CellCount");
         private static readonly int CellTexId = Shader.PropertyToID("_CellTex");
         private static readonly int MaskTexId = Shader.PropertyToID("_MaskTex");
+        private static readonly int BloomTexId = Shader.PropertyToID("_BloomTex");
         private static readonly int AmbientId = Shader.PropertyToID("_Ambient");
         private static readonly int LightCountId = Shader.PropertyToID("_LightCount");
         private static readonly int LightsId = Shader.PropertyToID("_Lights");
@@ -94,9 +97,22 @@ namespace Mortar.Unity
             ApplyLights(_material, source.width, source.height);
             var cells = CellTexture(grid);
             Graphics.Blit(source, cells, _material, DownsamplePass);
+            var bloom = Bloom(_material, cells, grid);
             _material.SetTexture(CellTexId, cells);
+            _material.SetTexture(BloomTexId, bloom);
             Graphics.Blit(source, destination, _material, GlyphPass);
+            RenderTexture.ReleaseTemporary(bloom);
             RenderTexture.ReleaseTemporary(cells);
+        }
+
+        private static RenderTexture Bloom(Material material, RenderTexture cells, CellGrid grid)
+        {
+            var across = CellTexture(grid);
+            var down = CellTexture(grid);
+            Graphics.Blit(cells, across, material, BloomAcrossPass);
+            Graphics.Blit(across, down, material, BloomDownPass);
+            RenderTexture.ReleaseTemporary(across);
+            return down;
         }
 
         private void ApplyLights(Material material, int width, int height)

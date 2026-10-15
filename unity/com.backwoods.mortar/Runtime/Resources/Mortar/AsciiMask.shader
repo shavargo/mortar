@@ -20,6 +20,20 @@ Shader "Hidden/Mortar/AsciiMask"
     }
     SubShader
     {
+        Tags { "RenderType"="MortarGlow" "Queue"="Transparent" }
+        Cull Off ZWrite Off Blend Off
+        Pass
+        {
+            CGPROGRAM
+            #pragma vertex SpriteVert
+            #pragma fragment FragGlow
+            #pragma target 2.0
+            #include "Mask.cginc"
+            ENDCG
+        }
+    }
+    SubShader
+    {
         Tags { "RenderType"="Transparent" "Queue"="Transparent" }
         Cull Off ZWrite Off Blend Off
         Pass

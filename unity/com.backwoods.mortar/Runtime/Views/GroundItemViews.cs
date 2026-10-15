@@ -36,6 +36,11 @@ namespace Mortar.Unity
                 var view = SpriteObjects.Create(transform, $"Ground {ground.Id}", catalog.Icon(icon), LevelView.FloorOrder + 1);
                 view.transform.position = space.Center(ground.Cell);
                 view.transform.localScale = Vector3.one * IconScale;
+                var glow = MaskMaterials.Glow;
+                if (glow != null)
+                {
+                    view.sharedMaterial = glow;
+                }
                 _views.Add(ground.Id, view);
             }
             _stale.Clear();
