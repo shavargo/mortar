@@ -21,7 +21,7 @@ def parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--kind", choices=("all",) + jobs.KINDS, default="all")
     parser.add_argument("--only", help="an entry or key, e.g. actors/warrior or tiles/town/grass")
-    parser.add_argument("--reroll", action="store_true", help="bump the seed of --only and regenerate it")
+    parser.add_argument("--reroll", action="store_true", help="bump the reroll counter of --only and regenerate it")
     parser.add_argument("--force", action="store_true", help="regenerate sprites that already exist")
     parser.add_argument("--reprocess", action="store_true", help="rebuild sprites from saved raw images without calling the API")
     parser.add_argument("--sheet", action="store_true", help="write contact sheets to tools/art/out/sheets")
@@ -67,7 +67,7 @@ def generate(selected: list[jobs.Job], spec: jobs.Spec, force: bool) -> None:
     credentials = load_credentials(os.environ, REPO_ROOT / ".env")
     for index, job in enumerate(pending, 1):
         print(f"[ART] {index}/{len(pending)} {job.key} (seed {job.seed})")
-        data = generate_image(credentials, spec["model"], job.prompt, job.seed, int(spec.get("steps", 8)))
+        data = generate_image(credentials, spec["model"], job.prompt, int(spec.get("steps", 8)))
         job.raw.parent.mkdir(parents=True, exist_ok=True)
         job.raw.write_bytes(data)
         save_sprite(job, Image.open(io.BytesIO(data)))

@@ -22,10 +22,10 @@ class ArtError(Exception):
     pass
 
 
-def build_request(credentials: Credentials, model: str, prompt: str, seed: int, steps: int) -> urllib.request.Request:
+def build_request(credentials: Credentials, model: str, prompt: str, steps: int) -> urllib.request.Request:
     if not 1 <= steps <= MAX_STEPS:
         raise ArtError(f"steps must be between 1 and {MAX_STEPS}")
-    body = json.dumps({"prompt": prompt, "steps": steps, "seed": seed}).encode("utf-8")
+    body = json.dumps({"prompt": prompt, "steps": steps}).encode("utf-8")
     return urllib.request.Request(
         f"{API_BASE}/{credentials.account_id}/ai/run/{model}",
         data=body,
@@ -38,13 +38,12 @@ def generate_image(
     credentials: Credentials,
     model: str,
     prompt: str,
-    seed: int,
     steps: int = MAX_STEPS,
     timeout: float = 120.0,
     opener: Callable[..., Any] = urllib.request.urlopen,
 ) -> bytes:
     try:
-        request = build_request(credentials, model, prompt, seed, steps)
+        request = build_request(credentials, model, prompt, steps)
         with opener(request, timeout=timeout) as response:
             payload = json.loads(response.read().decode("utf-8"))
     except urllib.error.HTTPError as error:

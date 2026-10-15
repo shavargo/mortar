@@ -70,7 +70,7 @@ In the inventory, left-click an item to hold it and left-click a bag cell, equip
    .venv/Scripts/python generate.py --kind all --sheet
    ```
 
-   Existing sprites are skipped unless you pass `--force`. `--only actors/warrior` limits the run to one entry; `--reroll` with `--only` bumps that entry's seed in `prompts.json` and regenerates every variant of the entry, even when `--only` names a single variant. `--reprocess` rebuilds sprites from the raw images in `tools/art/out/raw` without calling the API. Contact sheets go to `tools/art/out/sheets`.
+   Existing sprites are skipped unless you pass `--force`. `--only actors/warrior` limits the run to one entry; `--reroll` with `--only` bumps that entry's seed in `prompts.json` and regenerates every variant of the entry, even when `--only` names a single variant. FLUX-1 schnell on Workers AI rejects a `seed` input, so output is not reproducible; the seed in `prompts.json` is only a counter that records each reroll. `--reprocess` rebuilds sprites from the raw images in `tools/art/out/raw` without calling the API. Contact sheets go to `tools/art/out/sheets`.
 4. In Unity, run `Mortar/Rebuild Sprite Catalog` (or `run-method.ps1 -Method Mortar.Unity.EditorTools.SpriteCatalogBuilder.RebuildFromCommandLine`).
 
 Sprites are stills: one front-facing image per actor, reused for all eight directions with a horizontal flip and a facing arrow. Tiles are seamless textures projected onto 64×32 diamonds, or 64×64 blocks for walls and trees.
