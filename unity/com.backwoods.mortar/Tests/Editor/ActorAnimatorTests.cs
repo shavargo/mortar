@@ -73,11 +73,54 @@ namespace Mortar.Unity.Tests
         }
 
         [Test]
+        public void TheHitClipNeverJumpsBackWhenTheStaggerEnds()
+        {
+            var clips = new ClipSet(new Dictionary<string, ActorClip>
+            {
+                { ClipNames.Idle, Clip(ClipNames.Idle, 4, loop: true) },
+                { ClipNames.Hit, Clip(ClipNames.Hit, 6) },
+            });
+            var staggering = Moment(ActionKind.Recovering, 5, 6, alpha: 0.99f, now: 10.299f);
+            staggering.HitAt = 10f;
+            var recovered = Moment(ActionKind.Idle, now: 10.3f);
+            recovered.HitAt = 10f;
+
+            var before = ActorAnimator.Pick(clips, staggering);
+            var after = ActorAnimator.Pick(clips, recovered);
+
+            Assert.AreEqual(ClipNames.Hit, before.Name);
+            Assert.AreEqual(ClipNames.Hit, after.Name);
+            Assert.GreaterOrEqual(after.Index, before.Index);
+        }
+
+        [Test]
+        public void StaggerWithoutAHitClipShowsIdle()
+        {
+            var idleOnly = new ClipSet(new Dictionary<string, ActorClip> { { ClipNames.Idle, Clip(ClipNames.Idle, 4, loop: true) } });
+
+            Assert.AreEqual(ClipNames.Idle, ActorAnimator.Pick(idleOnly, Moment(ActionKind.Recovering, 3, 6)).Name);
+        }
+
+        [TestCase(0)]
+        [TestCase(8)]
+        public void AttackWithoutAUsableHitTickFollowsProgress(int hitTick)
+        {
+            Assert.AreEqual(1, ActorAnimator.AttackFrame(2f, 8, hitTick, 6, 3));
+        }
+
+        [TestCase(1)]
+        [TestCase(0)]
+        public void AttackWithASingleFrameOrNoneShowsFrameZero(int frames)
+        {
+            Assert.AreEqual(0, ActorAnimator.AttackFrame(5f, 8, 4, frames, 0));
+        }
+
+        [Test]
         public void ARecentHitOverridesWalkingButNotAttacking()
         {
-            var walking = Moment(ActionKind.Moving, 2, 8, now: 10.1f);
+            var walking = Moment(ActionKind.Moving, 2, 8, now: 10.15f);
             walking.HitAt = 10f;
-            var attacking = Moment(ActionKind.Attacking, 1, 10, now: 10.1f);
+            var attacking = Moment(ActionKind.Attacking, 1, 10, now: 10.15f);
             attacking.HitAt = 10f;
 
             AssertFrame(ActorAnimator.Pick(Full(), walking), ClipNames.Hit, 1);

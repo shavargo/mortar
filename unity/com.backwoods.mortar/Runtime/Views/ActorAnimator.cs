@@ -19,9 +19,9 @@ namespace Mortar.Unity
                 return new ClipFrame(ClipNames.Attack, AttackFrame(ticks, moment.Duration, moment.HitTick, attack.Frames, attack.HitFrame));
             }
             var progress = ActorPose.Progress(moment.Elapsed, moment.Duration, moment.Alpha);
-            if (moment.Action == ActionKind.Recovering)
+            if (moment.Action == ActionKind.Recovering && clips.Has(ClipNames.Hit))
             {
-                return new ClipFrame(ClipNames.Hit, ProgressFrame(progress, clips.Get(ClipNames.Hit).Frames));
+                return new ClipFrame(ClipNames.Hit, StaggerFrame(clips.Get(ClipNames.Hit), moment, progress));
             }
             var sinceHit = moment.Now - moment.HitAt;
             if (clips.Has(ClipNames.Hit) && sinceHit >= 0f && sinceHit < clips.Get(ClipNames.Hit).Seconds)
@@ -61,6 +61,14 @@ namespace Mortar.Unity
                 ? ticks / hitTick * hit
                 : hit + (ticks - hitTick) / (attackTicks - hitTick) * (frames - 1 - hit);
             return Mathf.Clamp(Mathf.FloorToInt(position + 1e-4f), 0, frames - 1);
+        }
+
+        private static int StaggerFrame(ActorClip hit, AnimMoment moment, float progress)
+        {
+            var sinceHit = moment.Now - moment.HitAt;
+            return sinceHit >= 0f && sinceHit < hit.Seconds
+                ? OnceFrame(sinceHit, hit.Fps, hit.Frames)
+                : ProgressFrame(progress, hit.Frames);
         }
     }
 }
