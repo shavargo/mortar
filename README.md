@@ -4,6 +4,8 @@ Mortar generates replayable, seed-based levels for action RPGs from hand-made pi
 
 Mortar is free and open source under the MIT license.
 
+This project is built heavily with [Cursor](https://cursor.com) — agents, skills, and specs drive most of the design and implementation work.
+
 ## Status
 
 Version 0.1 generates **indoor** levels by stitching hand-made rooms along a landmark graph. Outdoor generation is planned (see `docs/design.md`).
