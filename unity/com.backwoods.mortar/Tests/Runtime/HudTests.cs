@@ -33,13 +33,14 @@ namespace Mortar.Unity.Tests
         }
 
         [Test]
-        public void OrbsShowLifeAndMana()
+        public void BarsShowLifeAndMana()
         {
             _hud.Refresh(_world, new string[0], null);
 
             var player = _world.Player;
             Assert.AreEqual($"{player.Life}/{player.Profile.MaxLife}", _hud.Life.Text);
             Assert.AreEqual($"{player.Mana}/{player.Profile.MaxMana}", _hud.Mana.Text);
+            Assert.AreEqual(new string('█', TextBar.Cells), _hud.Life.BarText, "a new character starts at full life");
         }
 
         [Test]

@@ -17,8 +17,8 @@ namespace Mortar.Unity
 
         public HudView(UiRoot ui, SpriteCatalog catalog)
         {
-            Life = new Orb("life", new Color(0.65f, 0.08f, 0.08f));
-            Mana = new Orb("mana", new Color(0.12f, 0.2f, 0.7f));
+            Life = new TextBar("life", "HP", new Color(0.85f, 0.15f, 0.15f));
+            Mana = new TextBar("mana", "MP", new Color(0.3f, 0.45f, 1f));
             Belt = new BeltBar(catalog);
             _experienceFill = new VisualElement { pickingMode = PickingMode.Ignore };
             _bar = BuildBottomBar(BuildCenter());
@@ -33,9 +33,9 @@ namespace Mortar.Unity
             ui.Hud.Add(_hover);
         }
 
-        public Orb Life { get; }
+        public TextBar Life { get; }
 
-        public Orb Mana { get; }
+        public TextBar Mana { get; }
 
         public BeltBar Belt { get; }
 
@@ -97,7 +97,7 @@ namespace Mortar.Unity
             track.style.width = ExperienceWidth;
             track.style.height = 6f;
             track.style.marginBottom = 6f;
-            track.style.backgroundColor = new Color(0.1f, 0.1f, 0.1f, 0.9f);
+            track.style.backgroundColor = Ui.SlotColor;
             _experienceFill.style.height = Length.Percent(100f);
             _experienceFill.style.backgroundColor = new Color(0.8f, 0.7f, 0.3f);
             track.Add(_experienceFill);
