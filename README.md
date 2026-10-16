@@ -48,7 +48,7 @@ if (result.Succeeded)
 
 ## Unity
 
-`unity/com.backwoods.mortar` is a Unity 6 package that renders and controls the `Mortar.Game` simulation, and `unity/Mortar.Sample` is a playable project built on it. See `docs/unity.md` for setup, syncing the simulation into Unity, running the Unity tests, and the controls.
+`unity/com.backwoods.mortar` is a Unity 6 package that renders and controls the `Mortar.Game` simulation, and `unity/Mortar.Sample` is a playable project built on it. See `docs/unity.md` for setup, syncing the simulation into Unity, running the Unity tests, and the controls. The look, the glyph tools and the actor bake are described in `docs/art.md`.
 
 ## Repository layout
 

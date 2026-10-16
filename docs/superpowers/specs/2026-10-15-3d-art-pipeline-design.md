@@ -1,5 +1,7 @@
 # 3D art pipeline (actor bake) — design
 
+Amended 2026-10-15: actors are now the source for the ASCII filter (`2026-10-15-ascii-look-design.md`), which supersedes this spec's Tasks 9 and 10 and the values below.
+
 Date: 2026-10-15. The 3D-to-sprite half of the art pipeline described in
 `2026-10-14-arpg-framework-design.md`, brought forward because the AI stills
 are not good enough for actors.
@@ -59,7 +61,7 @@ and the bake refuses a mismatch.
 
 - `model`: path under `tools/art/models/`, plus optional `animations` file
   when clips live in a separate library;
-- `attachments`: model file and bone name, e.g. a sword on the right hand;
+- `hide`: object names to switch off (packs ship accessories already attached to the hands);
 - `scale` and optional `tint` (RGB multiplier);
 - `clips`: our animation name to the source clip name;
 - `attackHitSeconds`: the clip time where the blow lands;
@@ -82,7 +84,7 @@ A pytest check loads the content files and requires an entry for every
 - Scene: orthographic camera at a fixed scale, yawed 45° and pitched 30° down
   so the ground plane projects as 2:1 isometric; one sun key light plus a
   fill, identical for all actors; EEVEE with a transparent film.
-- Frames render at 256×384 and Pillow downsamples 2× to 128×192.
+- Frames render at 208×208 and Pillow downsamples 2× to 104×104 (64 pixels per tile, foot pivot at (52, 24) from the bottom-left). Death is baked in place: the root is held at its first-frame ground position.
 - Directions: the camera stays put and the model turns in 45° steps. Grid
   directions are 45° apart on the ground, so each `Direction` lands where
   `IsoMath.ScreenDirection` points. Row order is the `Direction` enum order
@@ -110,7 +112,7 @@ all directions for review before baked art is committed.
 ## Unity
 
 - `SpriteCatalogBuilder` slices each sheet into frame sprites (foot pivot,
-  128 pixels per unit, point filtering) and stores an `ActorClip` per actor
+  64 pixels per unit, bilinear filtering, compressed (DXT5) readable sheets) and stores an `ActorClip` per actor
   and animation: frames by direction, fps, loop, hit frame.
 - `SpriteCatalog.Clip(spriteSet, anim)` returns the clip or null. Actors
   without clips keep today's still plus bob and lunge, so migration can be
@@ -120,8 +122,7 @@ all directions for review before baked art is committed.
   - walk follows move progress, one cycle per cell;
   - attack is time-warped piecewise so clip frame `hitFrame` shows on the
     tick where `ActionElapsed == HitFrame`, whatever `attackTicks` is;
-  - hit plays once when `Flash` fires, overriding idle or walk but never an
-    attack;
+  - hit plays over the simulation's stagger, or once when `Flash` fires without a stagger, overriding idle or walk but never an attack;
   - death plays once and holds the last frame, replacing the tip-over and
     grey tint; corpse sorting is unchanged.
 - `ActorView` uses `ActorAnimator` when clips exist: real directions replace
