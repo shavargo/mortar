@@ -9,6 +9,13 @@ public static class WorldHash
         var hasher = new StateHasher();
         hasher.Add(world.Seed).Add(world.TickCount).Add((long)world.Depth).Add((long)world.NextActorId).Add((long)world.NextItemId);
         hasher.Add((long)world.NextProjectileId);
+        hasher.Add(world.Portal is not null);
+        if (world.Portal is { } portal)
+        {
+            hasher.Add((long)portal.DungeonDepth);
+            hasher.Add((long)portal.DungeonCell.X).Add((long)portal.DungeonCell.Y);
+            hasher.Add((long)portal.TownCell.X).Add((long)portal.TownCell.Y);
+        }
         hasher.Add(world.Rng.State).Add(world.Rng.Increment);
         AddProgress(hasher, world.Progress);
         AddBelongings(hasher, world.Belongings);

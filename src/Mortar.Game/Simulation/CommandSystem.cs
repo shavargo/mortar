@@ -32,6 +32,8 @@ internal static class CommandSystem
                 return PlayerGrowth.SpendPoint(world, spend.Stat, events);
             case UseStairsCommand _:
                 return Stairs.Use(world, events);
+            case UsePortalCommand _:
+                return PortalSystem.Use(world, events);
             case PickUpCommand pickUp:
                 return PickupSystem.Start(world, pickUp);
             case EquipCommand equip:
@@ -137,6 +139,11 @@ internal static class CommandSystem
             if (world.Belongings.Find(cast.ItemId) is null) return "no such item";
             if (world.Belongings.Find(cast.ItemId)!.Identified) return "item is already identified";
             itemId = cast.ItemId;
+        }
+        if (spell.Id == "town-portal")
+        {
+            if (world.Content.ShallowestLevel > 0) return "there is no town";
+            if (world.Depth <= 0) return "cannot open a portal in town";
         }
         world.Player.SetCastIntent(spell.Id, targetId, aim, fromStaff, itemId);
         return null;

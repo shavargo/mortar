@@ -34,10 +34,10 @@ internal static class TestWorlds
         return result.World ?? throw new InvalidOperationException(result.Error);
     }
 
-    public static World CreateWithTown(ContentSet? content = null)
+    public static World CreateWithTown(ContentSet? content = null, string classId = "warrior")
     {
         var generator = FixedLevelGenerator.WithTown(Town, Room, Room);
-        var result = World.Create(content ?? TestGameContent.Valid(levels: TestGameContent.WithTown()), generator, "warrior", 1);
+        var result = World.Create(content ?? TestGameContent.Valid(levels: TestGameContent.WithTown()), generator, classId, 1);
         return result.World ?? throw new InvalidOperationException(result.Error);
     }
 

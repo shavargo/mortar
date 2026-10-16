@@ -48,6 +48,11 @@ internal static class SpellSystem
             Identify(world, caster, events);
             return;
         }
+        if (spell.Id == "town-portal")
+        {
+            PortalSystem.Open(world, events);
+            return;
+        }
         switch (spell.Shape)
         {
             case SpellShapes.Self:

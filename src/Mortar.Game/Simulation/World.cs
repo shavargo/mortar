@@ -44,6 +44,8 @@ public sealed class World
 
     public bool IsGameOver => Player.IsDead;
 
+    public PortalPair? Portal { get; internal set; }
+
     public IReadOnlyList<int> VisitedDepths => _levels.Keys.OrderBy(depth => depth).ToList();
 
     internal Pcg32 Rng { get; }

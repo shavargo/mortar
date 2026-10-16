@@ -10,7 +10,7 @@ internal static class LevelEntry
         var level = world.FindLevel(depth);
         if (level is null)
         {
-            level = Build(world, depth, out var buildError);
+            level = Ensure(world, depth, out var buildError);
             if (level is null) return buildError;
         }
         var anchor = level.FindMarker(arrivalMarker);
@@ -32,8 +32,14 @@ internal static class LevelEntry
         return null;
     }
 
-    private static LevelState? Build(World world, int depth, out string? error)
+    public static LevelState? Ensure(World world, int depth, out string? error)
     {
+        var existing = world.FindLevel(depth);
+        if (existing is not null)
+        {
+            error = null;
+            return existing;
+        }
         var definition = world.Content.Level(depth);
         var seed = LevelSeeds.For(world.Seed, depth);
         var result = world.Generator.Generate(definition, seed);
