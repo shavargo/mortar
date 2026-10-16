@@ -19,7 +19,9 @@ Each frame the filter:
 
 F9 toggles the filter to show the raw scene; it is a debug key. Tuning values (thresholds,
 light radius, stroke speed, bloom) live in `AsciiSettings`. If a shader or the atlas fails to
-load, the filter logs once and shows the raw scene.
+load, the filter logs once and shows the raw scene. Living walkers also flatten stroke grass
+into lasting trails; that change blocks movement through town NPCs and occupied cells in the
+simulation so trampers stand where they look.
 
 ## Glyph atlas and icons
 

@@ -109,7 +109,16 @@ namespace Mortar.Unity
             _material.SetVector(CellCountId, new Vector4(grid.Columns, grid.Rows, 0f, 0f));
             _material.SetTexture(MaskTexId, _mask.Render(_camera, grid));
             AdvanceTrample(grid);
-            _material.SetTexture(TrampleTexId, (Texture?)_trample?.Texture ?? Texture2D.blackTexture);
+            Texture? trampleTexture = null;
+            if (_trample != null)
+            {
+                trampleTexture = _trample.Texture;
+            }
+            if (trampleTexture == null)
+            {
+                trampleTexture = Texture2D.blackTexture;
+            }
+            _material.SetTexture(TrampleTexId, trampleTexture);
             ApplyLights(_material, source.width, source.height);
             var cells = CellTexture(grid);
             Graphics.Blit(source, cells, _material, DownsamplePass);
