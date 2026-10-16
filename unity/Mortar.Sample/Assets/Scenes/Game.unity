@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &31805430
+--- !u!1 &184082350
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,8 +127,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 31805432}
-  - component: {fileID: 31805431}
+  - component: {fileID: 184082352}
+  - component: {fileID: 184082351}
   m_Layer: 0
   m_Name: Mortar
   m_TagString: Untagged
@@ -136,13 +136,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &31805431
+--- !u!114 &184082351
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 31805430}
+  m_GameObject: {fileID: 184082350}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9ad2051ef645e2042bc9b23f75bfdfb8, type: 3}
@@ -151,13 +151,13 @@ MonoBehaviour:
   _catalog: {fileID: 11400000, guid: 4c34140dd4321bc46944b561c43efdab, type: 2}
   _panelSettings: {fileID: 11400000, guid: 5f13bf28f0676b64fbfee3bb87d0cd34, type: 2}
   _classId: warrior
---- !u!4 &31805432
+--- !u!4 &184082352
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 31805430}
+  m_GameObject: {fileID: 184082350}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -170,4 +170,4 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 31805432}
+  - {fileID: 184082352}

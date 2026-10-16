@@ -37,6 +37,38 @@ MonoBehaviour:
     _sprite: {fileID: 21300000, guid: c997ccff42008e4458e3c0ef461bd363, type: 3}
   - _key: actors/zombie
     _sprite: {fileID: 21300000, guid: 222448bbf39fc374eb4fa2676c9cb479, type: 3}
+  - _key: glyph-icons/banded-buckler
+    _sprite: {fileID: 21300000, guid: 5a54c336979c37946a276cc1172bdf17, type: 3}
+  - _key: glyph-icons/bone-charm
+    _sprite: {fileID: 21300000, guid: 8ce1f235c1115c0428b11ee9ff5e8ea9, type: 3}
+  - _key: glyph-icons/broad-blade
+    _sprite: {fileID: 21300000, guid: b4000149972d73e49b669497cc99de21, type: 3}
+  - _key: glyph-icons/copper-band
+    _sprite: {fileID: 21300000, guid: 299cfbdc84e739a41b5829d8f1bf8737, type: 3}
+  - _key: glyph-icons/cudgel
+    _sprite: {fileID: 21300000, guid: c06733f3e93f35940a90a86930e64e77, type: 3}
+  - _key: glyph-icons/gold
+    _sprite: {fileID: 21300000, guid: f7d0b3da442ab4f429b513dd2446f953, type: 3}
+  - _key: glyph-icons/hatchet
+    _sprite: {fileID: 21300000, guid: 87d213139f91b7047a159dad83b9a72e, type: 3}
+  - _key: glyph-icons/healing-draught
+    _sprite: {fileID: 21300000, guid: d56ef2af9dc15254486c6af9723b4ce4, type: 3}
+  - _key: glyph-icons/iron-knife
+    _sprite: {fileID: 21300000, guid: 786e4903dde7f3c41881275b81e2110e, type: 3}
+  - _key: glyph-icons/iron-pot-helm
+    _sprite: {fileID: 21300000, guid: 747ae004e2caf9d4bab79235f3826bc6, type: 3}
+  - _key: glyph-icons/leather-hood
+    _sprite: {fileID: 21300000, guid: daa949a68bf1fda4eb21114353eab4ca, type: 3}
+  - _key: glyph-icons/mana-draught
+    _sprite: {fileID: 21300000, guid: 26257b340abd57f4cb7cc93226d66420, type: 3}
+  - _key: glyph-icons/padded-vest
+    _sprite: {fileID: 21300000, guid: e4130d1fb5e88814fbcdd5e8a1534664, type: 3}
+  - _key: glyph-icons/plank-shield
+    _sprite: {fileID: 21300000, guid: 62d9817726d09ee4e9060f29c8904221, type: 3}
+  - _key: glyph-icons/ring-hauberk
+    _sprite: {fileID: 21300000, guid: 4d5348c8229c3ef438e5951896cc6bed, type: 3}
+  - _key: glyph-icons/studded-jerkin
+    _sprite: {fileID: 21300000, guid: 3823eda2bcdefb24b96d620214577be4, type: 3}
   - _key: icons/banded-buckler
     _sprite: {fileID: 21300000, guid: f1175b2abeaf3494f846c3af1033e757, type: 3}
   - _key: icons/bone-charm
