@@ -24,7 +24,6 @@ namespace Mortar.Unity
         {
             var label = Ui.Text(text, 16);
             label.style.color = color;
-            label.style.unityFontStyleAndWeight = FontStyle.Bold;
             label.style.position = Position.Absolute;
             _layer.Add(label);
             _entries.Add(new Entry(label, world, now));

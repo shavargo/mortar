@@ -30,7 +30,7 @@ namespace Mortar.Unity
             Equipment.SlotHovered += slot => _tooltip.Show(slot.HasValue ? Gear?.Equipment.Get(slot.Value) : null);
             _gold = Ui.Text("", 14);
             _grid = BuildGrid();
-            _panel = Ui.Box("inventory");
+            _panel = Ui.Box("inventory", "Inventory");
             Ui.Place(_panel, null, 16f, 16f, null);
             _panel.Add(Equipment.Element);
             _panel.Add(_gold);

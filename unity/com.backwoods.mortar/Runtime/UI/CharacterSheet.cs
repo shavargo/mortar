@@ -21,7 +21,7 @@ namespace Mortar.Unity
         public CharacterSheet(UiRoot ui, MortarGame game)
         {
             _game = game;
-            _panel = Ui.Box("character");
+            _panel = Ui.Box("character", "Character");
             Ui.Place(_panel, 16f, 16f, null, null);
             _panel.style.width = 300f;
             _panel.Add(_header);
@@ -89,6 +89,7 @@ namespace Mortar.Unity
             var plus = new Button(() => _game.Enqueue(new SpendStatPointCommand(kind))) { text = "+" };
             plus.style.minWidth = 44f;
             plus.style.minHeight = 44f;
+            Ui.Flat(plus);
             Ui.Show(plus, false);
             _plus[kind] = plus;
             row.Add(plus);

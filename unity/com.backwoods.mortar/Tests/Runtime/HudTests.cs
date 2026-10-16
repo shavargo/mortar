@@ -70,6 +70,21 @@ namespace Mortar.Unity.Tests
             Assert.AreEqual(0, texts.Count);
         }
 
+        [Test]
+        public void TheInterfaceUsesTheMonospaceFont()
+        {
+            Assert.IsNotNull(_ui.Root.style.unityFontDefinition.value.font);
+        }
+
+        [Test]
+        public void FloatingTextsAreNotBold()
+        {
+            var texts = new FloatingTexts(_ui.Overlay);
+            texts.Spawn("12", Vector3.zero, Color.white, 0f);
+
+            Assert.AreNotEqual(FontStyle.Bold, _ui.Overlay.Q<Label>().style.unityFontStyleAndWeight.value);
+        }
+
         [UnityTest]
         public IEnumerator EmptyScreenCenterIsNotUi()
         {

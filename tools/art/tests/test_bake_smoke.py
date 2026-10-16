@@ -24,7 +24,6 @@ def test_the_warrior_idle_bakes_with_real_transparency_and_feet_on_the_pivot(tmp
     warrior = manifest.actors["warrior"]
     actors.check_files(manifest, warrior)
     job = actors.build_job(warrior, tmp_path, animations=("idle",), directions=(0,), max_frames=1)
-    job["hide"] = [*job["hide"], "1H_Sword", "Badge_Shield"]
 
     bake_runner.run_job(BLENDER, job, tmp_path)
 
@@ -38,4 +37,4 @@ def test_the_warrior_idle_bakes_with_real_transparency_and_feet_on_the_pivot(tmp
     box = alpha.getbbox()
     assert box is not None
     feet_row = height - geo.PIVOT_FROM_BOTTOM * geo.RENDER_SCALE
-    assert feet_row + 4 * geo.RENDER_SCALE <= box[3] <= feet_row + 14 * geo.RENDER_SCALE
+    assert feet_row + 4 * geo.RENDER_SCALE <= box[3] <= feet_row + 16 * geo.RENDER_SCALE

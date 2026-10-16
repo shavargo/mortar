@@ -54,6 +54,7 @@ namespace Mortar.Unity
 
         private void BuildLayers()
         {
+            Ui.ApplyFont(Root);
             Root.pickingMode = PickingMode.Ignore;
             Overlay = Layer("overlay");
             Hud = Layer("hud");

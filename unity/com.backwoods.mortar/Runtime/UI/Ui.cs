@@ -6,19 +6,44 @@ namespace Mortar.Unity
 {
     public static class Ui
     {
-        public static readonly Color PanelColor = new Color(0.08f, 0.07f, 0.06f, 0.94f);
-        public static readonly Color BorderColor = new Color(0.45f, 0.36f, 0.22f);
-        public static readonly Color TextColor = new Color(0.9f, 0.86f, 0.76f);
+        public const string FontPath = "Mortar/DejaVuSansMono";
+
+        public static readonly Color PanelColor = new Color(0.02f, 0.02f, 0.02f, 0.92f);
+        public static readonly Color TitleBackground = new Color(0.02f, 0.02f, 0.02f, 1f);
+        public static readonly Color BorderColor = new Color(0.62f, 0.62f, 0.6f);
+        public static readonly Color TextColor = new Color(0.86f, 0.86f, 0.82f);
         public static readonly Color MagicColor = new Color(0.45f, 0.6f, 1f);
         public static readonly Color HeldColor = new Color(0.95f, 0.8f, 0.3f);
-        public static readonly Color SlotColor = new Color(0.14f, 0.12f, 0.1f, 0.95f);
+        public static readonly Color SlotColor = new Color(0.06f, 0.06f, 0.06f, 0.95f);
+        public static readonly Color EmptyBarColor = new Color(0.3f, 0.3f, 0.3f);
 
-        public static VisualElement Box(string name)
+        public static bool ApplyFont(VisualElement root)
+        {
+            var font = Resources.Load<Font>(FontPath);
+            if (font == null)
+            {
+                Debug.LogWarning($"Mortar: interface font '{FontPath}' did not load; using the default font");
+                return false;
+            }
+            root.style.unityFontDefinition = FontDefinition.FromFont(font);
+            return true;
+        }
+
+        public static VisualElement Box(string name, string? title = null)
         {
             var box = new VisualElement { name = name };
             box.style.backgroundColor = PanelColor;
-            Border(box, 2f, BorderColor);
+            Border(box, 1f, BorderColor);
             Padding(box, 10f);
+            if (title != null)
+            {
+                var label = Text($"┤ {title} ├", 14);
+                label.name = "title";
+                label.style.backgroundColor = TitleBackground;
+                Place(label, 12f, -10f, null, null);
+                box.style.paddingTop = 16f;
+                box.Add(label);
+            }
             return box;
         }
 
@@ -38,7 +63,16 @@ namespace Mortar.Unity
             button.style.fontSize = 16;
             button.style.marginTop = 4f;
             button.style.marginBottom = 4f;
+            Flat(button);
             return button;
+        }
+
+        public static void Flat(Button button)
+        {
+            button.style.color = TextColor;
+            button.style.backgroundColor = SlotColor;
+            Border(button, 1f, BorderColor);
+            Radius(button, 0f);
         }
 
         public static Image Icon(Sprite? sprite, float size)
