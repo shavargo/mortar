@@ -6,6 +6,7 @@ namespace Mortar.Unity
     {
         public const string ShaderPath = "Mortar/Ascii";
         public const string MaskShaderPath = "Mortar/AsciiMask";
+        public const string TrampleShaderPath = "Mortar/AsciiTrample";
         public const string AtlasPath = "Mortar/GlyphAtlas";
 
         public AsciiResources(Shader? shader, Shader? maskShader, Texture2D? atlas)

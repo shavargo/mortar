@@ -22,7 +22,8 @@ docs.
 
 Out: a player-facing setting for the filter or cell size; extra light sources
 beyond the player (the hook exists, nothing uses it); a terminal or text-mode
-build; glyph-authored tiles or actors; new gameplay.
+build; glyph-authored tiles or actors; blade-sprite grass or SoftBody; saved
+trample trails; new gameplay.
 
 ## Decisions
 
@@ -51,7 +52,8 @@ project uses Unity's built-in render pipeline, so it runs in `OnRenderImage`.
    - edge glyph: where brightness changes strongly across neighbours, one of
      `- / | \` by edge direction;
    - stroke glyph: cells marked in the stroke mask draw a dash whose angle comes
-     from a scrolling noise field, so grass and water ripple.
+     from a scrolling noise field, so grass and water ripple. Grass strokes also
+     read a trample field (below).
    The glyph is tinted with the cell colour, slightly desaturated, on
    near-black (0.04).
 4. Bloom: bright cells are blurred and added back, so fire, spells and loot
@@ -68,6 +70,14 @@ with the font's licence. The ramp is ordered by measured ink coverage.
 Stroke mask: ground tiles whose type is grass or water are tagged. A second,
 cheap camera pass renders tagged tiles into a one-channel mask texture the
 glyph pass reads; all other cells use brightness and edge glyphs.
+
+Trample field: a persistent cell-resolution buffer that decays over about
+10–15 seconds (half-life ~5s). Each frame soft footprints are stamped at every
+living walker's ground position — the player, living monsters, and standing
+town NPCs. Grass stroke cells blend from windy dashes toward a flat `-` by
+trample amount, so paths stay visibly flattened for a while after someone
+walks through. Water strokes ignore the field. Trails are session-only (not
+saved).
 
 F9 toggles the filter off to show the raw scene, for art tuning. It is a debug
 key, not a player option.
@@ -147,8 +157,8 @@ through the filter.
 - Unity EditMode: brightness-to-glyph lookup, cell-grid maths, light falloff,
   edge threshold, catalog preferring glyph icons.
 - Unity PlayMode: known scenes through the real filter with pixel read-back —
-  black gives blank cells; a bright square gives glyph pixels in its colour; an
-  edge gives a stroke glyph; a stroke-tagged tile appears in the mask; F9
+  black gives blank cells; a bright square gives glyph pixels in its colour; a
+  sharp edge gives an edge glyph; a stroke-tagged tile appears in the mask; F9
   restores the raw image; a failed shader load shows the raw scene. The
   existing art preview capture writes filtered town and dungeon screenshots.
 - Manual: the user plays before each visible phase is committed.

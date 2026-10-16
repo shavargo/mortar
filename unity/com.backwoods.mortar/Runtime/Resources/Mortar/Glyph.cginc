@@ -20,6 +20,7 @@ float _FigureLift;
 float _FigureFloor;
 sampler2D _BloomTex;
 float _BloomStrength;
+sampler2D _TrampleTex;
 
 static const float2 CellPixels = float2(6.0, 10.0);
 static const float Slots = 16.0;
@@ -103,7 +104,9 @@ float ChooseSlot(float2 cell, float luma)
     }
     if (mask.r > 0.75)
     {
-        return WindSlot(cell);
+        float wind = WindSlot(cell);
+        float trample = Fetch(_TrampleTex, CellUv(cell)).r;
+        return lerp(wind, FirstEdgeSlot, saturate(trample * 1.4));
     }
     if (mask.r > 0.25)
     {

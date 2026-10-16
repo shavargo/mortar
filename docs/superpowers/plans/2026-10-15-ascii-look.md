@@ -2911,6 +2911,19 @@ While playing, ask the user to open Window > Analysis > Profiler with the GPU Us
 
 Tune only `AsciiSettings` values (thresholds, light radius, stroke speed, bloom) from the user's feedback; re-run both Unity suites after any change and commit as `tune the ascii look`. Move on when the user approves.
 
+### Task 6b: Trampled stroke grass (controller follow-up)
+
+**Files:**
+- Modify: `docs/superpowers/specs/2026-10-15-ascii-look-design.md` (already amended)
+- Create: `Runtime/Ascii/AsciiTrample.cs`, `Runtime/Ascii/GrassTrampers.cs`, `Runtime/Resources/Mortar/AsciiTrample.shader`, `Trample.cginc`
+- Modify: `AsciiFilter.cs`, `AsciiSettings.cs`, `AsciiMaterial.cs`, `Glyph.cginc`, `Ascii.shader` (if sharing material), `MortarApp.cs`
+- Test: `Tests/Runtime/AsciiFilterTests.cs`
+
+**Interfaces:**
+- Produces: persistent cell-grid trample RT; `AsciiFilter.Tramplers`; decay half-life ~5s; grass `WindSlot` lerps to flat `-` by trample; water unchanged; living actors + town NPC props stamp each frame.
+
+Steps: settings + shader decay/stamp; wire filter; `GrassTrampers.Collect` from actors + NPC props; MortarApp fills list in `RefreshLights`; PlayMode tests (stamp marks field, flatten thins grass ink vs windy, decay clears after long step); commit `trample grass under living walkers`.
+
 ---
 
 ## Phase 3: Actors

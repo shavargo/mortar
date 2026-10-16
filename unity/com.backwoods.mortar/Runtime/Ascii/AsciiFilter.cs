@@ -17,6 +17,7 @@ namespace Mortar.Unity
         private static readonly int CellCountId = Shader.PropertyToID("_CellCount");
         private static readonly int CellTexId = Shader.PropertyToID("_CellTex");
         private static readonly int MaskTexId = Shader.PropertyToID("_MaskTex");
+        private static readonly int TrampleTexId = Shader.PropertyToID("_TrampleTex");
         private static readonly int BloomTexId = Shader.PropertyToID("_BloomTex");
         private static readonly int AmbientId = Shader.PropertyToID("_Ambient");
         private static readonly int LightCountId = Shader.PropertyToID("_LightCount");
@@ -28,6 +29,7 @@ namespace Mortar.Unity
         private Camera _camera = null!;
         private Material? _material;
         private AsciiMask? _mask;
+        private AsciiTrample? _trample;
 
         public bool IsUsable => _material != null;
 
@@ -39,7 +41,13 @@ namespace Mortar.Unity
 
         public List<AsciiLight> Lights { get; } = new List<AsciiLight>();
 
+        public List<Vector3> Tramplers { get; } = new List<Vector3>();
+
+        public float TrampleDeltaSeconds { get; set; } = -1f;
+
         public RenderTexture? MaskTexture => _mask?.Texture;
+
+        public RenderTexture? TrampleTexture => _trample?.Texture;
 
         public static AsciiFilter Attach(Camera camera, AsciiResources resources)
         {
@@ -60,6 +68,11 @@ namespace Mortar.Unity
             }
             _material = AsciiMaterial.Create(resources.Shader!, resources.Atlas!, _owned);
             _mask = new AsciiMask(_camera, resources.MaskShader!);
+            var trampleShader = Resources.Load<Shader>(AsciiResources.TrampleShaderPath);
+            if (trampleShader != null && trampleShader.isSupported)
+            {
+                _trample = new AsciiTrample(trampleShader);
+            }
         }
 
         private void Awake()
@@ -77,6 +90,7 @@ namespace Mortar.Unity
         {
             _toggle.Dispose();
             _mask?.Dispose();
+            _trample?.Dispose();
             foreach (var item in _owned)
             {
                 if (item != null) Destroy(item);
@@ -94,6 +108,8 @@ namespace Mortar.Unity
             var grid = new CellGrid(source.width, source.height);
             _material.SetVector(CellCountId, new Vector4(grid.Columns, grid.Rows, 0f, 0f));
             _material.SetTexture(MaskTexId, _mask.Render(_camera, grid));
+            AdvanceTrample(grid);
+            _material.SetTexture(TrampleTexId, (Texture?)_trample?.Texture ?? Texture2D.blackTexture);
             ApplyLights(_material, source.width, source.height);
             var cells = CellTexture(grid);
             Graphics.Blit(source, cells, _material, DownsamplePass);
@@ -129,6 +145,19 @@ namespace Mortar.Unity
             material.SetFloat(LightCountId, count);
             material.SetVectorArray(LightsId, _lightData);
         }
+
+        private void AdvanceTrample(CellGrid grid)
+        {
+            if (_trample == null)
+            {
+                return;
+            }
+            var dt = TrampleDeltaSeconds >= 0f ? TrampleDeltaSeconds : Time.deltaTime;
+            _trample.Advance(_camera, grid, Tramplers, dt);
+            TrampleDeltaSeconds = -1f;
+        }
+
+        public void ClearTrample() => _trample?.Clear();
 
         private static RenderTexture CellTexture(CellGrid grid)
         {

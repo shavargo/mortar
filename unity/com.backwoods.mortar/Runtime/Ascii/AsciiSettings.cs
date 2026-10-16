@@ -24,6 +24,8 @@ namespace Mortar.Unity
         public const float FigureLift = 1.55f;
         public const float FigureFloor = 0.18f;
         public const float FigureBoost = 1.2f;
+        public const float TrampleHalfLife = 5f;
+        public const float TrampleRadiusTiles = 0.85f;
     }
 }
 

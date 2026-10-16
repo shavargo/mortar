@@ -240,9 +240,11 @@ namespace Mortar.Unity
             var session = Game.Session;
             if (session == null)
             {
+                CameraRig.Filter.Tramplers.Clear();
                 return;
             }
             PlayerLight.Apply(CameraRig.Filter, session.World.Depth, PlayerPosition());
+            GrassTrampers.Collect(CameraRig.Filter.Tramplers, session.World, Actors, Level);
         }
     }
 }
