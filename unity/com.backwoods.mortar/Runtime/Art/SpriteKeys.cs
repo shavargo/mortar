@@ -8,6 +8,8 @@ namespace Mortar.Unity
 
         public static string Icon(string id) => $"icons/{id}";
 
+        public static string GlyphIcon(string id) => $"glyph-icons/{id}";
+
         public static string Clip(string id, string clip) => $"actors/{id}/{clip}";
     }
 }

@@ -79,7 +79,13 @@ namespace Mortar.Unity
 
         public Sprite Actor(string spriteSet) => Resolve(SpriteKeys.Actor(spriteSet), GeneratedSprites.Actor);
 
-        public Sprite Icon(string iconId) => Resolve(SpriteKeys.Icon(iconId), GeneratedSprites.Icon);
+        public Sprite Icon(string iconId)
+        {
+            var glyph = Find(SpriteKeys.GlyphIcon(iconId));
+            return glyph != null ? glyph : WorldIcon(iconId);
+        }
+
+        public Sprite WorldIcon(string iconId) => Resolve(SpriteKeys.Icon(iconId), GeneratedSprites.Icon);
 
         public bool Has(string key) => Find(key) != null;
 

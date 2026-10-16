@@ -33,7 +33,7 @@ namespace Mortar.Unity
                     continue;
                 }
                 var icon = ground.Item != null ? ground.Item.Definition.IconId : GoldIcon;
-                var view = SpriteObjects.Create(transform, $"Ground {ground.Id}", catalog.Icon(icon), LevelView.FloorOrder + 1);
+                var view = SpriteObjects.Create(transform, $"Ground {ground.Id}", catalog.WorldIcon(icon), LevelView.FloorOrder + 1);
                 view.transform.position = space.Center(ground.Cell);
                 view.transform.localScale = Vector3.one * IconScale;
                 var glow = MaskMaterials.Glow;

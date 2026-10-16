@@ -88,6 +88,36 @@ namespace Mortar.Unity.Tests
             LogAssert.NoUnexpectedReceived();
         }
 
+        [Test]
+        public void IconsPreferTheGlyphVersion()
+        {
+            var painted = MakeSprite();
+            var glyph = MakeSprite();
+            _catalog.SetEntries(new[] { new SpriteEntry("icons/iron-knife", painted), new SpriteEntry("glyph-icons/iron-knife", glyph) });
+
+            Assert.AreSame(glyph, _catalog.Icon("iron-knife"));
+        }
+
+        [Test]
+        public void WorldIconsKeepThePaintedIcon()
+        {
+            var painted = MakeSprite();
+            var glyph = MakeSprite();
+            _catalog.SetEntries(new[] { new SpriteEntry("icons/iron-knife", painted), new SpriteEntry("glyph-icons/iron-knife", glyph) });
+
+            Assert.AreSame(painted, _catalog.WorldIcon("iron-knife"));
+        }
+
+        [Test]
+        public void AMissingGlyphIconFallsBackToThePaintedIconWithoutWarning()
+        {
+            var painted = MakeSprite();
+            _catalog.SetEntries(new[] { new SpriteEntry("icons/iron-knife", painted) });
+
+            Assert.AreSame(painted, _catalog.Icon("iron-knife"));
+            LogAssert.NoUnexpectedReceived();
+        }
+
         private static Sprite MakeSprite()
         {
             var texture = new Texture2D(4, 4);
