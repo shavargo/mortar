@@ -50,7 +50,12 @@ public sealed class ItemBaseDefinition
         WeaponSwing? swing,
         IntRange? armor,
         int blockChance,
-        PotionEffect? potion)
+        PotionEffect? potion,
+        bool ranged = false,
+        string? ammoId = null,
+        int stackMax = 1,
+        string? spellId = null,
+        int maxCharges = 0)
     {
         Id = id;
         Name = name;
@@ -66,6 +71,11 @@ public sealed class ItemBaseDefinition
         Armor = armor;
         BlockChance = blockChance;
         Potion = potion;
+        Ranged = ranged;
+        AmmoId = ammoId;
+        StackMax = stackMax;
+        SpellId = spellId;
+        MaxCharges = maxCharges;
     }
 
     public string Id { get; }
@@ -96,7 +106,21 @@ public sealed class ItemBaseDefinition
 
     public PotionEffect? Potion { get; }
 
+    public bool Ranged { get; }
+
+    public string? AmmoId { get; }
+
+    public int StackMax { get; }
+
+    public string? SpellId { get; }
+
+    public int MaxCharges { get; }
+
     public bool IsEquippable => ItemSlots.IsEquippable(Slot);
 
     public bool IsPotion => Slot == ItemSlots.Potion;
+
+    public bool IsAmmo => Slot == ItemSlots.Ammo;
+
+    public bool IsStackable => StackMax > 1;
 }

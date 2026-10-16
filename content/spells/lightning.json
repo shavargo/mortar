@@ -1,0 +1,11 @@
+{
+  "id": "lightning",
+  "name": "Lightning",
+  "shape": "projectile",
+  "manaCost": 12,
+  "castTicks": 12,
+  "hitFrame": 7,
+  "range": 10,
+  "damage": { "min": 6, "max": 12 },
+  "damagePerLevel": 3
+}

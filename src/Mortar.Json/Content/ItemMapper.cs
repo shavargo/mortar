@@ -23,7 +23,12 @@ internal static class ItemMapper
             ToSwing(fields, dto.Swing),
             dto.Armor is null ? null : (IntRange?)fields.ReadRange(dto.Armor, "armor"),
             dto.BlockChance ?? 0,
-            ToPotion(fields, dto.Potion));
+            ToPotion(fields, dto.Potion),
+            dto.Ranged ?? false,
+            string.IsNullOrWhiteSpace(dto.Ammo) ? null : dto.Ammo,
+            dto.StackMax ?? 1,
+            string.IsNullOrWhiteSpace(dto.Spell) ? null : dto.Spell,
+            dto.MaxCharges ?? 0);
     }
 
     public static AffixDefinition ToAffix(string source, int index, AffixDto dto, List<AuthoringError> errors)

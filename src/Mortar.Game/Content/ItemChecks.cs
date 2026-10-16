@@ -12,6 +12,7 @@ internal static class ItemChecks
 
     public static void Validate(
         ItemCatalog items,
+        SpellCatalog spells,
         IReadOnlyList<ClassDefinition> classes,
         IReadOnlyList<MonsterDefinition> monsters,
         List<AuthoringError> errors)
@@ -24,7 +25,7 @@ internal static class ItemChecks
         foreach (var table in items.LootTables) CheckLootTable(table, errors);
         CheckWeightTotal(items.Bases.Select(b => (long)Math.Max(0, b.DropWeight)), "items", "dropWeight", errors);
         CheckWeightTotal(items.Affixes.Select(a => (long)Math.Max(0, a.Weight)), "affixes", "weight", errors);
-        CheckReferences(items, classes, monsters, errors);
+        CheckReferences(items, spells, classes, monsters, errors);
     }
 
     private static void CheckBase(ItemBaseDefinition item, List<AuthoringError> errors)
@@ -51,6 +52,8 @@ internal static class ItemChecks
         CheckWeapon(source, item, errors);
         CheckArmor(source, item, errors);
         CheckPotion(source, item, errors);
+        CheckRangedAndStacks(source, item, errors);
+        CheckSpellItem(source, item, errors);
     }
 
     private static void CheckSize(string source, ItemBaseDefinition item, List<AuthoringError> errors)
@@ -59,8 +62,12 @@ internal static class ItemChecks
         {
             errors.Add(source, $"size must be 1-{MaxItemWidth} wide and 1-{MaxItemHeight} tall");
         }
-        var small = item.Slot == ItemSlots.Ring || item.Slot == ItemSlots.Amulet || item.Slot == ItemSlots.Potion;
-        if (small && (item.Width != 1 || item.Height != 1)) errors.Add(source, "rings, amulets, and potions must be 1x1");
+        var small = item.Slot == ItemSlots.Ring || item.Slot == ItemSlots.Amulet || item.Slot == ItemSlots.Potion
+            || item.Slot == ItemSlots.Ammo;
+        if (small && (item.Width != 1 || item.Height != 1))
+        {
+            errors.Add(source, "rings, amulets, potions, and ammo must be 1x1");
+        }
     }
 
     private static void CheckWeapon(string source, ItemBaseDefinition item, List<AuthoringError> errors)
@@ -72,6 +79,33 @@ internal static class ItemChecks
         if (item.Swing is { } swing && (swing.HitFrame < 1 || swing.HitFrame >= swing.AttackTicks || swing.AttackTicks > MaxValue))
         {
             errors.Add(source, $"swing needs 1 <= hitFrame < attackTicks <= {MaxValue}");
+        }
+    }
+
+    private static void CheckRangedAndStacks(string source, ItemBaseDefinition item, List<AuthoringError> errors)
+    {
+        if (item.StackMax < 1 || item.StackMax > MaxValue) errors.Add(source, $"stackMax must be between 1 and {MaxValue}");
+        if (item.Slot == ItemSlots.Ammo && item.StackMax < 2) errors.Add(source, "ammo needs stackMax of at least 2");
+        if (item.StackMax > 1 && item.Slot != ItemSlots.Ammo) errors.Add(source, "only ammo may stack");
+        if (item.Ranged && item.Slot != ItemSlots.Weapon) errors.Add(source, "only weapons may be ranged");
+        if (!item.Ranged && item.AmmoId is not null) errors.Add(source, "ammo is only set on ranged weapons");
+        if (item.Ranged && string.IsNullOrWhiteSpace(item.AmmoId)) errors.Add(source, "ranged weapons need ammo");
+    }
+
+    private static void CheckSpellItem(string source, ItemBaseDefinition item, List<AuthoringError> errors)
+    {
+        if (item.MaxCharges < 0 || item.MaxCharges > MaxValue) errors.Add(source, $"maxCharges must be between 0 and {MaxValue}");
+        if (item.MaxCharges > 0 && string.IsNullOrWhiteSpace(item.SpellId))
+        {
+            errors.Add(source, "charged items need a spell");
+        }
+        if (item.MaxCharges > 0 && item.Slot != ItemSlots.Weapon)
+        {
+            errors.Add(source, "only weapons may hold staff charges");
+        }
+        if (item.Slot == ItemSlots.Weapon && item.SpellId is not null && item.MaxCharges < 1)
+        {
+            errors.Add(source, "weapons with a spell need maxCharges");
         }
     }
 
@@ -134,12 +168,14 @@ internal static class ItemChecks
 
     private static void CheckReferences(
         ItemCatalog items,
+        SpellCatalog spells,
         IReadOnlyList<ClassDefinition> classes,
         IReadOnlyList<MonsterDefinition> monsters,
         List<AuthoringError> errors)
     {
         var bases = new HashSet<string>(items.Bases.Select(b => b.Id), StringComparer.Ordinal);
         var tables = new HashSet<string>(items.LootTables.Select(t => t.Id), StringComparer.Ordinal);
+        var spellIds = new HashSet<string>(spells.Spells.Select(s => s.Id), StringComparer.Ordinal);
         foreach (var definition in classes)
         {
             foreach (var id in definition.StartingItems)
@@ -152,6 +188,18 @@ internal static class ItemChecks
             if (monster.LootTableId is not null && !tables.Contains(monster.LootTableId))
             {
                 errors.Add($"monster '{monster.Id}'", $"loot references unknown loot table '{monster.LootTableId}'");
+            }
+        }
+        foreach (var item in items.Bases)
+        {
+            var source = $"item '{item.Id}'";
+            if (item.AmmoId is not null && !bases.Contains(item.AmmoId))
+            {
+                errors.Add(source, $"ammo references unknown item '{item.AmmoId}'");
+            }
+            if (item.SpellId is not null && !spellIds.Contains(item.SpellId))
+            {
+                errors.Add(source, $"spell references unknown spell '{item.SpellId}'");
             }
         }
     }

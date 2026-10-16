@@ -1,0 +1,11 @@
+{
+  "id": "firebolt",
+  "name": "Firebolt",
+  "shape": "projectile",
+  "manaCost": 6,
+  "castTicks": 10,
+  "hitFrame": 6,
+  "range": 8,
+  "damage": { "min": 4, "max": 8 },
+  "damagePerLevel": 2
+}

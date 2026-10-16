@@ -1,0 +1,12 @@
+{
+  "id": "fireball",
+  "name": "Fireball",
+  "shape": "area",
+  "manaCost": 18,
+  "castTicks": 14,
+  "hitFrame": 9,
+  "range": 7,
+  "radius": 2,
+  "damage": { "min": 8, "max": 16 },
+  "damagePerLevel": 3
+}

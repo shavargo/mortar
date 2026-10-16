@@ -14,7 +14,8 @@ public sealed class GameRules
         int hitRecoveryPercent,
         int experiencePercentPerLevel,
         int minimumExperiencePercent,
-        IReadOnlyList<long> experienceThresholds)
+        IReadOnlyList<long> experienceThresholds,
+        int maxSpellLevel = 15)
     {
         MinHitChance = minHitChance;
         MaxHitChance = maxHitChance;
@@ -28,6 +29,7 @@ public sealed class GameRules
         ExperiencePercentPerLevel = experiencePercentPerLevel;
         MinimumExperiencePercent = minimumExperiencePercent;
         ExperienceThresholds = experienceThresholds.ToArray();
+        MaxSpellLevel = maxSpellLevel;
     }
 
     public int MinHitChance { get; }
@@ -56,6 +58,8 @@ public sealed class GameRules
 
     /// <summary>Total experience needed to reach level 2, 3, ...; index 0 is level 2.</summary>
     public IReadOnlyList<long> ExperienceThresholds { get; }
+
+    public int MaxSpellLevel { get; }
 
     public int MaxLevel => ExperienceThresholds.Count + 1;
 }

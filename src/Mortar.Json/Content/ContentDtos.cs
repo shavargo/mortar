@@ -12,6 +12,8 @@ internal sealed class ManifestDto
 
     public string? Items { get; set; }
 
+    public string? Spells { get; set; }
+
     public string? Affixes { get; set; }
 
     public string? Loot { get; set; }
@@ -42,6 +44,8 @@ internal sealed class RulesDto
     public int? MinimumExperiencePercent { get; set; }
 
     public List<long>? ExperienceThresholds { get; set; }
+
+    public int? MaxSpellLevel { get; set; }
 }
 
 internal sealed class StatsDto

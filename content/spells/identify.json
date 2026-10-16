@@ -1,0 +1,8 @@
+{
+  "id": "identify",
+  "name": "Identify",
+  "shape": "self",
+  "manaCost": 8,
+  "castTicks": 10,
+  "hitFrame": 6
+}

@@ -48,6 +48,16 @@ internal sealed class ItemBaseDto
     public int? BlockChance { get; set; }
 
     public PotionDto? Potion { get; set; }
+
+    public bool? Ranged { get; set; }
+
+    public string? Ammo { get; set; }
+
+    public int? StackMax { get; set; }
+
+    public string? Spell { get; set; }
+
+    public int? MaxCharges { get; set; }
 }
 
 internal sealed class AffixListDto

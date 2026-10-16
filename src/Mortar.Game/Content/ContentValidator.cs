@@ -9,7 +9,8 @@ internal static class ContentValidator
         IReadOnlyList<ClassDefinition> classes,
         IReadOnlyList<MonsterDefinition> monsters,
         IReadOnlyList<LevelDefinition> levels,
-        ItemCatalog items)
+        ItemCatalog items,
+        SpellCatalog spells)
     {
         var errors = new List<AuthoringError>();
         CheckRules(rules, errors);
@@ -28,7 +29,8 @@ internal static class ContentValidator
         foreach (var definition in classes) DefinitionChecks.CheckClass(definition, errors);
         foreach (var monster in monsters) DefinitionChecks.CheckMonster(monster, Find, errors);
         CheckLevels(levels, Find, errors);
-        ItemChecks.Validate(items, classes, monsters, errors);
+        SpellChecks.Validate(spells, errors);
+        ItemChecks.Validate(items, spells, classes, monsters, errors);
         return errors;
     }
 
@@ -58,6 +60,10 @@ internal static class ContentValidator
         if (rules.MinimumExperiencePercent < 0 || rules.MinimumExperiencePercent > 100)
         {
             errors.Add(source, "minimumExperiencePercent must be between 0 and 100");
+        }
+        if (rules.MaxSpellLevel < 1 || rules.MaxSpellLevel > DefinitionChecks.MaxValue)
+        {
+            errors.Add(source, $"maxSpellLevel must be between 1 and {DefinitionChecks.MaxValue}");
         }
         for (var i = 0; i < rules.ExperienceThresholds.Count; i++)
         {

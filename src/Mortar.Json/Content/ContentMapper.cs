@@ -21,7 +21,8 @@ internal static class ContentMapper
             fields.Int(dto.HitRecoveryPercent, "hitRecoveryPercent"),
             fields.Int(dto.ExperiencePercentPerLevel, "experiencePercentPerLevel"),
             fields.Int(dto.MinimumExperiencePercent, "minimumExperiencePercent"),
-            dto.ExperienceThresholds ?? new List<long>());
+            dto.ExperienceThresholds ?? new List<long>(),
+            dto.MaxSpellLevel ?? 15);
     }
 
     public static ClassDefinition ToClass(string source, ClassDto dto, List<AuthoringError> errors)

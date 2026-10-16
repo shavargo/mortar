@@ -4,6 +4,7 @@
   "monsters": "monsters",
   "levels": "levels.json",
   "items": "items",
+  "spells": "spells",
   "affixes": "affixes.json",
   "loot": "loot.json"
 }

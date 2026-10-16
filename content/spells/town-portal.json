@@ -1,0 +1,8 @@
+{
+  "id": "town-portal",
+  "name": "Town Portal",
+  "shape": "self",
+  "manaCost": 20,
+  "castTicks": 16,
+  "hitFrame": 10
+}

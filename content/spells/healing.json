@@ -1,0 +1,10 @@
+{
+  "id": "healing",
+  "name": "Healing",
+  "shape": "self",
+  "manaCost": 10,
+  "castTicks": 12,
+  "hitFrame": 8,
+  "healAmount": 20,
+  "healPerLevel": 5
+}
