@@ -14,7 +14,7 @@
         "death": "Human Armature|Human Armature|Death"
       },
       "attackHitSeconds": 0.4,
-      "scale": 0.7,
+      "scale": 0.33,
       "facing": 0,
       "tint": [
         1.0,
@@ -150,7 +150,7 @@
       "clips": {
         "idle": "Human Armature|Human Armature|Idle"
       },
-      "scale": 0.72,
+      "scale": 0.34,
       "facing": 0,
       "tint": [
         1.0,
@@ -169,7 +169,7 @@
       "clips": {
         "idle": "Human Armature|Human Armature|Idle"
       },
-      "scale": 0.68,
+      "scale": 0.32,
       "facing": 0,
       "tint": [
         0.75,
@@ -188,7 +188,7 @@
       "clips": {
         "idle": "Human Armature|Human Armature|Idle"
       },
-      "scale": 0.68,
+      "scale": 0.32,
       "facing": 0,
       "tint": [
         0.8,
