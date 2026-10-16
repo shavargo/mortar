@@ -40,6 +40,11 @@ public static class WorldHash
         var stats = progress.BaseStats;
         hasher.Add((long)progress.Level).Add(progress.Experience).Add((long)progress.UnspentPoints);
         hasher.Add((long)stats.Strength).Add((long)stats.Dexterity).Add((long)stats.Vitality).Add((long)stats.Magic);
+        hasher.Add((long)progress.Spells.Count);
+        foreach (var spell in progress.Spells)
+        {
+            hasher.Add(spell.SpellId).Add((long)spell.Level);
+        }
     }
 
     private static void AddActor(StateHasher hasher, Actor actor)
@@ -49,7 +54,9 @@ public static class WorldHash
         hasher.Add((long)actor.Life).Add((long)actor.Mana).Add(actor.IsDead).Add(actor.IsAwake);
         hasher.Add((long)actor.LeaderId).Add((long)actor.LastAttackerId);
         hasher.Add((long)actor.Action).Add((long)actor.ActionElapsed).Add((long)actor.ActionDuration).Add((long)actor.ActionTargetId);
+        hasher.Add(actor.ActionSpellId).Add((long)actor.ActionAim.X).Add((long)actor.ActionAim.Y);
         hasher.Add((long)actor.Intent).Add((long)actor.IntentCell.X).Add((long)actor.IntentCell.Y).Add((long)actor.IntentTargetId);
+        hasher.Add(actor.IntentSpellId);
         hasher.Add((long)actor.Profile.Level).Add((long)actor.Profile.MaxLife).Add((long)actor.Profile.MaxMana);
     }
 

@@ -27,10 +27,10 @@ internal static class TestWorlds
         "#######",
     };
 
-    public static World Create(ContentSet? content = null, uint seed = 1, string[][]? levels = null)
+    public static World Create(ContentSet? content = null, uint seed = 1, string[][]? levels = null, string classId = "warrior")
     {
         var generator = new FixedLevelGenerator(levels ?? new[] { Room, Room });
-        var result = World.Create(content ?? TestGameContent.Valid(), generator, "warrior", seed);
+        var result = World.Create(content ?? TestGameContent.Valid(), generator, classId, seed);
         return result.World ?? throw new InvalidOperationException(result.Error);
     }
 

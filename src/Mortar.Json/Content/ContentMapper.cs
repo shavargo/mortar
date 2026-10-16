@@ -37,7 +37,8 @@ internal static class ContentMapper
             ToGrowth(fields, dto.Growth),
             fields.ReadRange(dto.UnarmedDamage, "unarmedDamage"),
             fields.ReadTimings(dto.Timings),
-            ToStartingItems(fields, dto.StartingItems));
+            ToStartingItems(fields, dto.StartingItems),
+            ToStartingItems(fields, dto.StartingSpells, "startingSpells"));
     }
 
     public static MonsterDefinition ToMonster(string source, MonsterDto dto, List<AuthoringError> errors)
@@ -95,6 +96,6 @@ internal static class ContentMapper
             fields.Int(dto.StatPointsPerLevel, "growth.statPointsPerLevel"));
     }
 
-    private static IReadOnlyList<string> ToStartingItems(Fields fields, List<string?>? ids) =>
-        ids is null ? Array.Empty<string>() : ids.Select((id, i) => fields.Text(id, $"startingItems[{i}]")).ToList();
+    private static IReadOnlyList<string> ToStartingItems(Fields fields, List<string?>? ids, string field = "startingItems") =>
+        ids is null ? Array.Empty<string>() : ids.Select((id, i) => fields.Text(id, $"{field}[{i}]")).ToList();
 }

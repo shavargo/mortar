@@ -6,5 +6,6 @@ public enum ActionKind
     Moving,
     Attacking,
     Shooting,
+    Casting,
     Recovering,
 }

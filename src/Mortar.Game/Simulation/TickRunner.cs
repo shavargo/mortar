@@ -21,6 +21,7 @@ internal static class TickRunner
         AiSystem.Update(world, events);
         var due = ActionSystem.Advance(world, events);
         CombatSystem.Resolve(world, due, events);
+        SpellSystem.Resolve(world, due, events);
         ProjectileSystem.Advance(world, events);
         DeathSystem.Process(world, events);
         PickupSystem.Process(world, events);

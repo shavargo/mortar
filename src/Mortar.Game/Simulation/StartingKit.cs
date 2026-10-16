@@ -21,5 +21,9 @@ internal static class StartingKit
             }
             belongings.Stow(item);
         }
+        foreach (var spellId in world.PlayerClass.StartingSpells)
+        {
+            world.Progress.Learn(spellId, world.Content.Rules.MaxSpellLevel);
+        }
     }
 }

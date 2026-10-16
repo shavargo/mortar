@@ -185,6 +185,10 @@ internal static class ItemChecks
             {
                 if (!bases.Contains(id)) errors.Add($"class '{definition.Id}'", $"starting item references unknown item '{id}'");
             }
+            foreach (var id in definition.StartingSpells)
+            {
+                if (!spellIds.Contains(id)) errors.Add($"class '{definition.Id}'", $"starting spell references unknown spell '{id}'");
+            }
         }
         foreach (var monster in monsters)
         {

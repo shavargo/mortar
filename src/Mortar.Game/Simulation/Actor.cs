@@ -46,11 +46,17 @@ public sealed class Actor
 
     public int ActionTargetId { get; private set; }
 
+    public string ActionSpellId { get; internal set; } = "";
+
+    public Cell ActionAim { get; internal set; }
+
     public IntentKind Intent { get; private set; }
 
     public Cell IntentCell { get; private set; }
 
     public int IntentTargetId { get; private set; }
+
+    public string IntentSpellId { get; private set; } = "";
 
     public bool IsAlive => !IsDead && Life > 0;
 
@@ -60,6 +66,11 @@ public sealed class Actor
         ActionDuration = duration;
         ActionElapsed = 0;
         ActionTargetId = targetId;
+        if (kind != ActionKind.Casting)
+        {
+            ActionSpellId = "";
+            ActionAim = default;
+        }
     }
 
     internal void ClearAction() => StartAction(ActionKind.Idle, 0);
@@ -69,6 +80,7 @@ public sealed class Actor
         Intent = IntentKind.MoveTo;
         IntentCell = cell;
         IntentTargetId = 0;
+        IntentSpellId = "";
     }
 
     internal void SetAttackIntent(int targetId)
@@ -76,6 +88,15 @@ public sealed class Actor
         Intent = IntentKind.Attack;
         IntentCell = default;
         IntentTargetId = targetId;
+        IntentSpellId = "";
+    }
+
+    internal void SetCastIntent(string spellId, int targetId, Cell cell)
+    {
+        Intent = IntentKind.Cast;
+        IntentSpellId = spellId;
+        IntentTargetId = targetId;
+        IntentCell = cell;
     }
 
     internal void SetPickUpIntent(int groundItemId, Cell cell)
@@ -83,6 +104,7 @@ public sealed class Actor
         Intent = IntentKind.PickUp;
         IntentCell = cell;
         IntentTargetId = groundItemId;
+        IntentSpellId = "";
     }
 
     internal void ClearIntent()
@@ -90,6 +112,7 @@ public sealed class Actor
         Intent = IntentKind.None;
         IntentCell = default;
         IntentTargetId = 0;
+        IntentSpellId = "";
     }
 
     internal void ApplyProfile(CombatProfile profile)

@@ -113,6 +113,8 @@ internal sealed class ClassDto
     public TimingsDto? Timings { get; set; }
 
     public List<string?>? StartingItems { get; set; }
+
+    public List<string?>? StartingSpells { get; set; }
 }
 
 internal sealed class MinionsDto

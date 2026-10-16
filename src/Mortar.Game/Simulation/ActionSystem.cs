@@ -12,7 +12,7 @@ internal static class ActionSystem
         var due = new List<Actor>();
         foreach (var actor in level.Actors)
         {
-            if (actor.IsAlive) Progress(actor, due);
+            if (actor.IsAlive) Progress(world, actor, due);
         }
         foreach (var actor in level.Actors)
         {
@@ -21,15 +21,22 @@ internal static class ActionSystem
         return due;
     }
 
-    private static void Progress(Actor actor, List<Actor> due)
+    private static void Progress(World world, Actor actor, List<Actor> due)
     {
         if (actor.Action == ActionKind.Idle) return;
         actor.ActionElapsed++;
-        if (IsStrikeAction(actor.Action) && actor.ActionElapsed == actor.Profile.Timings.HitFrame)
-        {
-            due.Add(actor);
-        }
+        if (IsDue(world, actor)) due.Add(actor);
         if (actor.ActionElapsed >= actor.ActionDuration) actor.ClearAction();
+    }
+
+    private static bool IsDue(World world, Actor actor)
+    {
+        if (actor.Action == ActionKind.Casting)
+        {
+            return world.Content.TryGetSpell(actor.ActionSpellId, out var spell)
+                && actor.ActionElapsed == spell!.HitFrame;
+        }
+        return IsStrikeAction(actor.Action) && actor.ActionElapsed == actor.Profile.Timings.HitFrame;
     }
 
     private static bool IsStrikeAction(ActionKind action) =>
@@ -45,10 +52,29 @@ internal static class ActionSystem
             case IntentKind.Attack:
                 ContinueAttack(world, actor, events);
                 break;
+            case IntentKind.Cast:
+                ContinueCast(world, actor, events);
+                break;
             case IntentKind.PickUp:
                 Movement.Approach(world.Level, actor, actor.IntentCell, events);
                 break;
         }
+    }
+
+    private static void ContinueCast(World world, Actor actor, EventSink events)
+    {
+        if (!world.Content.TryGetSpell(actor.IntentSpellId, out var spell))
+        {
+            actor.ClearIntent();
+            return;
+        }
+        if (actor.Mana < spell!.ManaCost)
+        {
+            actor.ClearIntent();
+            return;
+        }
+        SpellSystem.StartCast(world, actor, spell, actor.IntentTargetId, actor.IntentCell, events);
+        actor.ClearIntent();
     }
 
     private static void ContinueAttack(World world, Actor actor, EventSink events)

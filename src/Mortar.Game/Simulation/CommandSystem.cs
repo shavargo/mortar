@@ -1,4 +1,5 @@
 using Mortar.Game.Commands;
+using Mortar.Game.Content;
 using Mortar.Game.Events;
 using Mortar.Game.Items;
 
@@ -23,6 +24,8 @@ internal static class CommandSystem
                 return Move(world, move);
             case AttackCommand attack:
                 return Attack(world, attack);
+            case CastCommand cast:
+                return Cast(world, cast);
             case SpendStatPointCommand spend:
                 return PlayerGrowth.SpendPoint(world, spend.Stat, events);
             case UseStairsCommand _:
@@ -67,6 +70,51 @@ internal static class CommandSystem
             }
         }
         world.Player.SetAttackIntent(target.Id);
+        return null;
+    }
+
+    private static string? Cast(World world, CastCommand cast)
+    {
+        if (string.IsNullOrWhiteSpace(cast.SpellId) || !world.Content.TryGetSpell(cast.SpellId, out var spell))
+        {
+            return "unknown spell";
+        }
+        if (!world.Progress.Knows(cast.SpellId))
+        {
+            return "spell not learned";
+        }
+        if (world.Player.Mana < spell!.ManaCost)
+        {
+            return "not enough mana";
+        }
+        var aim = world.Player.Cell;
+        var targetId = 0;
+        if (spell.Shape == SpellShapes.Projectile)
+        {
+            if (cast.TargetActorId != 0)
+            {
+                var target = world.Level.Find(cast.TargetActorId);
+                if (target is null || !target.IsAlive || target.Kind != ActorKind.Monster)
+                {
+                    return "no such monster on this level";
+                }
+                aim = target.Cell;
+                targetId = target.Id;
+            }
+            else if (cast.TargetCell is { } cell)
+            {
+                if (!world.Level.InBounds(cell))
+                {
+                    return "invalid target";
+                }
+                aim = cell;
+            }
+            else
+            {
+                return "spell needs a target";
+            }
+        }
+        world.Player.SetCastIntent(spell.Id, targetId, aim);
         return null;
     }
 

@@ -5,5 +5,6 @@ public enum IntentKind
     None,
     MoveTo,
     Attack,
+    Cast,
     PickUp,
 }

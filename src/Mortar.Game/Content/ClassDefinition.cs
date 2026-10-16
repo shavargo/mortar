@@ -11,7 +11,8 @@ public sealed class ClassDefinition
         ClassGrowth growth,
         IntRange unarmedDamage,
         ActionTimings timings,
-        IReadOnlyList<string> startingItems)
+        IReadOnlyList<string> startingItems,
+        IReadOnlyList<string>? startingSpells = null)
     {
         Id = id;
         Name = name;
@@ -22,6 +23,7 @@ public sealed class ClassDefinition
         UnarmedDamage = unarmedDamage;
         Timings = timings;
         StartingItems = startingItems.ToArray();
+        StartingSpells = (startingSpells ?? Array.Empty<string>()).ToArray();
     }
 
     public string Id { get; }
@@ -41,4 +43,6 @@ public sealed class ClassDefinition
     public ActionTimings Timings { get; }
 
     public IReadOnlyList<string> StartingItems { get; }
+
+    public IReadOnlyList<string> StartingSpells { get; }
 }
