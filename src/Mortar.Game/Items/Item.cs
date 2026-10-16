@@ -31,7 +31,8 @@ public sealed class Item
         RolledAffix? prefix,
         RolledAffix? suffix,
         int stackCount = 1,
-        int charges = 0)
+        int charges = 0,
+        bool identified = true)
     {
         Id = id;
         Definition = definition;
@@ -41,6 +42,7 @@ public sealed class Item
         Suffix = suffix;
         StackCount = stackCount;
         Charges = charges;
+        Identified = identified;
     }
 
     public int Id { get; }
@@ -59,12 +61,18 @@ public sealed class Item
 
     public int Charges { get; internal set; }
 
+    public bool Identified { get; internal set; }
+
     public ItemQuality Quality => Prefix is null && Suffix is null ? ItemQuality.Normal : ItemQuality.Magic;
 
     public string Name
     {
         get
         {
+            if (!Identified && Quality == ItemQuality.Magic)
+            {
+                return $"Magic {Definition.Slot}";
+            }
             var parts = new List<string>(3);
             if (Prefix is not null) parts.Add(Prefix.Definition.Name);
             parts.Add(Definition.Name);

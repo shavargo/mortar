@@ -16,6 +16,22 @@ public sealed class SpellLearned : GameEvent
     protected override string Describe() => Level <= 1 ? $"learned {SpellId}" : $"{SpellId} is now level {Level}";
 }
 
+public sealed class ItemIdentified : GameEvent
+{
+    public ItemIdentified(long tick, int itemId, string name)
+        : base(tick)
+    {
+        ItemId = itemId;
+        Name = name;
+    }
+
+    public int ItemId { get; }
+
+    public string Name { get; }
+
+    protected override string Describe() => $"identified #{ItemId} as {Name}";
+}
+
 public sealed class ItemConsumed : GameEvent
 {
     public ItemConsumed(long tick, int itemId, string definitionId)

@@ -6,12 +6,14 @@ namespace Mortar.Game.Simulation;
 
 internal static class SpellSystem
 {
-    public static void StartCast(World world, Actor caster, SpellDefinition spell, int targetId, Cell aim, EventSink events, bool fromStaff)
+    public static void StartCast(
+        World world, Actor caster, SpellDefinition spell, int targetId, Cell aim, EventSink events, bool fromStaff, int itemId = 0)
     {
         caster.Facing = aim != caster.Cell ? Directions.Toward(caster.Cell, aim) : caster.Facing;
         caster.StartAction(ActionKind.Casting, spell.CastTicks, targetId);
         caster.ActionSpellId = spell.Id;
         caster.ActionAim = aim;
+        caster.ActionItemId = itemId;
         if (fromStaff)
         {
             var staff = CombatSystem.EquippedWeapon(world);
@@ -41,6 +43,11 @@ internal static class SpellSystem
 
     internal static void Apply(World world, Actor caster, SpellDefinition spell, int spellLevel, EventSink events)
     {
+        if (spell.Id == "identify")
+        {
+            Identify(world, caster, events);
+            return;
+        }
         switch (spell.Shape)
         {
             case SpellShapes.Self:
@@ -53,6 +60,23 @@ internal static class SpellSystem
                 Bolt(world, caster, spell, spellLevel, events, spell.Radius);
                 break;
         }
+    }
+
+    public static string? IdentifyItem(World world, int itemId, EventSink events)
+    {
+        var item = world.Belongings.Find(itemId);
+        if (item is null) return "no such item";
+        if (item.Identified) return "item is already identified";
+        item.Identified = true;
+        world.RefreshPlayer();
+        events.Add(new ItemIdentified(events.Tick, item.Id, item.Name));
+        return null;
+    }
+
+    private static void Identify(World world, Actor caster, EventSink events)
+    {
+        var itemId = caster.ActionItemId;
+        IdentifyItem(world, itemId, events);
     }
 
     private static void Heal(Actor caster, SpellDefinition spell, int spellLevel, EventSink events)

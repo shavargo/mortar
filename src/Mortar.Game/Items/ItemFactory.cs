@@ -31,7 +31,10 @@ internal static class ItemFactory
             if (shape != 0) suffix = RollAffix(world, definition, itemLevel, AffixPositions.Suffix);
         }
         var stack = definition.IsStackable ? definition.StackMax : 1;
-        return new Item(world.NextItemId++, definition, itemLevel, armor, prefix, suffix, stack, definition.MaxCharges);
+        var magic = prefix is not null || suffix is not null;
+        return new Item(
+            world.NextItemId++, definition, itemLevel, armor, prefix, suffix, stack, definition.MaxCharges,
+            identified: !magic);
     }
 
     private static RolledAffix? RollAffix(World world, ItemBaseDefinition definition, int itemLevel, string position)

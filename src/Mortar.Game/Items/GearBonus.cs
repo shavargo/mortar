@@ -51,8 +51,11 @@ public sealed class GearBonus
                 weaponDamage = item.Definition.Damage;
                 swing = item.Definition.Swing;
             }
-            if (item.Prefix is not null) totals.Apply(item.Prefix);
-            if (item.Suffix is not null) totals.Apply(item.Suffix);
+            if (item.Identified)
+            {
+                if (item.Prefix is not null) totals.Apply(item.Prefix);
+                if (item.Suffix is not null) totals.Apply(item.Suffix);
+            }
         }
         return new GearBonus(totals, weaponDamage, swing);
     }

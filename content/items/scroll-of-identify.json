@@ -1,0 +1,10 @@
+{
+  "id": "scroll-of-identify",
+  "name": "Scroll of Identify",
+  "icon": "scroll-of-identify",
+  "slot": "scroll",
+  "size": { "width": 1, "height": 1 },
+  "itemLevel": 1,
+  "dropWeight": 4,
+  "spell": "identify"
+}

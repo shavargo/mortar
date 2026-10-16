@@ -133,7 +133,7 @@ public class GameContentLoaderTests
     public void RepoContent_HasItemsAffixesAndLoot()
     {
         var content = GameContentLoader.Load(ContentFixture.Manifest).Value!.Content;
-        Assert.Equal(20, content.ItemBases.Count);
+        Assert.Equal(21, content.ItemBases.Count);
         Assert.Equal(13, content.Affixes.Count);
         Assert.Equal(4, content.Items.LootTables.Count);
         Assert.Equal("common", content.Monster("zombie").LootTableId);

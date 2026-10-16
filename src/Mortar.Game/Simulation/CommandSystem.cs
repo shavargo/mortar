@@ -130,7 +130,15 @@ internal static class CommandSystem
                 return "spell needs a target";
             }
         }
-        world.Player.SetCastIntent(spell.Id, targetId, aim, fromStaff);
+        var itemId = 0;
+        if (spell.Id == "identify")
+        {
+            if (cast.ItemId == 0) return "identify needs an item";
+            if (world.Belongings.Find(cast.ItemId) is null) return "no such item";
+            if (world.Belongings.Find(cast.ItemId)!.Identified) return "item is already identified";
+            itemId = cast.ItemId;
+        }
+        world.Player.SetCastIntent(spell.Id, targetId, aim, fromStaff, itemId);
         return null;
     }
 

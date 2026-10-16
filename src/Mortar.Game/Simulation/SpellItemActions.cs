@@ -40,8 +40,17 @@ internal static class SpellItemActions
             var aimError = ResolveAim(world, command, out aim, out targetId);
             if (aimError is not null) return aimError;
         }
+        if (spell.Id == "identify")
+        {
+            if (command.TargetItemId == 0) return "identify needs an item";
+            var error = SpellSystem.IdentifyItem(world, command.TargetItemId, events);
+            if (error is not null) return error;
+            Consume(world, item, events);
+            return null;
+        }
         world.Player.ActionAim = aim;
         world.Player.ActionSpellId = spell.Id;
+        world.Player.ActionItemId = command.TargetItemId;
         world.Player.StartAction(ActionKind.Idle, 0);
         SpellSystem.ApplyScroll(world, world.Player, spell, events);
         Consume(world, item, events);

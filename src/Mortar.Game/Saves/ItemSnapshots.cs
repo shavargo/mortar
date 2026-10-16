@@ -14,6 +14,8 @@ public sealed class ItemSnapshot
 
     public int Charges { get; set; }
 
+    public bool Identified { get; set; } = true;
+
     public AffixRollSnapshot? Prefix { get; set; }
 
     public AffixRollSnapshot? Suffix { get; set; }

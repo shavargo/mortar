@@ -102,7 +102,7 @@
 343 #1 hit #10 for 7
 343 #10 died (killed by #1)
 343 gained 30 xp (total 100)
-343 item 6 'Short Bow' dropped at (15,20)
+343 item 6 'Healing Draught' dropped at (15,20)
 344 #9 moved (20,23)->(19,23) in 8
 344 #11 moved (23,21)->(22,21) in 8
 349 #1 moved (14,20)->(15,20) in 7
@@ -118,74 +118,82 @@
 376 #9 swings at #1 for 12
 376 #11 moved (19,21)->(18,21) in 8
 377 #1 swings at #9 for 11
-383 #1 missed #9
-383 #9 missed #1
+383 #1 hit #9 for 5
+383 #9 staggered for 6
 384 #11 swings at #1 for 12
 388 #1 swings at #9 for 11
-388 #9 swings at #1 for 12
-391 #11 hit #1 for 1
-394 #1 hit #9 for 7
+389 #9 swings at #1 for 12
+391 #11 missed #1
+394 #1 hit #9 for 5
 394 #9 staggered for 6
 396 #11 swings at #1 for 12
 399 #1 swings at #9 for 11
 400 #9 swings at #1 for 12
-403 #11 missed #1
-405 #1 hit #9 for 6
-405 #9 staggered for 6
+403 #11 hit #1 for 1
+405 #1 missed #9
+407 #9 hit #1 for 3
 408 #11 swings at #1 for 12
 410 #1 swings at #9 for 11
-411 #9 swings at #1 for 12
+412 #9 swings at #1 for 12
 415 #11 missed #1
 416 #1 hit #9 for 5
-416 #9 died (killed by #1)
-416 gained 148 xp (total 248)
-416 reached level 2
-416 item 7 '10 gold' dropped at (17,22)
-416 item 8 'Healing Draught' dropped at (17,21)
+416 #9 staggered for 6
 420 #11 swings at #1 for 12
-422 #1 swings at #11 for 11
-427 #11 missed #1
-428 #1 missed #11
+421 #1 swings at #9 for 11
+422 #9 swings at #1 for 12
+427 #1 missed #9
+427 #11 hit #1 for 1
+429 #9 hit #1 for 5
+432 #1 swings at #9 for 11
 432 #11 swings at #1 for 12
-433 #1 swings at #11 for 11
-439 #1 hit #11 for 8
-439 #11 died (killed by #1)
-439 gained 26 xp (total 274)
-445 strength is now 25
-446 strength is now 26
-447 strength is now 27
-448 strength is now 28
-449 picked up item 8 'Healing Draught'
-450 picked up 10 gold (total 16)
-451 #1 moved (17,21)->(17,20) in 7
-458 #1 moved (17,20)->(16,20) in 7
-465 picked up item 6 'Short Bow'
-466 #1 moved (16,20)->(17,20) in 7
-473 #1 moved (17,20)->(17,19) in 7
-480 #1 moved (17,19)->(17,18) in 7
-487 #1 moved (17,18)->(17,17) in 7
-488 #2 woke up
-488 #2 moved (20,12)->(20,13) in 14
-494 #1 moved (17,17)->(18,17) in 7
-501 #1 moved (18,17)->(19,17) in 7
-502 #2 moved (20,13)->(20,14) in 14
-508 #1 moved (19,17)->(20,17) in 7
-515 #1 moved (20,17)->(20,16) in 7
-516 #2 moved (20,14)->(20,15) in 14
-522 #1 swings at #2 for 11
-528 #1 missed #2
-530 #2 swings at #1 for 16
-533 #1 swings at #2 for 11
-539 #1 hit #2 for 7
-539 #2 staggered for 8
-544 #1 swings at #2 for 11
-547 #2 swings at #1 for 16
-550 #1 missed #2
-555 #1 swings at #2 for 11
-557 #2 missed #1
-561 #1 hit #2 for 7
-561 #2 died (killed by #1)
-561 gained 35 xp (total 309)
+434 #9 swings at #1 for 12
+438 #1 missed #9
+439 #11 hit #1 for 2
+441 #9 hit #1 for 4
+443 #1 swings at #9 for 11
+444 #11 swings at #1 for 12
+446 #9 swings at #1 for 12
+449 #1 hit #9 for 7
+449 #9 died (killed by #1)
+449 gained 148 xp (total 248)
+449 reached level 2
+449 item 7 'Arrows' dropped at (17,22)
+451 #11 missed #1
+455 #1 swings at #11 for 11
+456 #11 swings at #1 for 12
+461 #1 hit #11 for 5
+461 #11 died (killed by #1)
+461 gained 26 xp (total 274)
+467 strength is now 25
+468 strength is now 26
+469 strength is now 27
+470 strength is now 28
+471 picked up item 7 'Arrows'
+472 #1 moved (17,21)->(17,20) in 7
+479 #1 moved (17,20)->(16,20) in 7
+486 picked up item 6 'Healing Draught'
+487 #1 moved (16,20)->(17,20) in 7
+494 #1 moved (17,20)->(17,19) in 7
+501 #1 moved (17,19)->(17,18) in 7
+508 #1 moved (17,18)->(17,17) in 7
+509 #2 woke up
+509 #2 moved (20,12)->(20,13) in 14
+515 #1 moved (17,17)->(18,17) in 7
+522 #1 moved (18,17)->(19,17) in 7
+523 #2 moved (20,13)->(20,14) in 14
+529 #1 moved (19,17)->(20,17) in 7
+536 #1 moved (20,17)->(20,16) in 7
+537 #2 moved (20,14)->(20,15) in 14
+543 #1 swings at #2 for 11
+549 #1 hit #2 for 5
+549 #2 staggered for 8
+554 #1 swings at #2 for 11
+557 #2 swings at #1 for 16
+560 #1 hit #2 for 7
+560 #2 died (killed by #1)
+560 gained 35 xp (total 309)
+560 item 8 '11 gold' dropped at (20,15)
+566 picked up 11 gold (total 17)
 567 #1 moved (20,16)->(20,15) in 7
 574 #1 moved (20,15)->(20,14) in 7
 581 #1 moved (20,14)->(21,13) in 7
@@ -209,93 +217,85 @@
 614 #3 moved (28,15)->(28,14) in 8
 614 #4 moved (25,13)->(25,12) in 8
 615 #1 swings at #4 for 11
-621 #1 hit #4 for 7
+621 #1 hit #4 for 5
 621 #4 died (killed by #1)
 621 gained 26 xp (total 335)
+621 item 9 'Leather Hood' dropped at (25,12)
 622 #3 moved (28,14)->(28,13) in 8
 622 #5 moved (25,14)->(25,13) in 8
 627 #1 moved (24,12)->(25,12) in 7
 630 #3 moved (28,13)->(28,12) in 8
 630 #5 swings at #1 for 12
 634 #1 swings at #5 for 11
-637 #5 hit #1 for 1
+637 #5 missed #1
 638 #3 moved (28,12)->(28,11) in 8
-640 #1 hit #5 for 8
-640 #5 died (killed by #1)
-640 gained 26 xp (total 361)
-646 #1 moved (25,12)->(25,11) in 7
+640 #1 missed #5
+642 #5 swings at #1 for 12
+645 #1 swings at #5 for 11
 646 #3 moved (28,11)->(27,11) in 8
-653 #1 moved (25,11)->(26,11) in 7
-654 #3 swings at #1 for 12
-660 #1 swings at #3 for 11
-661 #3 missed #1
-666 #3 swings at #1 for 12
-666 #1 missed #3
-671 #1 swings at #3 for 11
-673 #3 missed #1
-677 #1 missed #3
-678 #3 swings at #1 for 12
-682 #1 swings at #3 for 11
-685 #3 hit #1 for 4
-688 #1 hit #3 for 7
-688 #3 staggered for 6
-693 #1 swings at #3 for 11
-694 #3 swings at #1 for 12
-699 #1 hit #3 for 5
-699 #3 staggered for 6
-704 #1 swings at #3 for 11
-705 #3 swings at #1 for 12
-710 #1 missed #3
-712 #3 hit #1 for 3
-715 #1 swings at #3 for 11
-717 #3 swings at #1 for 12
-721 #1 hit #3 for 5
-721 #3 died (killed by #1)
-721 gained 134 xp (total 495)
-721 item 9 'Tempered Leather Hood of Deftness' dropped at (27,11)
-721 item 10 'Plank Shield' dropped at (28,10)
-727 picked up item 9 'Tempered Leather Hood of Deftness'
-728 equipped item 9 as Head
-729 #1 moved (26,11)->(27,11) in 7
-736 #1 moved (27,11)->(28,11) in 7
-743 picked up item 10 'Plank Shield'
-744 equipped item 10 as Shield
-745 #1 moved (28,11)->(29,11) in 7
-746 #6 woke up
-746 #7 woke up
-746 #8 woke up
-746 #6 moved (36,12)->(35,13) in 8
-746 #7 moved (35,11)->(34,12) in 8
-746 #8 moved (36,11)->(35,12) in 8
-752 #1 moved (29,11)->(30,11) in 7
-754 #6 moved (35,13)->(34,13) in 8
-754 #7 moved (34,12)->(33,12) in 8
-759 #1 moved (30,11)->(31,11) in 7
-762 #7 moved (33,12)->(32,12) in 8
-766 #1 moved (31,11)->(31,12) in 7
-770 #7 swings at #1 for 12
-773 #1 swings at #7 for 11
-777 #7 missed #1
-779 #1 hit #7 for 8
-779 #7 died (killed by #1)
-779 gained 26 xp (total 521)
-780 #6 moved (34,13)->(33,12) in 8
-785 #1 moved (31,12)->(32,12) in 7
-788 #6 swings at #1 for 12
-792 #1 swings at #6 for 11
-795 #6 missed #1
-798 #1 hit #6 for 8
-798 #6 staggered for 6
-803 #1 swings at #6 for 11
-804 #6 swings at #1 for 12
-809 #1 missed #6
-811 #6 hit #1 for 4
-814 #1 swings at #6 for 11
-816 #6 swings at #1 for 12
-820 #1 hit #6 for 7
-820 #6 staggered for 6
-825 #1 swings at #6 for 11
-826 #6 swings at #1 for 12
-831 #1 hit #6 for 6
-831 #6 died (killed by #1)
-hash: a0d3ef5ce4178946
+649 #5 missed #1
+651 #1 hit #5 for 7
+651 #5 died (killed by #1)
+651 gained 26 xp (total 361)
+654 #3 moved (27,11)->(26,11) in 8
+657 #1 moved (25,12)->(25,11) in 7
+662 #3 swings at #1 for 12
+664 #1 swings at #3 for 11
+669 #3 hit #1 for 3
+670 #1 hit #3 for 7
+670 #3 staggered for 6
+675 #1 swings at #3 for 11
+676 #3 swings at #1 for 12
+681 #1 missed #3
+683 #3 missed #1
+686 #1 swings at #3 for 11
+688 #3 swings at #1 for 12
+692 #1 hit #3 for 5
+692 #3 staggered for 6
+697 #1 swings at #3 for 11
+698 #3 swings at #1 for 12
+703 #1 hit #3 for 8
+703 #3 died (killed by #1)
+703 gained 134 xp (total 495)
+709 picked up item 9 'Leather Hood'
+710 equipped item 9 as Head
+711 #1 moved (25,11)->(26,11) in 7
+718 #1 moved (26,11)->(27,11) in 7
+725 #1 moved (27,11)->(28,11) in 7
+732 #1 moved (28,11)->(29,11) in 7
+733 #6 woke up
+733 #7 woke up
+733 #8 woke up
+733 #6 moved (36,12)->(35,13) in 8
+733 #7 moved (35,11)->(34,12) in 8
+733 #8 moved (36,11)->(35,12) in 8
+739 #1 moved (29,11)->(30,11) in 7
+741 #6 moved (35,13)->(34,13) in 8
+741 #7 moved (34,12)->(33,12) in 8
+746 #1 moved (30,11)->(31,11) in 7
+749 #7 moved (33,12)->(32,12) in 8
+753 #1 moved (31,11)->(31,12) in 7
+757 #7 swings at #1 for 12
+760 #1 swings at #7 for 11
+764 #7 missed #1
+766 #1 missed #7
+769 #7 swings at #1 for 12
+771 #1 swings at #7 for 11
+776 #7 missed #1
+777 #1 hit #7 for 7
+777 #7 died (killed by #1)
+777 gained 26 xp (total 521)
+778 #6 moved (34,13)->(33,12) in 8
+783 #1 moved (31,12)->(32,12) in 7
+786 #6 swings at #1 for 12
+790 #1 swings at #6 for 11
+793 #6 missed #1
+796 #1 hit #6 for 5
+796 #6 staggered for 6
+801 #1 swings at #6 for 11
+802 #6 swings at #1 for 12
+807 #1 hit #6 for 8
+807 #6 staggered for 6
+812 #1 swings at #6 for 11
+813 #6 swings at #1 for 12
+hash: 30c0f130082ecf82

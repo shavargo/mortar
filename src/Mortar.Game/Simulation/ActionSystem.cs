@@ -83,7 +83,8 @@ internal static class ActionSystem
                 return;
             }
         }
-        SpellSystem.StartCast(world, actor, spell!, actor.IntentTargetId, actor.IntentCell, events, fromStaff);
+        SpellSystem.StartCast(
+            world, actor, spell!, actor.IntentTargetId, actor.IntentCell, events, fromStaff, actor.IntentItemId);
         actor.ClearIntent();
     }
 
