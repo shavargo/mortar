@@ -22,3 +22,19 @@ def test_a_missing_font_fails_with_an_error(tmp_path, monkeypatch, capsys):
 
     assert cli.main(["atlas"]) == 1
     assert "[ERROR] font not found" in capsys.readouterr().err
+
+
+def test_icons_writes_glyph_icons_and_a_sheet(tmp_path, monkeypatch):
+    art = tmp_path / "Art"
+    (art / "icons").mkdir(parents=True)
+    Image.new("RGBA", (64, 64), (200, 200, 40, 255)).save(art / "icons" / "lamp.png")
+    monkeypatch.setattr(cli, "ART_ROOT", art)
+    monkeypatch.setattr(cli, "SHEET_PATH", tmp_path / "sheets" / "glyph-icons.png")
+    monkeypatch.setattr(cli, "REPO_ROOT", tmp_path)
+
+    assert cli.main(["icons"]) == 0
+
+    with Image.open(art / "glyph-icons" / "lamp.png") as picture:
+        assert picture.size == (72, 80)
+    assert (tmp_path / "sheets" / "glyph-icons.png").is_file()
+
