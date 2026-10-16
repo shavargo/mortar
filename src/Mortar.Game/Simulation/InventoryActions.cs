@@ -41,7 +41,7 @@ internal static class InventoryActions
         var current = belongings.Belt.IndexOf(itemId);
         var item = belongings.Inventory.Find(itemId)?.Item ?? belongings.Belt.Get(current);
         if (item is null) return "no such item in the inventory or belt";
-        if (!item.Definition.IsPotion) return "only potions go in the belt";
+        if (!item.Definition.IsPotion && !item.Definition.IsAmmo) return "only potions and ammo go in the belt";
         if (belongings.Belt.Get(slot) is not null) return "that belt slot is taken";
         if (current >= 0) belongings.Belt.Take(current);
         else belongings.Inventory.Remove(itemId);

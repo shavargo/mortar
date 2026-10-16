@@ -58,6 +58,8 @@ internal sealed class ItemBaseDto
     public string? Spell { get; set; }
 
     public int? MaxCharges { get; set; }
+
+    public int? Range { get; set; }
 }
 
 internal sealed class AffixListDto

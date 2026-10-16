@@ -1,0 +1,15 @@
+{
+  "id": "short-bow",
+  "name": "Short Bow",
+  "icon": "short-bow",
+  "slot": "weapon",
+  "size": { "width": 2, "height": 3 },
+  "itemLevel": 1,
+  "dropWeight": 4,
+  "requirements": { "dexterity": 15 },
+  "damage": { "min": 2, "max": 5 },
+  "swing": { "attackTicks": 10, "hitFrame": 5 },
+  "ranged": true,
+  "ammo": "arrows",
+  "range": 8
+}

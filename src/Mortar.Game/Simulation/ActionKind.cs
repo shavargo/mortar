@@ -5,5 +5,6 @@ public enum ActionKind
     Idle,
     Moving,
     Attacking,
+    Shooting,
     Recovering,
 }

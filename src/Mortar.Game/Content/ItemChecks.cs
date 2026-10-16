@@ -90,6 +90,9 @@ internal static class ItemChecks
         if (item.Ranged && item.Slot != ItemSlots.Weapon) errors.Add(source, "only weapons may be ranged");
         if (!item.Ranged && item.AmmoId is not null) errors.Add(source, "ammo is only set on ranged weapons");
         if (item.Ranged && string.IsNullOrWhiteSpace(item.AmmoId)) errors.Add(source, "ranged weapons need ammo");
+        if (item.Range < 0 || item.Range > MaxValue) errors.Add(source, $"range must be between 0 and {MaxValue}");
+        if (item.Ranged && item.Range < 1) errors.Add(source, "ranged weapons need range of at least 1");
+        if (!item.Ranged && item.Range != 0) errors.Add(source, "only ranged weapons have range");
     }
 
     private static void CheckSpellItem(string source, ItemBaseDefinition item, List<AuthoringError> errors)

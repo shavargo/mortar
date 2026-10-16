@@ -1,5 +1,6 @@
 using Mortar.Game.Commands;
 using Mortar.Game.Events;
+using Mortar.Game.Items;
 
 namespace Mortar.Game.Simulation;
 
@@ -55,6 +56,15 @@ internal static class CommandSystem
         if (!target.IsAlive)
         {
             return "target is already dead";
+        }
+        var weapon = CombatSystem.EquippedWeapon(world);
+        if (CombatSystem.IsRangedWeapon(weapon))
+        {
+            var ammoId = weapon!.Definition.AmmoId!;
+            if (!Ammo.Has(world.Belongings, ammoId))
+            {
+                return "no ammo";
+            }
         }
         world.Player.SetAttackIntent(target.Id);
         return null;

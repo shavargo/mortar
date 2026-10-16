@@ -23,7 +23,14 @@ public sealed class RolledAffix
 
 public sealed class Item
 {
-    internal Item(int id, ItemBaseDefinition definition, int itemLevel, int armorValue, RolledAffix? prefix, RolledAffix? suffix)
+    internal Item(
+        int id,
+        ItemBaseDefinition definition,
+        int itemLevel,
+        int armorValue,
+        RolledAffix? prefix,
+        RolledAffix? suffix,
+        int stackCount = 1)
     {
         Id = id;
         Definition = definition;
@@ -31,6 +38,7 @@ public sealed class Item
         ArmorValue = armorValue;
         Prefix = prefix;
         Suffix = suffix;
+        StackCount = stackCount;
     }
 
     public int Id { get; }
@@ -44,6 +52,8 @@ public sealed class Item
     public RolledAffix? Prefix { get; }
 
     public RolledAffix? Suffix { get; }
+
+    public int StackCount { get; internal set; }
 
     public ItemQuality Quality => Prefix is null && Suffix is null ? ItemQuality.Normal : ItemQuality.Magic;
 

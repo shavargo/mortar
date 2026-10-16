@@ -14,7 +14,8 @@ public sealed class Belt
 
     internal bool TryPut(Item item, int slot)
     {
-        if (slot < 0 || slot >= Slots || _slots[slot] is not null || !item.Definition.IsPotion) return false;
+        if (slot < 0 || slot >= Slots || _slots[slot] is not null) return false;
+        if (!item.Definition.IsPotion && !item.Definition.IsAmmo) return false;
         _slots[slot] = item;
         return true;
     }

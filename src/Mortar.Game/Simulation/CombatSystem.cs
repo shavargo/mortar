@@ -1,4 +1,5 @@
 using Mortar.Game.Events;
+using Mortar.Game.Items;
 using Mortar.Game.Pathing;
 
 namespace Mortar.Game.Simulation;
@@ -13,11 +14,25 @@ internal static class CombatSystem
         events.Add(new AttackStarted(events.Tick, attacker.Id, target.Id, duration));
     }
 
+    public static void StartShoot(Actor attacker, Actor target, EventSink events)
+    {
+        var duration = attacker.Profile.Timings.AttackTicks;
+        attacker.Facing = Directions.Toward(attacker.Cell, target.Cell);
+        attacker.StartAction(ActionKind.Shooting, duration, target.Id);
+        events.Add(new AttackStarted(events.Tick, attacker.Id, target.Id, duration));
+    }
+
     public static void Resolve(World world, IReadOnlyList<Actor> due, EventSink events)
     {
         foreach (var attacker in due)
         {
-            if (!attacker.IsAlive || attacker.Action != ActionKind.Attacking) continue;
+            if (!attacker.IsAlive) continue;
+            if (attacker.Action == ActionKind.Shooting)
+            {
+                ResolveShot(world, attacker, events);
+                continue;
+            }
+            if (attacker.Action != ActionKind.Attacking) continue;
             var target = world.Level.Find(attacker.ActionTargetId);
             if (target is null || !target.IsAlive) continue;
             if (!Reach.CanStrike(attacker.Cell, target.Cell, world.Level.IsWalkable))
@@ -27,6 +42,41 @@ internal static class CombatSystem
             }
             Strike(world, attacker, target, events);
         }
+    }
+
+    public static Item? EquippedWeapon(World world) =>
+        world.Belongings.Equipment.Get(EquipmentSlot.Weapon);
+
+    public static bool IsRangedWeapon(Item? weapon) => weapon?.Definition.Ranged == true;
+
+    private static void ResolveShot(World world, Actor attacker, EventSink events)
+    {
+        var target = world.Level.Find(attacker.ActionTargetId);
+        if (target is null || !target.IsAlive) return;
+        if (attacker.Kind != ActorKind.Player)
+        {
+            SpawnArrow(world, attacker, target, events, range: 8);
+            return;
+        }
+        var weapon = EquippedWeapon(world);
+        if (!IsRangedWeapon(weapon)) return;
+        var ammoId = weapon!.Definition.AmmoId!;
+        if (!Ammo.TrySpend(world.Belongings, ammoId)) return;
+        SpawnArrow(world, attacker, target, events, weapon.Definition.Range);
+    }
+
+    private static void SpawnArrow(World world, Actor attacker, Actor target, EventSink events, int range)
+    {
+        var damage = attacker.Profile.Damage;
+        ProjectileSystem.Spawn(
+            world,
+            attacker,
+            ProjectileKinds.Arrow,
+            target.Cell,
+            range,
+            damage.Min,
+            damage.Max,
+            events);
     }
 
     private static void Strike(World world, Actor attacker, Actor target, EventSink events)

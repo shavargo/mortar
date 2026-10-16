@@ -1,4 +1,5 @@
 using Mortar.Game.Events;
+using Mortar.Game.Items;
 using Mortar.Game.Pathing;
 
 namespace Mortar.Game.Simulation;
@@ -15,7 +16,7 @@ internal static class ActionSystem
         }
         foreach (var actor in level.Actors)
         {
-            if (actor.IsAlive && actor.Action == ActionKind.Idle) StartFromIntent(level, actor, events);
+            if (actor.IsAlive && actor.Action == ActionKind.Idle) StartFromIntent(world, actor, events);
         }
         return due;
     }
@@ -24,35 +25,44 @@ internal static class ActionSystem
     {
         if (actor.Action == ActionKind.Idle) return;
         actor.ActionElapsed++;
-        if (actor.Action == ActionKind.Attacking && actor.ActionElapsed == actor.Profile.Timings.HitFrame)
+        if (IsStrikeAction(actor.Action) && actor.ActionElapsed == actor.Profile.Timings.HitFrame)
         {
             due.Add(actor);
         }
         if (actor.ActionElapsed >= actor.ActionDuration) actor.ClearAction();
     }
 
-    private static void StartFromIntent(LevelState level, Actor actor, EventSink events)
+    private static bool IsStrikeAction(ActionKind action) =>
+        action == ActionKind.Attacking || action == ActionKind.Shooting;
+
+    private static void StartFromIntent(World world, Actor actor, EventSink events)
     {
         switch (actor.Intent)
         {
             case IntentKind.MoveTo:
-                Movement.ContinueMoveTo(level, actor, events);
+                Movement.ContinueMoveTo(world.Level, actor, events);
                 break;
             case IntentKind.Attack:
-                ContinueAttack(level, actor, events);
+                ContinueAttack(world, actor, events);
                 break;
             case IntentKind.PickUp:
-                Movement.Approach(level, actor, actor.IntentCell, events);
+                Movement.Approach(world.Level, actor, actor.IntentCell, events);
                 break;
         }
     }
 
-    private static void ContinueAttack(LevelState level, Actor actor, EventSink events)
+    private static void ContinueAttack(World world, Actor actor, EventSink events)
     {
+        var level = world.Level;
         var target = level.Find(actor.IntentTargetId);
         if (target is null || !target.IsAlive)
         {
             actor.ClearIntent();
+            return;
+        }
+        if (actor.Kind == ActorKind.Player && CombatSystem.IsRangedWeapon(CombatSystem.EquippedWeapon(world)))
+        {
+            ContinueRanged(world, actor, target, events);
             return;
         }
         if (Reach.CanStrike(actor.Cell, target.Cell, level.IsWalkable))
@@ -62,5 +72,24 @@ internal static class ActionSystem
         }
         var path = Pathfinder.FindPathNextTo(actor.Cell, target.Cell, level.IsWalkable, level.IsFree);
         if (path is { Count: > 0 }) Movement.Step(level, actor, path[0], events);
+    }
+
+    private static void ContinueRanged(World world, Actor actor, Actor target, EventSink events)
+    {
+        var weapon = CombatSystem.EquippedWeapon(world)!;
+        var ammoId = weapon.Definition.AmmoId!;
+        if (!Ammo.Has(world.Belongings, ammoId))
+        {
+            actor.ClearIntent();
+            return;
+        }
+        var range = weapon.Definition.Range;
+        if (actor.Cell.DistanceTo(target.Cell) <= range)
+        {
+            CombatSystem.StartShoot(actor, target, events);
+            return;
+        }
+        var path = Pathfinder.FindPathNextTo(actor.Cell, target.Cell, world.Level.IsWalkable, world.Level.IsFree);
+        if (path is { Count: > 0 }) Movement.Step(world.Level, actor, path[0], events);
     }
 }

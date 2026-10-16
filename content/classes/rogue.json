@@ -1,0 +1,19 @@
+{
+  "id": "rogue",
+  "name": "Rogue",
+  "spriteSet": "rogue",
+  "baseStats": { "strength": 14, "dexterity": 26, "vitality": 16, "magic": 12 },
+  "statCaps": { "strength": 80, "dexterity": 160, "vitality": 90, "magic": 60 },
+  "growth": {
+    "lifeBase": 22,
+    "lifePerVitality": 1,
+    "lifePerLevel": 2,
+    "manaBase": 8,
+    "manaPerMagic": 2,
+    "manaPerLevel": 1,
+    "statPointsPerLevel": 4
+  },
+  "unarmedDamage": { "min": 1, "max": 2 },
+  "timings": { "moveTicks": 6, "attackTicks": 10, "hitFrame": 5, "recoveryTicks": 5 },
+  "startingItems": ["short-bow", "arrows", "padded-vest", "healing-draught", "healing-draught"]
+}

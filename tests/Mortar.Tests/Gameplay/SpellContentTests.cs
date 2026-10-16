@@ -52,7 +52,7 @@ public sealed class SpellContentTests
         var bow = new ItemBaseDefinition(
             "bow", "Bow", "bow", ItemSlots.Weapon, 1, 2, 1, 1, default,
             new IntRange(2, 5), new WeaponSwing(10, 5), null, 0, null,
-            ranged: true, ammoId: "arrows");
+            ranged: true, ammoId: "arrows", range: 8);
 
         var result = ContentSet.Create(
             TestGameContent.Rules(),

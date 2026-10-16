@@ -133,12 +133,17 @@ public class GameContentLoaderTests
     public void RepoContent_HasItemsAffixesAndLoot()
     {
         var content = GameContentLoader.Load(ContentFixture.Manifest).Value!.Content;
-        Assert.Equal(15, content.ItemBases.Count);
+        Assert.Equal(17, content.ItemBases.Count);
         Assert.Equal(13, content.Affixes.Count);
         Assert.Equal(4, content.Items.LootTables.Count);
         Assert.Equal("common", content.Monster("zombie").LootTableId);
         Assert.True(content.TryGetClass("warrior", out var warrior));
         Assert.Equal(new[] { "iron-knife", "padded-vest", "healing-draught", "healing-draught" }, warrior!.StartingItems);
+        Assert.True(content.TryGetClass("rogue", out var rogue));
+        Assert.Equal(new[] { "short-bow", "arrows", "padded-vest", "healing-draught", "healing-draught" }, rogue!.StartingItems);
+        Assert.True(content.TryGetItemBase("short-bow", out var bow));
+        Assert.True(bow!.Ranged);
+        Assert.Equal("arrows", bow.AmmoId);
     }
 
     [Fact]

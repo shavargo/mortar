@@ -10,6 +10,8 @@ public sealed class ItemSnapshot
 
     public int Armor { get; set; }
 
+    public int StackCount { get; set; } = 1;
+
     public AffixRollSnapshot? Prefix { get; set; }
 
     public AffixRollSnapshot? Suffix { get; set; }

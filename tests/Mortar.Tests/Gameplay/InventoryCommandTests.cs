@@ -165,7 +165,7 @@ public class InventoryCommandTests
         var world = Create();
         var potions = Enumerable.Range(0, 9).Select(_ => TestWorlds.Give(world, Tonic)).ToList();
         var knife = TestWorlds.Give(world, Knife);
-        Assert.Equal("only potions go in the belt", Rejection(Tick(world, new PutInBeltCommand(knife.Id, 0))));
+        Assert.Equal("only potions and ammo go in the belt", Rejection(Tick(world, new PutInBeltCommand(knife.Id, 0))));
         Assert.Equal("that belt slot is taken", Rejection(Tick(world, new PutInBeltCommand(potions[8].Id, 0))));
         Tick(world, new UseBeltCommand(3));
         Assert.Single(Tick(world, new PutInBeltCommand(potions[8].Id, 3)).OfType<ItemBelted>());

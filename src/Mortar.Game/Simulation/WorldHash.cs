@@ -80,6 +80,7 @@ public static class WorldHash
     private static void AddItem(StateHasher hasher, Item item)
     {
         hasher.Add((long)item.Id).Add(item.Definition.Id).Add((long)item.ItemLevel).Add((long)item.ArmorValue);
+        hasher.Add((long)item.StackCount);
         AddAffix(hasher, item.Prefix);
         AddAffix(hasher, item.Suffix);
     }

@@ -6,7 +6,14 @@ namespace Mortar.Game.Items;
 internal static class ItemFactory
 {
     public static Item CreatePlain(World world, ItemBaseDefinition definition) =>
-        new Item(world.NextItemId++, definition, definition.ItemLevel, definition.Armor?.Max ?? 0, null, null);
+        new Item(
+            world.NextItemId++,
+            definition,
+            definition.ItemLevel,
+            definition.Armor?.Max ?? 0,
+            null,
+            null,
+            definition.IsStackable ? definition.StackMax : 1);
 
     public static Item? Roll(World world, int itemLevel, int magicPercent)
     {
@@ -16,13 +23,14 @@ internal static class ItemFactory
         var armor = definition.Armor is { } range ? world.Rng.NextInt(range.Min, range.Max + 1) : 0;
         RolledAffix? prefix = null;
         RolledAffix? suffix = null;
-        if (!definition.IsPotion && world.Rng.NextInt(100) < magicPercent)
+        if (!definition.IsPotion && !definition.IsAmmo && world.Rng.NextInt(100) < magicPercent)
         {
             var shape = world.Rng.NextInt(3);
             if (shape != 1) prefix = RollAffix(world, definition, itemLevel, AffixPositions.Prefix);
             if (shape != 0) suffix = RollAffix(world, definition, itemLevel, AffixPositions.Suffix);
         }
-        return new Item(world.NextItemId++, definition, itemLevel, armor, prefix, suffix);
+        var stack = definition.IsStackable ? definition.StackMax : 1;
+        return new Item(world.NextItemId++, definition, itemLevel, armor, prefix, suffix, stack);
     }
 
     private static RolledAffix? RollAffix(World world, ItemBaseDefinition definition, int itemLevel, string position)
