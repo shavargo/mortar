@@ -2,14 +2,30 @@
   "actors": [
     {
       "id": "warrior",
-      "model": "kaykit-adventurers/Knight.glb",
+      "model": "quaternius/AnimatedHuman.glb",
       "hide": [
-        "2H_Sword",
-        "1H_Sword_Offhand",
-        "Rectangle_Shield",
-        "Round_Shield",
-        "Spike_Shield"
+        "Icosphere"
       ],
+      "clips": {
+        "idle": "Human Armature|Human Armature|Idle",
+        "walk": "Human Armature|Human Armature|Walk",
+        "attack": "Human Armature|Human Armature|Punch",
+        "hit": "Human Armature|Human Armature|Jump",
+        "death": "Human Armature|Human Armature|Death"
+      },
+      "attackHitSeconds": 0.4,
+      "scale": 0.7,
+      "facing": 0,
+      "tint": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "maxFrames": 12
+    },
+    {
+      "id": "skeleton",
+      "model": "kaykit-skeletons/Skeleton_Minion.glb",
       "clips": {
         "idle": "Idle",
         "walk": "Walking_A",
@@ -18,6 +34,85 @@
         "death": "Death_A"
       },
       "attackHitSeconds": 0.67,
+      "scale": 0.55,
+      "facing": 0,
+      "tint": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "id": "gravewarden",
+      "model": "kaykit-skeletons/Skeleton_Warrior.glb",
+      "clips": {
+        "idle": "Idle",
+        "walk": "Walking_A",
+        "attack": "1H_Melee_Attack_Chop",
+        "hit": "Hit_A",
+        "death": "Death_A"
+      },
+      "attackHitSeconds": 0.67,
+      "scale": 0.78,
+      "facing": 0,
+      "tint": [
+        0.75,
+        0.7,
+        0.8
+      ]
+    },
+    {
+      "id": "zombie",
+      "model": "quaternius/Zombie.glb",
+      "clips": {
+        "idle": "CharacterArmature|Idle",
+        "walk": "CharacterArmature|Walk",
+        "attack": "CharacterArmature|Punch",
+        "hit": "CharacterArmature|HitReact",
+        "death": "CharacterArmature|Death"
+      },
+      "attackHitSeconds": 0.35,
+      "scale": 0.55,
+      "facing": 0,
+      "tint": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "id": "imp",
+      "model": "quaternius/Demon.glb",
+      "hide": [
+        "Trident"
+      ],
+      "clips": {
+        "idle": "CharacterArmature|Idle",
+        "walk": "CharacterArmature|Walk",
+        "attack": "CharacterArmature|Weapon",
+        "hit": "CharacterArmature|HitReact",
+        "death": "CharacterArmature|Death"
+      },
+      "attackHitSeconds": 0.4,
+      "scale": 0.4,
+      "facing": 0,
+      "tint": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "id": "imp-chieftain",
+      "model": "quaternius/BlueDemon.glb",
+      "clips": {
+        "idle": "CharacterArmature|Idle",
+        "walk": "CharacterArmature|Walk",
+        "attack": "CharacterArmature|Weapon",
+        "hit": "CharacterArmature|HitReact",
+        "death": "CharacterArmature|Death"
+      },
+      "attackHitSeconds": 0.4,
       "scale": 0.6,
       "facing": 0,
       "tint": [
@@ -25,6 +120,82 @@
         1.0,
         1.0
       ]
+    },
+    {
+      "id": "carrion-bat",
+      "model": "quaternius/Bat.glb",
+      "clips": {
+        "idle": "BatArmature|Bat_Flying",
+        "walk": "BatArmature|Bat_Flying",
+        "attack": "BatArmature|Bat_Attack",
+        "hit": "BatArmature|Bat_Hit",
+        "death": "BatArmature|Bat_Death"
+      },
+      "attackHitSeconds": 0.4,
+      "scale": 0.4,
+      "facing": 0,
+      "tint": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "id": "smith",
+      "model": "quaternius/AnimatedHuman.glb",
+      "npc": true,
+      "hide": [
+        "Icosphere"
+      ],
+      "clips": {
+        "idle": "Human Armature|Human Armature|Idle"
+      },
+      "scale": 0.72,
+      "facing": 0,
+      "tint": [
+        1.0,
+        0.85,
+        0.7
+      ],
+      "maxFrames": 12
+    },
+    {
+      "id": "healer",
+      "model": "quaternius/AnimatedHuman.glb",
+      "npc": true,
+      "hide": [
+        "Icosphere"
+      ],
+      "clips": {
+        "idle": "Human Armature|Human Armature|Idle"
+      },
+      "scale": 0.68,
+      "facing": 0,
+      "tint": [
+        0.75,
+        1.0,
+        0.85
+      ],
+      "maxFrames": 12
+    },
+    {
+      "id": "sage",
+      "model": "quaternius/AnimatedHuman.glb",
+      "npc": true,
+      "hide": [
+        "Icosphere"
+      ],
+      "clips": {
+        "idle": "Human Armature|Human Armature|Idle"
+      },
+      "scale": 0.68,
+      "facing": 0,
+      "tint": [
+        0.8,
+        0.75,
+        1.0
+      ],
+      "maxFrames": 12
     }
   ],
   "files": {
@@ -34,6 +205,7 @@
     "kaykit-adventurers/Rogue_Hooded.glb": "93e6e25213009952276d9cf34f5d96a243767334c66f280db0433ddfabb91545",
     "kaykit-skeletons/Skeleton_Minion.glb": "6ffc003f895bed0b074791e0e490846210a2e2f8fc7da300aba53cc185f95968",
     "kaykit-skeletons/Skeleton_Warrior.glb": "178b6fda810b814c250d8a2010c24dfd9b458b9006dd323353e620b7ff118bbe",
+    "quaternius/AnimatedHuman.glb": "59d4cb5056e00f1be73ad48d45c9f27266d725239c77840ab942f51f1dfcca88",
     "quaternius/Bat.glb": "ff20d0c0d68be4ed4ba3a402b8ceaeaf54de5d0c9dc3968117749214aee63c9b",
     "quaternius/BlueDemon.glb": "6a8e743deba6f43f0f9b1e702016b04ddba1d3bf73b7101d2c86d64ae526f87c",
     "quaternius/Demon.glb": "7da854e1d43428b89b1afca0feca3f323b869b1d8ed7df74d17354260b607262",

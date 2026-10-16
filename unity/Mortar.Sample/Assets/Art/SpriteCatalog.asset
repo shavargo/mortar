@@ -99,3 +99,460 @@ MonoBehaviour:
     _sprite: {fileID: 21300000, guid: ca595f11abf229b47827857fa5667e40, type: 3}
   - _key: tiles/town/water-0
     _sprite: {fileID: 21300000, guid: e6883ee8cdc3c4540bd241bfb57dbd19, type: 3}
+  _clips:
+  - _key: actors/carrion-bat/attack
+    _sheet: {fileID: 2800000, guid: 0f44fbba7e93e8b45be98aa79910a747, type: 3}
+    _info:
+      frames: 10
+      directions: 8
+      fps: 10
+      loop: 0
+      hitFrame: 4
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/carrion-bat/death
+    _sheet: {fileID: 2800000, guid: 630ed88bc8b152a48a16ce98dfa39395, type: 3}
+    _info:
+      frames: 13
+      directions: 8
+      fps: 10
+      loop: 0
+      hitFrame: 0
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/carrion-bat/hit
+    _sheet: {fileID: 2800000, guid: 5bbe427510565674e8266bffcd329830, type: 3}
+    _info:
+      frames: 13
+      directions: 8
+      fps: 10
+      loop: 0
+      hitFrame: 0
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/carrion-bat/idle
+    _sheet: {fileID: 2800000, guid: ae60861174426b446a8c79f9a1146321, type: 3}
+    _info:
+      frames: 12
+      directions: 8
+      fps: 10
+      loop: 1
+      hitFrame: 0
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/carrion-bat/walk
+    _sheet: {fileID: 2800000, guid: 2cd94768be176ec45aa18e4b20c21478, type: 3}
+    _info:
+      frames: 12
+      directions: 8
+      fps: 10
+      loop: 1
+      hitFrame: 0
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/gravewarden/attack
+    _sheet: {fileID: 2800000, guid: 9594dd9927ac0534587688fff0c8b722, type: 3}
+    _info:
+      frames: 12
+      directions: 8
+      fps: 10
+      loop: 0
+      hitFrame: 7
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/gravewarden/death
+    _sheet: {fileID: 2800000, guid: 5628c61bc263e014eb09898f655a5978, type: 3}
+    _info:
+      frames: 9
+      directions: 8
+      fps: 10
+      loop: 0
+      hitFrame: 0
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/gravewarden/hit
+    _sheet: {fileID: 2800000, guid: 5ac8235e3e747474f818322c1f5f5907, type: 3}
+    _info:
+      frames: 8
+      directions: 8
+      fps: 10
+      loop: 0
+      hitFrame: 0
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/gravewarden/idle
+    _sheet: {fileID: 2800000, guid: 9c494cd7419069c40b47e182f8732f14, type: 3}
+    _info:
+      frames: 11
+      directions: 8
+      fps: 10
+      loop: 1
+      hitFrame: 0
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/gravewarden/walk
+    _sheet: {fileID: 2800000, guid: db075bf870304aa49b3fb0ec1d0e6dc0, type: 3}
+    _info:
+      frames: 11
+      directions: 8
+      fps: 10
+      loop: 1
+      hitFrame: 0
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/healer/idle
+    _sheet: {fileID: 2800000, guid: 35efbe34bbd138b4f8e63c4d8de7f886, type: 3}
+    _info:
+      frames: 12
+      directions: 1
+      fps: 10
+      loop: 1
+      hitFrame: 0
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/imp-chieftain/attack
+    _sheet: {fileID: 2800000, guid: a1e2347a7bbc17d4bb80904c2f686685, type: 3}
+    _info:
+      frames: 9
+      directions: 8
+      fps: 10
+      loop: 0
+      hitFrame: 4
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/imp-chieftain/death
+    _sheet: {fileID: 2800000, guid: e3b506612bc67ff4b974e98254210896, type: 3}
+    _info:
+      frames: 9
+      directions: 8
+      fps: 10
+      loop: 0
+      hitFrame: 0
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/imp-chieftain/hit
+    _sheet: {fileID: 2800000, guid: 94d513fe3de5d9e4c8c5801047bfd047, type: 3}
+    _info:
+      frames: 7
+      directions: 8
+      fps: 10
+      loop: 0
+      hitFrame: 0
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/imp-chieftain/idle
+    _sheet: {fileID: 2800000, guid: 5f45351a93f55934f90e668e75f7c0e1, type: 3}
+    _info:
+      frames: 10
+      directions: 8
+      fps: 10
+      loop: 1
+      hitFrame: 0
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/imp-chieftain/walk
+    _sheet: {fileID: 2800000, guid: 4dd7b2c71a96f8d48ab78458f9392022, type: 3}
+    _info:
+      frames: 10
+      directions: 8
+      fps: 10
+      loop: 1
+      hitFrame: 0
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/imp/attack
+    _sheet: {fileID: 2800000, guid: 397a0af5c03e5e44483b2ca230230124, type: 3}
+    _info:
+      frames: 9
+      directions: 8
+      fps: 10
+      loop: 0
+      hitFrame: 4
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/imp/death
+    _sheet: {fileID: 2800000, guid: b18b4c3cfd5b1c84fbe8d4ef3319ad20, type: 3}
+    _info:
+      frames: 9
+      directions: 8
+      fps: 10
+      loop: 0
+      hitFrame: 0
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/imp/hit
+    _sheet: {fileID: 2800000, guid: 40501c93328ea6342a04a01bdf9b833f, type: 3}
+    _info:
+      frames: 7
+      directions: 8
+      fps: 10
+      loop: 0
+      hitFrame: 0
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/imp/idle
+    _sheet: {fileID: 2800000, guid: b30a033db3b32c84c9da3f9b9adc2afe, type: 3}
+    _info:
+      frames: 10
+      directions: 8
+      fps: 10
+      loop: 1
+      hitFrame: 0
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/imp/walk
+    _sheet: {fileID: 2800000, guid: da7c64553960ce94bba83278e831ebf3, type: 3}
+    _info:
+      frames: 10
+      directions: 8
+      fps: 10
+      loop: 1
+      hitFrame: 0
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/sage/idle
+    _sheet: {fileID: 2800000, guid: 710edab19e1f71d468baf28ee02f19fc, type: 3}
+    _info:
+      frames: 12
+      directions: 1
+      fps: 10
+      loop: 1
+      hitFrame: 0
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/skeleton/attack
+    _sheet: {fileID: 2800000, guid: 43ba1e45aa3fa4a4f8334e72a900e278, type: 3}
+    _info:
+      frames: 12
+      directions: 8
+      fps: 10
+      loop: 0
+      hitFrame: 7
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/skeleton/death
+    _sheet: {fileID: 2800000, guid: 7a4238d1ac8f53744a47d4150fc4d348, type: 3}
+    _info:
+      frames: 9
+      directions: 8
+      fps: 10
+      loop: 0
+      hitFrame: 0
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/skeleton/hit
+    _sheet: {fileID: 2800000, guid: 4ef2da2a8d14b8943b831bde25b597c3, type: 3}
+    _info:
+      frames: 8
+      directions: 8
+      fps: 10
+      loop: 0
+      hitFrame: 0
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/skeleton/idle
+    _sheet: {fileID: 2800000, guid: 5204ba3cc898d1b4584841cfc936ac52, type: 3}
+    _info:
+      frames: 11
+      directions: 8
+      fps: 10
+      loop: 1
+      hitFrame: 0
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/skeleton/walk
+    _sheet: {fileID: 2800000, guid: f5c74050de6e4b146b0cf8f2b2264946, type: 3}
+    _info:
+      frames: 11
+      directions: 8
+      fps: 10
+      loop: 1
+      hitFrame: 0
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/smith/idle
+    _sheet: {fileID: 2800000, guid: b764f4234b168364f9fbc41df0c30ebe, type: 3}
+    _info:
+      frames: 12
+      directions: 1
+      fps: 10
+      loop: 1
+      hitFrame: 0
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/warrior/attack
+    _sheet: {fileID: 2800000, guid: cf2b309d09395d54397f1dca87af45cc, type: 3}
+    _info:
+      frames: 11
+      directions: 8
+      fps: 10
+      loop: 0
+      hitFrame: 4
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/warrior/death
+    _sheet: {fileID: 2800000, guid: 21024666a1538f04ab50caa5a3b4a098, type: 3}
+    _info:
+      frames: 12
+      directions: 8
+      fps: 10
+      loop: 0
+      hitFrame: 0
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/warrior/hit
+    _sheet: {fileID: 2800000, guid: c2179aebaa8ab004a8c01928f80a4eee, type: 3}
+    _info:
+      frames: 11
+      directions: 8
+      fps: 10
+      loop: 0
+      hitFrame: 0
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/warrior/idle
+    _sheet: {fileID: 2800000, guid: fd876b9bcccde8f45be0afca3bd66e3a, type: 3}
+    _info:
+      frames: 12
+      directions: 8
+      fps: 10
+      loop: 1
+      hitFrame: 0
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/warrior/walk
+    _sheet: {fileID: 2800000, guid: 2a7ed34fa509163478a879a5de77b0e6, type: 3}
+    _info:
+      frames: 10
+      directions: 8
+      fps: 10
+      loop: 1
+      hitFrame: 0
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/zombie/attack
+    _sheet: {fileID: 2800000, guid: 5d92340242bae3347a57c7e13938c406, type: 3}
+    _info:
+      frames: 9
+      directions: 8
+      fps: 10
+      loop: 0
+      hitFrame: 4
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/zombie/death
+    _sheet: {fileID: 2800000, guid: a467f6218ad11c8479ed029e26fab558, type: 3}
+    _info:
+      frames: 9
+      directions: 8
+      fps: 10
+      loop: 0
+      hitFrame: 0
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/zombie/hit
+    _sheet: {fileID: 2800000, guid: 322cc7cf7185da94a8e5c54586bb779d, type: 3}
+    _info:
+      frames: 7
+      directions: 8
+      fps: 10
+      loop: 0
+      hitFrame: 0
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/zombie/idle
+    _sheet: {fileID: 2800000, guid: 3997f79271214a648be902f5b29abba2, type: 3}
+    _info:
+      frames: 10
+      directions: 8
+      fps: 10
+      loop: 1
+      hitFrame: 0
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24
+  - _key: actors/zombie/walk
+    _sheet: {fileID: 2800000, guid: 882713351f60dce45853dc3f744a58ac, type: 3}
+    _info:
+      frames: 13
+      directions: 8
+      fps: 10
+      loop: 1
+      hitFrame: 0
+      frameWidth: 104
+      frameHeight: 104
+      pivotX: 52
+      pivotY: 24

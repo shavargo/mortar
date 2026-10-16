@@ -36,6 +36,7 @@ class ActorSpec:
     tint: tuple[float, float, float] = (1.0, 1.0, 1.0)
     attack_hit_seconds: float = 0.0
     npc: bool = False
+    max_frames: int | None = None
 
     @property
     def wanted(self) -> tuple[str, ...]:
@@ -92,6 +93,11 @@ def _parse_actor(entry: dict[str, Any]) -> ActorSpec:
     tint = tuple(float(value) for value in entry.get("tint", (1.0, 1.0, 1.0)))
     if len(tint) != 3:
         raise ManifestError(f"{actor_id}: tint needs three numbers")
+    max_frames = entry.get("maxFrames")
+    if max_frames is not None:
+        max_frames = int(max_frames)
+        if max_frames < 1:
+            raise ManifestError(f"{actor_id}: maxFrames must be at least 1")
     return ActorSpec(
         id=actor_id,
         model=str(_require(entry, "model", actor_id)),
@@ -103,6 +109,7 @@ def _parse_actor(entry: dict[str, Any]) -> ActorSpec:
         tint=(tint[0], tint[1], tint[2]),
         attack_hit_seconds=hit,
         npc=npc,
+        max_frames=max_frames,
     )
 
 
@@ -174,7 +181,7 @@ def build_job(
         "scale": actor.scale,
         "facing": actor.facing,
         "directions": list(directions if directions is not None else actor.directions),
-        "maxFrames": max_frames,
+        "maxFrames": actor.max_frames if max_frames is None else max_frames,
         "out": str(out_dir),
     }
 

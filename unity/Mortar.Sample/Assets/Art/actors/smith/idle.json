@@ -1,0 +1,11 @@
+{
+  "frames": 12,
+  "directions": 1,
+  "fps": 10,
+  "loop": true,
+  "hitFrame": 0,
+  "frameWidth": 104,
+  "frameHeight": 104,
+  "pivotX": 52,
+  "pivotY": 24
+}
