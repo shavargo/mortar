@@ -277,5 +277,29 @@ namespace Mortar.Unity.Tests
             Assert.Greater(stamped, 200);
             Assert.Less(faded, stamped / 4, "four half-lives should leave little trail");
         }
+
+        [Test]
+        public void TrampleStaysOnTheWorldWhenTheCameraMoves()
+        {
+            _scene.AddCells(0, 0, 200, 60, Color.white, MaskMaterials.Stroke);
+            var worldSpot = Vector3.zero;
+            _filter.Tramplers.Add(worldSpot);
+            _filter.TrampleDeltaSeconds = 0f;
+            _scene.Render();
+
+            _filter.Tramplers.Clear();
+            _filter.TrampleDeltaSeconds = 0f;
+            var shiftCells = 20;
+            _scene.Camera.transform.position += new Vector3(
+                shiftCells * AsciiSettings.CellWidth / AsciiScene.PixelsPerUnit, 0f, 0f);
+            _scene.Render();
+
+            var field = _filter.TrampleTexture!;
+            var pixels = _scene.Read(field);
+            var centre = pixels[(field.height / 2) * field.width + field.width / 2];
+            var left = pixels[(field.height / 2) * field.width + (field.width / 2 - shiftCells)];
+            Assert.Less(centre.r, 40, "the trail must not stay glued to screen centre after the camera moves");
+            Assert.Greater(left.r, 180, "the crushed grass should scroll with the world");
+        }
     }
 }

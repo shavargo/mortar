@@ -74,10 +74,11 @@ glyph pass reads; all other cells use brightness and edge glyphs.
 Trample field: a persistent cell-resolution buffer that decays over about
 10–15 seconds (half-life ~5s). Each frame soft footprints are stamped at every
 living walker's ground position — the player, living monsters, and standing
-town NPCs. Grass stroke cells blend from windy dashes toward a flat `-` by
-trample amount, so paths stay visibly flattened for a while after someone
-walks through. Water strokes ignore the field. Trails are session-only (not
-saved).
+town NPCs. The buffer scrolls with the camera so crushed grass stays on the
+world, not glued to the lens. Grass stroke cells blend from windy dashes toward
+a flat `-` by trample amount, so paths stay visibly flattened for a while after
+someone walks through. Water strokes ignore the field. Trails are session-only
+(not saved).
 
 F9 toggles the filter off to show the raw scene, for art tuning. It is a debug
 key, not a player option.

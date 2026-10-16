@@ -12,6 +12,7 @@ namespace Mortar.Unity
         private const int StampPass = 1;
 
         private static readonly int DecayId = Shader.PropertyToID("_Decay");
+        private static readonly int ScrollUvId = Shader.PropertyToID("_ScrollUv");
         private static readonly int WalkerCountId = Shader.PropertyToID("_WalkerCount");
         private static readonly int WalkersId = Shader.PropertyToID("_Walkers");
 
@@ -19,6 +20,8 @@ namespace Mortar.Unity
         private readonly Material _material;
         private RenderTexture? _field;
         private RenderTexture? _temp;
+        private Vector3 _lastCameraPosition;
+        private bool _hasCameraPosition;
 
         public AsciiTrample(Shader shader)
         {
@@ -32,11 +35,14 @@ namespace Mortar.Unity
             Ensure(grid);
             var decay = Mathf.Exp(-Mathf.Max(deltaTime, 0f) * Mathf.Log(2f) / AsciiSettings.TrampleHalfLife);
             _material.SetFloat(DecayId, decay);
+            _material.SetVector(ScrollUvId, ScrollUv(camera, grid));
             Graphics.Blit(_field, _temp, _material, DecayPass);
             var count = FillWalkers(camera, grid, positions);
             _material.SetFloat(WalkerCountId, count);
             _material.SetVectorArray(WalkersId, _walkers);
             Graphics.Blit(_temp, _field, _material, StampPass);
+            _lastCameraPosition = camera.transform.position;
+            _hasCameraPosition = true;
         }
 
         public void Clear()
@@ -49,6 +55,7 @@ namespace Mortar.Unity
             RenderTexture.active = _field;
             GL.Clear(true, true, Color.clear);
             RenderTexture.active = prior;
+            _hasCameraPosition = false;
         }
 
         public void Dispose()
@@ -60,11 +67,22 @@ namespace Mortar.Unity
             }
         }
 
+        private Vector2 ScrollUv(Camera camera, CellGrid grid)
+        {
+            if (!_hasCameraPosition)
+            {
+                return Vector2.zero;
+            }
+            var delta = camera.transform.position - _lastCameraPosition;
+            var pixelsPerUnit = PixelsPerUnit(camera);
+            return new Vector2(
+                delta.x * pixelsPerUnit / AsciiSettings.CellWidth / grid.Columns,
+                delta.y * pixelsPerUnit / AsciiSettings.CellHeight / grid.Rows);
+        }
+
         private int FillWalkers(Camera camera, CellGrid grid, IReadOnlyList<Vector3> positions)
         {
-            var height = camera.targetTexture != null ? camera.targetTexture.height
-                : (camera.pixelHeight > 0 ? camera.pixelHeight : (int)(camera.orthographicSize * 2f));
-            var pixelsPerUnit = height / (2f * camera.orthographicSize);
+            var pixelsPerUnit = PixelsPerUnit(camera);
             var radiusPixels = AsciiSettings.TrampleRadiusTiles / Mathf.Sqrt(2f) * pixelsPerUnit;
             var radiusCells = new Vector2(
                 Mathf.Max(1.25f, radiusPixels / AsciiSettings.CellWidth),
@@ -84,6 +102,13 @@ namespace Mortar.Unity
             return count;
         }
 
+        private static float PixelsPerUnit(Camera camera)
+        {
+            var height = camera.targetTexture != null ? camera.targetTexture.height
+                : (camera.pixelHeight > 0 ? camera.pixelHeight : (int)(camera.orthographicSize * 2f));
+            return height / (2f * camera.orthographicSize);
+        }
+
         private void Ensure(CellGrid grid)
         {
             if (_field != null && _field.width == grid.Columns && _field.height == grid.Rows)
@@ -93,6 +118,7 @@ namespace Mortar.Unity
             Release();
             _field = Make(grid.Columns, grid.Rows, "Mortar Ascii Trample");
             _temp = Make(grid.Columns, grid.Rows, "Mortar Ascii Trample Temp");
+            _hasCameraPosition = false;
         }
 
         private static RenderTexture Make(int width, int height, string name) =>
