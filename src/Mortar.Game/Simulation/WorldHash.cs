@@ -8,6 +8,7 @@ public static class WorldHash
     {
         var hasher = new StateHasher();
         hasher.Add(world.Seed).Add(world.TickCount).Add((long)world.Depth).Add((long)world.NextActorId).Add((long)world.NextItemId);
+        hasher.Add((long)world.NextProjectileId);
         hasher.Add(world.Rng.State).Add(world.Rng.Increment);
         AddProgress(hasher, world.Progress);
         AddBelongings(hasher, world.Belongings);
@@ -18,8 +19,20 @@ public static class WorldHash
             foreach (var actor in level.Actors) AddActor(hasher, actor);
             hasher.Add((long)level.GroundItems.Count);
             foreach (var ground in level.GroundItems) AddGround(hasher, ground);
+            hasher.Add((long)level.Projectiles.Count);
+            foreach (var projectile in level.Projectiles) AddProjectile(hasher, projectile);
         }
         return hasher.Value.ToString("x16");
+    }
+
+    private static void AddProjectile(StateHasher hasher, Projectile projectile)
+    {
+        hasher.Add((long)projectile.Id).Add((long)projectile.OwnerId).Add(projectile.Kind);
+        hasher.Add((long)projectile.Cell.X).Add((long)projectile.Cell.Y);
+        hasher.Add((long)projectile.Aim.X).Add((long)projectile.Aim.Y);
+        hasher.Add((long)projectile.RemainingRange);
+        hasher.Add((long)projectile.DamageMin).Add((long)projectile.DamageMax);
+        hasher.Add(projectile.HitsMonsters).Add(projectile.HitsPlayer);
     }
 
     private static void AddProgress(StateHasher hasher, PlayerProgress progress)

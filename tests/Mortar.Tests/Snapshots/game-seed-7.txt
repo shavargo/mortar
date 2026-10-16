@@ -298,4 +298,4 @@
 829 #1 hit #6 for 8
 829 #6 died (killed by #1)
 829 gained 134 xp (total 655)
-hash: 74d4885a9e214d1d
+hash: ea581f1a62123086

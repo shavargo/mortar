@@ -24,6 +24,7 @@ internal static class LevelEntry
             return $"level {depth} has no free cell near its {arrivalMarker}";
         }
         current?.Remove(world.Player);
+        current?.ClearProjectiles();
         world.Player.ClearAction();
         world.Player.ClearIntent();
         level.Add(world.Player, cell.Value);

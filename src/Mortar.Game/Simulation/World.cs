@@ -54,6 +54,8 @@ public sealed class World
 
     internal int NextItemId { get; set; } = 1;
 
+    internal int NextProjectileId { get; set; } = 1;
+
     public static WorldResult Create(ContentSet content, ILevelGenerator generator, string classId, uint seed)
     {
         if (!content.TryGetClass(classId, out var playerClass))

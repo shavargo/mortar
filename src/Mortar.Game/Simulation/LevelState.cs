@@ -11,6 +11,7 @@ public sealed class LevelState
     private readonly int[] _occupants;
     private readonly List<GroundItem> _groundItems = new List<GroundItem>();
     private readonly List<Actor> _actors = new List<Actor>();
+    private readonly List<Projectile> _projectiles = new List<Projectile>();
     private readonly Dictionary<int, Actor> _byId = new Dictionary<int, Actor>();
 
     internal LevelState(int depth, uint seed, Layout layout)
@@ -67,7 +68,11 @@ public sealed class LevelState
 
     public IReadOnlyList<GroundItem> GroundItems => _groundItems;
 
+    public IReadOnlyList<Projectile> Projectiles => _projectiles;
+
     public GroundItem? FindGroundItem(int id) => _groundItems.Find(ground => ground.Id == id);
+
+    public Projectile? FindProjectile(int id) => _projectiles.Find(projectile => projectile.Id == id);
 
     internal Cell? NearestFree(Cell origin, int maxRadius) => FirstInRings(origin, maxRadius, IsFree);
 
@@ -81,6 +86,16 @@ public sealed class LevelState
     }
 
     internal void RemoveGroundItem(GroundItem ground) => _groundItems.Remove(ground);
+
+    internal void AddProjectile(Projectile projectile)
+    {
+        var index = _projectiles.FindIndex(existing => existing.Id > projectile.Id);
+        _projectiles.Insert(index < 0 ? _projectiles.Count : index, projectile);
+    }
+
+    internal void RemoveProjectile(Projectile projectile) => _projectiles.Remove(projectile);
+
+    internal void ClearProjectiles() => _projectiles.Clear();
 
     internal void Add(Actor actor, Cell cell)
     {
