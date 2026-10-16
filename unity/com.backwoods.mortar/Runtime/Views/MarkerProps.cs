@@ -18,9 +18,9 @@ namespace Mortar.Unity
                     return "stairs-down";
                 case MarkerKinds.Entrance:
                     return hasLevelAbove ? "stairs-up" : null;
-                case "smith":
-                case "healer":
-                case "sage":
+                case MarkerKinds.Smith:
+                case MarkerKinds.Healer:
+                case MarkerKinds.Sage:
                     return markerKind;
                 default:
                     return null;

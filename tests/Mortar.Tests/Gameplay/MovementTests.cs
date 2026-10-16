@@ -1,3 +1,5 @@
+using Mortar.Core.Layouts;
+using Mortar.Core.Model;
 using Mortar.Game;
 using Mortar.Game.Commands;
 using Mortar.Game.Events;
@@ -78,15 +80,36 @@ public class MovementTests
     }
 
     [Fact]
-    public void OccupiedDestination_StopsNextToTheOccupant()
+    public void OccupiedDestination_IsRejected()
     {
         var world = TestWorlds.Create(TestGameContent.Valid(monsters: new[] { TestGameContent.Monster("zombie", sight: 1) }));
         TestWorlds.Spawn(world, "zombie", 5, 1);
-        var events = TestWorlds.Run(world, 14, new MoveCommand(new Cell(5, 1)));
-        var moves = events.OfType<ActorMoved>().Where(m => m.ActorId == Actor.PlayerId).ToList();
-        Assert.Equal(new long[] { 1, 5, 9 }, moves.Select(m => m.Tick));
-        Assert.Equal(new Cell(4, 1), world.Player.Cell);
+        var events = world.Tick(new Command[] { new MoveCommand(new Cell(5, 1)) });
+        var rejected = Assert.IsType<CommandRejected>(Assert.Single(events));
+        Assert.Equal("destination is blocked", rejected.Reason);
+        Assert.Equal(new Cell(1, 1), world.Player.Cell);
         Assert.Equal(IntentKind.None, world.Player.Intent);
+    }
+
+    [Fact]
+    public void TownNpcDestination_IsRejected()
+    {
+        var baseLayout = TestLevels.FromAscii(
+            "#########",
+            "#E......#",
+            "#.......#",
+            "#.......#",
+            "#......X#",
+            "#########");
+        var markers = baseLayout.Markers.Append(new Marker(MarkerKinds.Smith, null, 4, 1)).ToList();
+        var layout = new Layout(
+            baseLayout.AreaId, baseLayout.Seed, baseLayout.Attempt, baseLayout.Cells, markers,
+            baseLayout.MortarVersion, baseLayout.FormatVersion);
+        var world = World.Create(TestGameContent.Valid(), new FixedLayoutGenerator(layout), "warrior", 1).World
+            ?? throw new InvalidOperationException("failed to create world");
+        var events = world.Tick(new Command[] { new MoveCommand(new Cell(4, 1)) });
+        var rejected = Assert.IsType<CommandRejected>(Assert.Single(events));
+        Assert.Equal("destination is blocked", rejected.Reason);
     }
 
     [Fact]

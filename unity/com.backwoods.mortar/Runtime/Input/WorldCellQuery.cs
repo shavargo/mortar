@@ -43,6 +43,6 @@ namespace Mortar.Unity
             return false;
         }
 
-        public bool IsWalkable(Cell cell) => _world.Level.IsWalkable(cell);
+        public bool IsWalkable(Cell cell) => _world.Level.IsFree(cell);
     }
 }

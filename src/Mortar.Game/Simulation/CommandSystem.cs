@@ -66,6 +66,11 @@ internal static class CommandSystem
         {
             return "destination is not walkable";
         }
+        var occupant = world.Level.OccupantAt(move.Destination);
+        if ((occupant != 0 && occupant != world.Player.Id) || world.Level.HasTownNpc(move.Destination))
+        {
+            return "destination is blocked";
+        }
         if (!Movement.IsReachable(world.Level, world.Player.Cell, move.Destination))
         {
             return "destination is unreachable";

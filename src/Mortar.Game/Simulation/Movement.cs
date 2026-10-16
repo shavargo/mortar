@@ -19,7 +19,7 @@ internal static class Movement
             : Pathfinder.FindPath(actor.Cell, goal, level.IsWalkable, level.IsFree);
         if (path is null)
         {
-            if (!IsReachable(level, actor.Cell, goal)) actor.ClearIntent();
+            if (!level.IsFree(goal) || !IsReachable(level, actor.Cell, goal)) actor.ClearIntent();
             return;
         }
         Step(level, actor, path[0], events);
@@ -43,6 +43,10 @@ internal static class Movement
 
     public static void Step(LevelState level, Actor actor, Cell next, EventSink events)
     {
+        if (!level.IsFree(next) && level.OccupantAt(next) != actor.Id)
+        {
+            return;
+        }
         var from = actor.Cell;
         var duration = actor.Profile.Timings.MoveTicks;
         actor.Facing = Directions.Toward(from, next);

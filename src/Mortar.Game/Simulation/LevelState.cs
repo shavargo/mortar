@@ -1,4 +1,5 @@
 using Mortar.Core.Layouts;
+using Mortar.Core.Model;
 using Mortar.Game.Items;
 
 namespace Mortar.Game.Simulation;
@@ -33,9 +34,25 @@ public sealed class LevelState
 
     public bool IsWalkable(Cell cell) => InBounds(cell) && Layout.Cells.IsWalkable(cell.X, cell.Y);
 
-    public bool IsFree(Cell cell) => IsWalkable(cell) && _occupants[Index(cell)] == 0;
+    public bool IsFree(Cell cell) => IsWalkable(cell) && _occupants[Index(cell)] == 0 && !HasTownNpc(cell);
 
     public int OccupantAt(Cell cell) => InBounds(cell) ? _occupants[Index(cell)] : 0;
+
+    public bool HasTownNpc(Cell cell)
+    {
+        if (!InBounds(cell))
+        {
+            return false;
+        }
+        foreach (var marker in Layout.Markers)
+        {
+            if (marker.X == cell.X && marker.Y == cell.Y && MarkerKinds.IsTownNpc(marker.Kind))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public Actor? Find(int id) => _byId.TryGetValue(id, out var actor) ? actor : null;
 

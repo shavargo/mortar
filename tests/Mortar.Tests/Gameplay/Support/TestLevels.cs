@@ -33,6 +33,15 @@ internal static class TestLevels
     }
 }
 
+internal sealed class FixedLayoutGenerator : ILevelGenerator
+{
+    private readonly Layout _layout;
+
+    public FixedLayoutGenerator(Layout layout) => _layout = layout;
+
+    public LevelBuildResult Generate(LevelDefinition level, uint seed) => LevelBuildResult.Success(_layout);
+}
+
 internal sealed class FixedLevelGenerator : ILevelGenerator
 {
     private readonly string[]? _town;

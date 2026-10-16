@@ -205,7 +205,7 @@ namespace Mortar.Unity
             }
             _framesSinceMove = 0;
             var held = CellUnder(screen);
-            if (held.HasValue && _game.Session != null && _game.Session.World.Level.IsWalkable(held.Value))
+            if (held.HasValue && _game.Session != null && _game.Session.World.Level.IsFree(held.Value))
             {
                 _game.Enqueue(new MoveCommand(held.Value));
             }

@@ -1,3 +1,5 @@
+using Mortar.Core.Layouts;
+using Mortar.Core.Model;
 using Mortar.Game;
 using Mortar.Game.Simulation;
 using Mortar.Tests.Gameplay.Support;
@@ -53,5 +55,20 @@ public class LevelStateTests
         Assert.Equal(new Cell(1, 1), level.NearestFree(new Cell(1, 1), 2));
         level.Add(Monster(2), new Cell(1, 1));
         Assert.Equal(new Cell(2, 1), level.NearestFree(new Cell(1, 1), 2));
+    }
+
+    [Fact]
+    public void TownNpcMarkersAreNotFree()
+    {
+        var baseLayout = TestLevels.FromAscii("#####", "#E.X#", "#####");
+        var markers = baseLayout.Markers.Append(new Marker(MarkerKinds.Smith, null, 2, 1)).ToList();
+        var layout = new Layout(
+            baseLayout.AreaId, baseLayout.Seed, baseLayout.Attempt, baseLayout.Cells, markers,
+            baseLayout.MortarVersion, baseLayout.FormatVersion);
+        var level = new LevelState(0, 0, layout);
+
+        Assert.True(level.IsWalkable(new Cell(2, 1)));
+        Assert.True(level.HasTownNpc(new Cell(2, 1)));
+        Assert.False(level.IsFree(new Cell(2, 1)));
     }
 }
