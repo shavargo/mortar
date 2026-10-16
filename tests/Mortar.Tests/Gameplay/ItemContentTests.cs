@@ -39,7 +39,7 @@ public class ItemContentTests
     public void LargePotion_IsRejected()
     {
         var jug = new ItemBaseDefinition("jug", "jug", "jug", ItemSlots.Potion, 1, 2, 1, 1, default, null, null, null, 0, new PotionEffect(PotionKinds.Life, 5));
-        AssertError(Create(bases: jug), "item 'jug'", "rings, amulets, potions, and ammo must be 1x1");
+        AssertError(Create(bases: jug), "item 'jug'", "rings, amulets, potions, ammo, books, and scrolls must be 1x1");
     }
 
     [Fact]

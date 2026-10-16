@@ -26,6 +26,8 @@ internal static class CommandSystem
                 return Attack(world, attack);
             case CastCommand cast:
                 return Cast(world, cast);
+            case UseItemCommand useItem:
+                return SpellItemActions.Use(world, useItem, events);
             case SpendStatPointCommand spend:
                 return PlayerGrowth.SpendPoint(world, spend.Stat, events);
             case UseStairsCommand _:
@@ -79,17 +81,31 @@ internal static class CommandSystem
         {
             return "unknown spell";
         }
-        if (!world.Progress.Knows(cast.SpellId))
+        var staff = CombatSystem.EquippedWeapon(world);
+        var fromStaff = staff is not null
+            && staff.Definition.SpellId == cast.SpellId
+            && staff.Charges > 0
+            && staff.Definition.MaxCharges > 0;
+        var knows = world.Progress.Knows(cast.SpellId);
+        if (knows && world.Player.Mana >= spell!.ManaCost)
+        {
+            fromStaff = false;
+        }
+        else if (fromStaff)
+        {
+            // staff charge cast
+        }
+        else if (!knows)
         {
             return "spell not learned";
         }
-        if (world.Player.Mana < spell!.ManaCost)
+        else
         {
             return "not enough mana";
         }
         var aim = world.Player.Cell;
         var targetId = 0;
-        if (spell.Shape == SpellShapes.Projectile)
+        if (spell!.Shape == SpellShapes.Projectile || spell.Shape == SpellShapes.Area)
         {
             if (cast.TargetActorId != 0)
             {
@@ -114,7 +130,7 @@ internal static class CommandSystem
                 return "spell needs a target";
             }
         }
-        world.Player.SetCastIntent(spell.Id, targetId, aim);
+        world.Player.SetCastIntent(spell.Id, targetId, aim, fromStaff);
         return null;
     }
 

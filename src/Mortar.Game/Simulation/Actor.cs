@@ -58,6 +58,8 @@ public sealed class Actor
 
     public string IntentSpellId { get; private set; } = "";
 
+    public bool IntentFromStaff { get; private set; }
+
     public bool IsAlive => !IsDead && Life > 0;
 
     internal void StartAction(ActionKind kind, int duration, int targetId = 0)
@@ -81,6 +83,7 @@ public sealed class Actor
         IntentCell = cell;
         IntentTargetId = 0;
         IntentSpellId = "";
+        IntentFromStaff = false;
     }
 
     internal void SetAttackIntent(int targetId)
@@ -89,14 +92,16 @@ public sealed class Actor
         IntentCell = default;
         IntentTargetId = targetId;
         IntentSpellId = "";
+        IntentFromStaff = false;
     }
 
-    internal void SetCastIntent(string spellId, int targetId, Cell cell)
+    internal void SetCastIntent(string spellId, int targetId, Cell cell, bool fromStaff = false)
     {
         Intent = IntentKind.Cast;
         IntentSpellId = spellId;
         IntentTargetId = targetId;
         IntentCell = cell;
+        IntentFromStaff = fromStaff;
     }
 
     internal void SetPickUpIntent(int groundItemId, Cell cell)
@@ -105,6 +110,7 @@ public sealed class Actor
         IntentCell = cell;
         IntentTargetId = groundItemId;
         IntentSpellId = "";
+        IntentFromStaff = false;
     }
 
     internal void ClearIntent()
@@ -113,6 +119,7 @@ public sealed class Actor
         IntentCell = default;
         IntentTargetId = 0;
         IntentSpellId = "";
+        IntentFromStaff = false;
     }
 
     internal void ApplyProfile(CombatProfile profile)

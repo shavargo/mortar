@@ -16,7 +16,8 @@ internal static class ProjectileSystem
         int range,
         int damageMin,
         int damageMax,
-        EventSink events)
+        EventSink events,
+        int radius = 0)
     {
         var hitsMonsters = owner.Kind == ActorKind.Player;
         var hitsPlayer = owner.Kind == ActorKind.Monster;
@@ -30,7 +31,8 @@ internal static class ProjectileSystem
             damageMin,
             damageMax,
             hitsMonsters,
-            hitsPlayer);
+            hitsPlayer,
+            radius);
         world.Level.AddProjectile(projectile);
         events.Add(new ProjectileSpawned(events.Tick, projectile.Id, owner.Id, kind, owner.Cell));
         return projectile;
@@ -57,14 +59,12 @@ internal static class ProjectileSystem
     {
         if (projectile.RemainingRange <= 0 || projectile.Cell == projectile.Aim)
         {
-            events.Add(new ProjectileStopped(events.Tick, projectile.Id, projectile.Cell, StoppedByRange));
-            return true;
+            return Finish(world, projectile, events, StoppedByRange);
         }
         var next = projectile.Cell.Step(Directions.Toward(projectile.Cell, projectile.Aim));
         if (!world.Level.IsWalkable(next) || !Reach.CornersClear(projectile.Cell, next, world.Level.IsWalkable))
         {
-            events.Add(new ProjectileStopped(events.Tick, projectile.Id, projectile.Cell, StoppedByWall));
-            return true;
+            return Finish(world, projectile, events, StoppedByWall);
         }
         var from = projectile.Cell;
         projectile.Cell = next;
@@ -76,23 +76,47 @@ internal static class ProjectileSystem
             var target = world.Level.Find(occupantId);
             if (target is not null && target.IsAlive && CanHit(projectile, target))
             {
-                Hit(world, projectile, target, events);
+                if (projectile.IsArea)
+                {
+                    Explode(world, projectile, events);
+                }
+                else
+                {
+                    ApplyDamage(world, projectile, target, events);
+                }
                 return true;
             }
         }
         if (projectile.RemainingRange <= 0 || projectile.Cell == projectile.Aim)
         {
-            events.Add(new ProjectileStopped(events.Tick, projectile.Id, projectile.Cell, StoppedByRange));
-            return true;
+            return Finish(world, projectile, events, StoppedByRange);
         }
         return false;
+    }
+
+    private static bool Finish(World world, Projectile projectile, EventSink events, string reason)
+    {
+        events.Add(new ProjectileStopped(events.Tick, projectile.Id, projectile.Cell, reason));
+        if (projectile.IsArea) Explode(world, projectile, events);
+        return true;
+    }
+
+    private static void Explode(World world, Projectile projectile, EventSink events)
+    {
+        events.Add(new ProjectileExploded(events.Tick, projectile.Id, projectile.Cell, projectile.Radius));
+        foreach (var actor in world.Level.Actors)
+        {
+            if (!actor.IsAlive || !CanHit(projectile, actor)) continue;
+            if (actor.Cell.DistanceTo(projectile.Cell) > projectile.Radius) continue;
+            ApplyDamage(world, projectile, actor, events);
+        }
     }
 
     private static bool CanHit(Projectile projectile, Actor target) =>
         (projectile.HitsMonsters && target.Kind == ActorKind.Monster)
         || (projectile.HitsPlayer && target.Kind == ActorKind.Player);
 
-    private static void Hit(World world, Projectile projectile, Actor target, EventSink events)
+    private static void ApplyDamage(World world, Projectile projectile, Actor target, EventSink events)
     {
         var damage = world.Rng.NextInt(projectile.DamageMin, projectile.DamageMax + 1);
         events.Add(new ProjectileHit(events.Tick, projectile.Id, projectile.OwnerId, target.Id, damage));

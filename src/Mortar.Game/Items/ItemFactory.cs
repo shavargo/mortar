@@ -13,7 +13,8 @@ internal static class ItemFactory
             definition.Armor?.Max ?? 0,
             null,
             null,
-            definition.IsStackable ? definition.StackMax : 1);
+            definition.IsStackable ? definition.StackMax : 1,
+            definition.MaxCharges);
 
     public static Item? Roll(World world, int itemLevel, int magicPercent)
     {
@@ -30,7 +31,7 @@ internal static class ItemFactory
             if (shape != 0) suffix = RollAffix(world, definition, itemLevel, AffixPositions.Suffix);
         }
         var stack = definition.IsStackable ? definition.StackMax : 1;
-        return new Item(world.NextItemId++, definition, itemLevel, armor, prefix, suffix, stack);
+        return new Item(world.NextItemId++, definition, itemLevel, armor, prefix, suffix, stack, definition.MaxCharges);
     }
 
     private static RolledAffix? RollAffix(World world, ItemBaseDefinition definition, int itemLevel, string position)

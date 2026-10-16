@@ -10,8 +10,10 @@ public static class ItemSlots
     public const string Amulet = "amulet";
     public const string Potion = "potion";
     public const string Ammo = "ammo";
+    public const string Book = "book";
+    public const string Scroll = "scroll";
 
-    public static readonly IReadOnlyList<string> All = new[] { Weapon, Body, Head, Shield, Ring, Amulet, Potion, Ammo };
+    public static readonly IReadOnlyList<string> All = new[] { Weapon, Body, Head, Shield, Ring, Amulet, Potion, Ammo, Book, Scroll };
 
     public static readonly IReadOnlyList<string> Equippable = new[] { Weapon, Body, Head, Shield, Ring, Amulet };
 

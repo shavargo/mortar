@@ -15,6 +15,6 @@
   },
   "unarmedDamage": { "min": 1, "max": 2 },
   "timings": { "moveTicks": 8, "attackTicks": 14, "hitFrame": 8, "recoveryTicks": 6 },
-  "startingItems": ["iron-knife", "padded-vest", "mana-draught", "mana-draught", "healing-draught"],
+  "startingItems": ["oak-staff", "padded-vest", "mana-draught", "mana-draught", "healing-draught", "scroll-of-healing"],
   "startingSpells": ["firebolt", "healing", "lightning"]
 }

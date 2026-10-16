@@ -30,7 +30,8 @@ public sealed class Item
         int armorValue,
         RolledAffix? prefix,
         RolledAffix? suffix,
-        int stackCount = 1)
+        int stackCount = 1,
+        int charges = 0)
     {
         Id = id;
         Definition = definition;
@@ -39,6 +40,7 @@ public sealed class Item
         Prefix = prefix;
         Suffix = suffix;
         StackCount = stackCount;
+        Charges = charges;
     }
 
     public int Id { get; }
@@ -54,6 +56,8 @@ public sealed class Item
     public RolledAffix? Suffix { get; }
 
     public int StackCount { get; internal set; }
+
+    public int Charges { get; internal set; }
 
     public ItemQuality Quality => Prefix is null && Suffix is null ? ItemQuality.Normal : ItemQuality.Magic;
 

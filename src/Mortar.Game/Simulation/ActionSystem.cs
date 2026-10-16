@@ -68,12 +68,22 @@ internal static class ActionSystem
             actor.ClearIntent();
             return;
         }
-        if (actor.Mana < spell!.ManaCost)
+        var fromStaff = actor.IntentFromStaff;
+        if (!fromStaff && actor.Mana < spell!.ManaCost)
         {
             actor.ClearIntent();
             return;
         }
-        SpellSystem.StartCast(world, actor, spell, actor.IntentTargetId, actor.IntentCell, events);
+        if (fromStaff)
+        {
+            var staff = CombatSystem.EquippedWeapon(world);
+            if (staff is null || staff.Charges < 1 || staff.Definition.SpellId != spell!.Id)
+            {
+                actor.ClearIntent();
+                return;
+            }
+        }
+        SpellSystem.StartCast(world, actor, spell!, actor.IntentTargetId, actor.IntentCell, events, fromStaff);
         actor.ClearIntent();
     }
 

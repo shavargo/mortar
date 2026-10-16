@@ -33,6 +33,7 @@ public static class WorldHash
         hasher.Add((long)projectile.RemainingRange);
         hasher.Add((long)projectile.DamageMin).Add((long)projectile.DamageMax);
         hasher.Add(projectile.HitsMonsters).Add(projectile.HitsPlayer);
+        hasher.Add((long)projectile.Radius);
     }
 
     private static void AddProgress(StateHasher hasher, PlayerProgress progress)
@@ -87,7 +88,7 @@ public static class WorldHash
     private static void AddItem(StateHasher hasher, Item item)
     {
         hasher.Add((long)item.Id).Add(item.Definition.Id).Add((long)item.ItemLevel).Add((long)item.ArmorValue);
-        hasher.Add((long)item.StackCount);
+        hasher.Add((long)item.StackCount).Add((long)item.Charges);
         AddAffix(hasher, item.Prefix);
         AddAffix(hasher, item.Suffix);
     }

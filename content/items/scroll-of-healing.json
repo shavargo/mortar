@@ -1,0 +1,10 @@
+{
+  "id": "scroll-of-healing",
+  "name": "Scroll of Healing",
+  "icon": "scroll-of-healing",
+  "slot": "scroll",
+  "size": { "width": 1, "height": 1 },
+  "itemLevel": 1,
+  "dropWeight": 3,
+  "spell": "healing"
+}

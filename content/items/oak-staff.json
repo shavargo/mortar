@@ -1,0 +1,14 @@
+{
+  "id": "oak-staff",
+  "name": "Oak Staff",
+  "icon": "oak-staff",
+  "slot": "weapon",
+  "size": { "width": 1, "height": 3 },
+  "itemLevel": 3,
+  "dropWeight": 2,
+  "requirements": { "magic": 20 },
+  "damage": { "min": 2, "max": 4 },
+  "swing": { "attackTicks": 14, "hitFrame": 8 },
+  "spell": "firebolt",
+  "maxCharges": 20
+}

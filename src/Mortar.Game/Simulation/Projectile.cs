@@ -12,7 +12,8 @@ public sealed class Projectile
         int damageMin,
         int damageMax,
         bool hitsMonsters,
-        bool hitsPlayer)
+        bool hitsPlayer,
+        int radius = 0)
     {
         Id = id;
         OwnerId = ownerId;
@@ -24,6 +25,7 @@ public sealed class Projectile
         DamageMax = damageMax;
         HitsMonsters = hitsMonsters;
         HitsPlayer = hitsPlayer;
+        Radius = radius;
     }
 
     public int Id { get; }
@@ -45,4 +47,8 @@ public sealed class Projectile
     public bool HitsMonsters { get; }
 
     public bool HitsPlayer { get; }
+
+    public int Radius { get; }
+
+    public bool IsArea => Radius > 0;
 }

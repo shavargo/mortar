@@ -81,3 +81,22 @@ public sealed class ProjectileStopped : GameEvent
 
     protected override string Describe() => $"projectile #{ProjectileId} stopped at {Cell} ({Reason})";
 }
+
+public sealed class ProjectileExploded : GameEvent
+{
+    public ProjectileExploded(long tick, int projectileId, Cell cell, int radius)
+        : base(tick)
+    {
+        ProjectileId = projectileId;
+        Cell = cell;
+        Radius = radius;
+    }
+
+    public int ProjectileId { get; }
+
+    public Cell Cell { get; }
+
+    public int Radius { get; }
+
+    protected override string Describe() => $"projectile #{ProjectileId} exploded at {Cell} r={Radius}";
+}

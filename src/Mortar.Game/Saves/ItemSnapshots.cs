@@ -12,6 +12,8 @@ public sealed class ItemSnapshot
 
     public int StackCount { get; set; } = 1;
 
+    public int Charges { get; set; }
+
     public AffixRollSnapshot? Prefix { get; set; }
 
     public AffixRollSnapshot? Suffix { get; set; }

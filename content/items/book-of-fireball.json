@@ -1,0 +1,10 @@
+{
+  "id": "book-of-fireball",
+  "name": "Book of Fireball",
+  "icon": "book-of-fireball",
+  "slot": "book",
+  "size": { "width": 1, "height": 1 },
+  "itemLevel": 4,
+  "dropWeight": 1,
+  "spell": "fireball"
+}

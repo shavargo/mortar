@@ -17,7 +17,8 @@ internal static class ItemRestorer
         var suffix = RestoreAffix(content, snapshot.Suffix, definition, itemLevel, AffixPositions.Suffix, $"{where} suffix");
         var stackMax = definition.StackMax;
         var stackCount = snapshot.StackCount <= 0 ? 1 : Check.Range(snapshot.StackCount, 1, stackMax, $"{where} stackCount");
-        return new Item(snapshot.Id, definition, itemLevel, armor, prefix, suffix, stackCount);
+        var charges = Check.Range(snapshot.Charges, 0, Math.Max(definition.MaxCharges, snapshot.Charges), $"{where} charges");
+        return new Item(snapshot.Id, definition, itemLevel, armor, prefix, suffix, stackCount, charges);
     }
 
     private static RolledAffix? RestoreAffix(

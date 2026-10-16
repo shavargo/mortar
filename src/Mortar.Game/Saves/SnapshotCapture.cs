@@ -94,6 +94,7 @@ internal static class SnapshotCapture
         ItemLevel = item.ItemLevel,
         Armor = item.ArmorValue,
         StackCount = item.StackCount,
+        Charges = item.Charges,
         Prefix = CaptureAffix(item.Prefix),
         Suffix = CaptureAffix(item.Suffix),
     };

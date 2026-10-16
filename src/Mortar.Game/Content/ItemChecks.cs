@@ -63,10 +63,10 @@ internal static class ItemChecks
             errors.Add(source, $"size must be 1-{MaxItemWidth} wide and 1-{MaxItemHeight} tall");
         }
         var small = item.Slot == ItemSlots.Ring || item.Slot == ItemSlots.Amulet || item.Slot == ItemSlots.Potion
-            || item.Slot == ItemSlots.Ammo;
+            || item.Slot == ItemSlots.Ammo || item.Slot == ItemSlots.Book || item.Slot == ItemSlots.Scroll;
         if (small && (item.Width != 1 || item.Height != 1))
         {
-            errors.Add(source, "rings, amulets, potions, and ammo must be 1x1");
+            errors.Add(source, "rings, amulets, potions, ammo, books, and scrolls must be 1x1");
         }
     }
 
@@ -109,6 +109,18 @@ internal static class ItemChecks
         if (item.Slot == ItemSlots.Weapon && item.SpellId is not null && item.MaxCharges < 1)
         {
             errors.Add(source, "weapons with a spell need maxCharges");
+        }
+        if ((item.IsBook || item.IsScroll) && string.IsNullOrWhiteSpace(item.SpellId))
+        {
+            errors.Add(source, "books and scrolls need a spell");
+        }
+        if ((item.IsBook || item.IsScroll) && item.MaxCharges != 0)
+        {
+            errors.Add(source, "books and scrolls do not hold charges");
+        }
+        if (item.SpellId is not null && item.Slot != ItemSlots.Weapon && !item.IsBook && !item.IsScroll)
+        {
+            errors.Add(source, "only weapons, books, and scrolls may reference a spell");
         }
     }
 

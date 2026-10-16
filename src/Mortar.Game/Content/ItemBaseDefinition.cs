@@ -126,5 +126,9 @@ public sealed class ItemBaseDefinition
 
     public bool IsAmmo => Slot == ItemSlots.Ammo;
 
+    public bool IsBook => Slot == ItemSlots.Book;
+
+    public bool IsScroll => Slot == ItemSlots.Scroll;
+
     public bool IsStackable => StackMax > 1;
 }

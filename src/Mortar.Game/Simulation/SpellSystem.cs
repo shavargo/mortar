@@ -1,17 +1,27 @@
 using Mortar.Game.Content;
 using Mortar.Game.Events;
+using Mortar.Game.Items;
 
 namespace Mortar.Game.Simulation;
 
 internal static class SpellSystem
 {
-    public static void StartCast(World world, Actor caster, SpellDefinition spell, int targetId, Cell aim, EventSink events)
+    public static void StartCast(World world, Actor caster, SpellDefinition spell, int targetId, Cell aim, EventSink events, bool fromStaff)
     {
         caster.Facing = aim != caster.Cell ? Directions.Toward(caster.Cell, aim) : caster.Facing;
         caster.StartAction(ActionKind.Casting, spell.CastTicks, targetId);
         caster.ActionSpellId = spell.Id;
         caster.ActionAim = aim;
-        caster.Mana -= spell.ManaCost;
+        if (fromStaff)
+        {
+            var staff = CombatSystem.EquippedWeapon(world);
+            if (staff is null || staff.Charges < 1) return;
+            staff.Charges--;
+        }
+        else
+        {
+            caster.Mana -= spell.ManaCost;
+        }
         events.Add(new SpellCastStarted(events.Tick, caster.Id, spell.Id, spell.CastTicks));
     }
 
@@ -21,12 +31,15 @@ internal static class SpellSystem
         {
             if (!caster.IsAlive || caster.Action != ActionKind.Casting) continue;
             if (!world.Content.TryGetSpell(caster.ActionSpellId, out var spell)) continue;
-            var level = world.Progress.SpellLevel(spell!.Id);
+            var level = Math.Max(1, world.Progress.SpellLevel(spell!.Id));
             Apply(world, caster, spell, level, events);
         }
     }
 
-    private static void Apply(World world, Actor caster, SpellDefinition spell, int spellLevel, EventSink events)
+    public static void ApplyScroll(World world, Actor caster, SpellDefinition spell, EventSink events) =>
+        Apply(world, caster, spell, spellLevel: 1, events);
+
+    internal static void Apply(World world, Actor caster, SpellDefinition spell, int spellLevel, EventSink events)
     {
         switch (spell.Shape)
         {
@@ -34,7 +47,10 @@ internal static class SpellSystem
                 Heal(caster, spell, spellLevel, events);
                 break;
             case SpellShapes.Projectile:
-                Bolt(world, caster, spell, spellLevel, events);
+                Bolt(world, caster, spell, spellLevel, events, radius: 0);
+                break;
+            case SpellShapes.Area:
+                Bolt(world, caster, spell, spellLevel, events, spell.Radius);
                 break;
         }
     }
@@ -47,7 +63,7 @@ internal static class SpellSystem
         events.Add(new SpellHealed(events.Tick, caster.Id, spell.Id, caster.Life - before, caster.Life));
     }
 
-    private static void Bolt(World world, Actor caster, SpellDefinition spell, int spellLevel, EventSink events)
+    private static void Bolt(World world, Actor caster, SpellDefinition spell, int spellLevel, EventSink events, int radius)
     {
         var bonus = spell.DamagePerLevel * Math.Max(0, spellLevel - 1);
         var damage = spell.Damage ?? new IntRange(0, 0);
@@ -59,6 +75,7 @@ internal static class SpellSystem
             spell.Range,
             damage.Min + bonus,
             damage.Max + bonus,
-            events);
+            events,
+            radius);
     }
 }
