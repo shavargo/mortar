@@ -70,4 +70,28 @@ public class PortalTests
         var events = world.Tick(new Command[] { new CastCommand("town-portal") });
         Assert.Equal("cannot open a portal in town", Assert.Single(events.OfType<CommandRejected>()).Reason);
     }
+
+    [Fact]
+    public void TownPortalScroll_InTown_IsRejectedWithoutConsuming()
+    {
+        var portal = new SpellDefinition(
+            "town-portal", "Town Portal", SpellShapes.Self, 20, 6, 3, 0, null, 0, 0, 0, 0);
+        var scroll = new ItemBaseDefinition(
+            "scroll-portal", "Portal Scroll", "scroll", ItemSlots.Scroll, 1, 1, 1, 0, default,
+            null, null, null, 0, null, spellId: "town-portal");
+        var result = ContentSet.Create(
+            TestGameContent.Rules(),
+            new[] { TestGameContent.Warrior() },
+            new[] { TestGameContent.Monster("zombie", sight: 1) },
+            TestGameContent.WithTown(),
+            TestGameContent.Items(new[] { scroll }),
+            new SpellCatalog(new[] { portal }));
+        var world = TestWorlds.CreateWithTown(result.Value!);
+        Assert.Equal(0, world.Depth);
+        var item = TestWorlds.Give(world, scroll);
+        var events = world.Tick(new Command[] { new UseItemCommand(item.Id) });
+        Assert.Equal("cannot open a portal in town", Assert.Single(events.OfType<CommandRejected>()).Reason);
+        Assert.NotNull(world.Belongings.Find(item.Id));
+        Assert.Null(world.Portal);
+    }
 }

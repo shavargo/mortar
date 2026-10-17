@@ -52,6 +52,8 @@ public sealed class Actor
 
     public int ActionItemId { get; internal set; }
 
+    public bool ActionFromStaff { get; internal set; }
+
     public IntentKind Intent { get; private set; }
 
     public Cell IntentCell { get; private set; }
@@ -77,6 +79,7 @@ public sealed class Actor
             ActionSpellId = "";
             ActionAim = default;
             ActionItemId = 0;
+            ActionFromStaff = false;
         }
     }
 

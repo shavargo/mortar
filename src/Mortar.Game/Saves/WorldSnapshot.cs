@@ -176,6 +176,8 @@ public sealed class ActorSnapshot
 
     public int ActionItemId { get; set; }
 
+    public bool ActionFromStaff { get; set; }
+
     public string? Intent { get; set; }
 
     public int IntentX { get; set; }

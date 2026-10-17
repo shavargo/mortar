@@ -48,11 +48,17 @@ internal static class SpellItemActions
             Consume(world, item, events);
             return null;
         }
+        if (spell.Id == "town-portal")
+        {
+            if (world.Content.ShallowestLevel > 0) return "there is no town";
+            if (world.Depth <= 0) return "cannot open a portal in town";
+        }
         world.Player.ActionAim = aim;
         world.Player.ActionSpellId = spell.Id;
         world.Player.ActionItemId = command.TargetItemId;
         world.Player.StartAction(ActionKind.Idle, 0);
-        SpellSystem.ApplyScroll(world, world.Player, spell, events);
+        var applyError = SpellSystem.ApplyScroll(world, world.Player, spell, events);
+        if (applyError is not null) return applyError;
         Consume(world, item, events);
         return null;
     }

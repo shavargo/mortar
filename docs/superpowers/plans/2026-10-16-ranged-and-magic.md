@@ -159,9 +159,9 @@ docs/content.md, docs/saves.md          update
 
 ### Task 10: Final review
 
-- [ ] `dotnet test Mortar.slnx` green; Release 0 warnings.
-- [ ] Whole-branch review against Review Focus; fix Important issues.
-- [ ] Commit any fixes; mark milestone 2 sim complete.
+- [x] `dotnet test Mortar.slnx` green; Release 0 warnings.
+- [x] Whole-branch review against Review Focus; fix Important issues.
+- [x] Commit any fixes; mark milestone 2 sim complete.
 
 ## Unity follow-up (not this plan)
 

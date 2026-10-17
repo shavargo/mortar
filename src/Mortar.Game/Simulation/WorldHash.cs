@@ -63,8 +63,9 @@ public static class WorldHash
         hasher.Add((long)actor.LeaderId).Add((long)actor.LastAttackerId);
         hasher.Add((long)actor.Action).Add((long)actor.ActionElapsed).Add((long)actor.ActionDuration).Add((long)actor.ActionTargetId);
         hasher.Add(actor.ActionSpellId).Add((long)actor.ActionAim.X).Add((long)actor.ActionAim.Y);
+        hasher.Add((long)actor.ActionItemId).Add(actor.ActionFromStaff);
         hasher.Add((long)actor.Intent).Add((long)actor.IntentCell.X).Add((long)actor.IntentCell.Y).Add((long)actor.IntentTargetId);
-        hasher.Add(actor.IntentSpellId);
+        hasher.Add(actor.IntentSpellId).Add(actor.IntentFromStaff).Add((long)actor.IntentItemId);
         hasher.Add((long)actor.Profile.Level).Add((long)actor.Profile.MaxLife).Add((long)actor.Profile.MaxMana);
     }
 

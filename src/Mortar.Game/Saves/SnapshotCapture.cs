@@ -115,6 +115,7 @@ internal static class SnapshotCapture
         ActionAimX = actor.ActionAim.X,
         ActionAimY = actor.ActionAim.Y,
         ActionItemId = actor.ActionItemId,
+        ActionFromStaff = actor.ActionFromStaff,
         Intent = actor.Intent.ToString(),
         IntentX = actor.IntentCell.X,
         IntentY = actor.IntentCell.Y,

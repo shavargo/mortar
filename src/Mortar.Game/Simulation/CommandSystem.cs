@@ -85,61 +85,67 @@ internal static class CommandSystem
         {
             return "unknown spell";
         }
+        var sourceError = CastSource(world, spell!, out var fromStaff);
+        if (sourceError is not null) return sourceError;
+        var aimError = CastAim(world, cast, spell!, out var aim, out var targetId);
+        if (aimError is not null) return aimError;
+        var specialError = CastSpecial(world, cast, spell!, out var itemId);
+        if (specialError is not null) return specialError;
+        world.Player.SetCastIntent(spell!.Id, targetId, aim, fromStaff, itemId);
+        return null;
+    }
+
+    private static string? CastSource(World world, SpellDefinition spell, out bool fromStaff)
+    {
         var staff = CombatSystem.EquippedWeapon(world);
-        var fromStaff = staff is not null
-            && staff.Definition.SpellId == cast.SpellId
+        fromStaff = staff is not null
+            && staff.Definition.SpellId == spell.Id
             && staff.Charges > 0
             && staff.Definition.MaxCharges > 0;
-        var knows = world.Progress.Knows(cast.SpellId);
-        if (knows && world.Player.Mana >= spell!.ManaCost)
+        var knows = world.Progress.Knows(spell.Id);
+        if (knows && world.Player.Mana >= spell.ManaCost)
         {
             fromStaff = false;
+            return null;
         }
-        else if (fromStaff)
+        if (fromStaff) return null;
+        return knows ? "not enough mana" : "spell not learned";
+    }
+
+    private static string? CastAim(World world, CastCommand cast, SpellDefinition spell, out Cell aim, out int targetId)
+    {
+        aim = world.Player.Cell;
+        targetId = 0;
+        if (spell.Shape != SpellShapes.Projectile && spell.Shape != SpellShapes.Area) return null;
+        if (cast.TargetActorId != 0)
         {
-            // staff charge cast
-        }
-        else if (!knows)
-        {
-            return "spell not learned";
-        }
-        else
-        {
-            return "not enough mana";
-        }
-        var aim = world.Player.Cell;
-        var targetId = 0;
-        if (spell!.Shape == SpellShapes.Projectile || spell.Shape == SpellShapes.Area)
-        {
-            if (cast.TargetActorId != 0)
+            var target = world.Level.Find(cast.TargetActorId);
+            if (target is null || !target.IsAlive || target.Kind != ActorKind.Monster)
             {
-                var target = world.Level.Find(cast.TargetActorId);
-                if (target is null || !target.IsAlive || target.Kind != ActorKind.Monster)
-                {
-                    return "no such monster on this level";
-                }
-                aim = target.Cell;
-                targetId = target.Id;
+                return "no such monster on this level";
             }
-            else if (cast.TargetCell is { } cell)
-            {
-                if (!world.Level.InBounds(cell))
-                {
-                    return "invalid target";
-                }
-                aim = cell;
-            }
-            else
-            {
-                return "spell needs a target";
-            }
+            aim = target.Cell;
+            targetId = target.Id;
+            return null;
         }
-        var itemId = 0;
+        if (cast.TargetCell is { } cell)
+        {
+            if (!world.Level.InBounds(cell)) return "invalid target";
+            aim = cell;
+            return null;
+        }
+        return "spell needs a target";
+    }
+
+    private static string? CastSpecial(World world, CastCommand cast, SpellDefinition spell, out int itemId)
+    {
+        itemId = 0;
         if (spell.Id == "identify")
         {
             if (cast.ItemId == 0) return "identify needs an item";
-            if (world.Belongings.Find(cast.ItemId) is null) return "no such item";
-            if (world.Belongings.Find(cast.ItemId)!.Identified) return "item is already identified";
+            var item = world.Belongings.Find(cast.ItemId);
+            if (item is null) return "no such item";
+            if (item.Identified) return "item is already identified";
             itemId = cast.ItemId;
         }
         if (spell.Id == "town-portal")
@@ -147,7 +153,6 @@ internal static class CommandSystem
             if (world.Content.ShallowestLevel > 0) return "there is no town";
             if (world.Depth <= 0) return "cannot open a portal in town";
         }
-        world.Player.SetCastIntent(spell.Id, targetId, aim, fromStaff, itemId);
         return null;
     }
 

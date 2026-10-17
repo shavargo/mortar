@@ -14,6 +14,7 @@ internal static class SpellSystem
         caster.ActionSpellId = spell.Id;
         caster.ActionAim = aim;
         caster.ActionItemId = itemId;
+        caster.ActionFromStaff = fromStaff;
         if (fromStaff)
         {
             var staff = CombatSystem.EquippedWeapon(world);
@@ -34,24 +35,26 @@ internal static class SpellSystem
             if (!caster.IsAlive || caster.Action != ActionKind.Casting) continue;
             if (!world.Content.TryGetSpell(caster.ActionSpellId, out var spell)) continue;
             var level = Math.Max(1, world.Progress.SpellLevel(spell!.Id));
-            Apply(world, caster, spell, level, events);
+            if (Apply(world, caster, spell, level, events) is not null)
+            {
+                Refund(world, caster, spell);
+            }
         }
     }
 
-    public static void ApplyScroll(World world, Actor caster, SpellDefinition spell, EventSink events) =>
+    public static string? ApplyScroll(World world, Actor caster, SpellDefinition spell, EventSink events) =>
         Apply(world, caster, spell, spellLevel: 1, events);
 
-    internal static void Apply(World world, Actor caster, SpellDefinition spell, int spellLevel, EventSink events)
+    internal static string? Apply(World world, Actor caster, SpellDefinition spell, int spellLevel, EventSink events)
     {
         if (spell.Id == "identify")
         {
             Identify(world, caster, events);
-            return;
+            return null;
         }
         if (spell.Id == "town-portal")
         {
-            PortalSystem.Open(world, events);
-            return;
+            return PortalSystem.Open(world, events);
         }
         switch (spell.Shape)
         {
@@ -65,6 +68,18 @@ internal static class SpellSystem
                 Bolt(world, caster, spell, spellLevel, events, spell.Radius);
                 break;
         }
+        return null;
+    }
+
+    private static void Refund(World world, Actor caster, SpellDefinition spell)
+    {
+        if (caster.ActionFromStaff)
+        {
+            var staff = CombatSystem.EquippedWeapon(world);
+            if (staff is not null && staff.Charges < staff.Definition.MaxCharges) staff.Charges++;
+            return;
+        }
+        caster.Mana = Math.Min(caster.Profile.MaxMana, caster.Mana + spell.ManaCost);
     }
 
     public static string? IdentifyItem(World world, int itemId, EventSink events)

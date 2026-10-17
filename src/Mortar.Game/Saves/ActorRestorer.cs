@@ -54,6 +54,7 @@ internal static class ActorRestorer
             actor.ActionSpellId = snapshot.ActionSpellId ?? "";
             actor.ActionAim = new Cell(snapshot.ActionAimX, snapshot.ActionAimY);
             actor.ActionItemId = Check.Range(snapshot.ActionItemId, 0, int.MaxValue, $"{where} actionItemId");
+            actor.ActionFromStaff = snapshot.ActionFromStaff;
         }
         var intent = Check.EnumValue<IntentKind>(snapshot.Intent, $"{where} intent");
         var intentCell = new Cell(snapshot.IntentX, snapshot.IntentY);
