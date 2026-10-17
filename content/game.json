@@ -6,5 +6,6 @@
   "items": "items",
   "spells": "spells",
   "affixes": "affixes.json",
-  "loot": "loot.json"
+  "loot": "loot.json",
+  "uniques": "uniques.json"
 }

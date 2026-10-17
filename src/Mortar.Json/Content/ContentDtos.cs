@@ -17,6 +17,8 @@ internal sealed class ManifestDto
     public string? Affixes { get; set; }
 
     public string? Loot { get; set; }
+
+    public string? Uniques { get; set; }
 }
 
 internal sealed class RulesDto

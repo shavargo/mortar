@@ -27,6 +27,7 @@ public static class GameContentLoader
         var spells = LoadFolder<SpellDto, SpellDefinition>(source, directory, manifest.Spells, "spells", SpellMapper.ToSpell, errors);
         var affixes = ItemContentLoader.LoadAffixes(source, directory, manifest.Affixes, errors);
         var loot = ItemContentLoader.LoadLootTables(source, directory, manifest.Loot, errors);
+        var uniques = ItemContentLoader.LoadUniques(source, directory, manifest.Uniques, errors);
         var areas = new Dictionary<string, CompiledArea>(StringComparer.Ordinal);
         var levels = LevelFileLoader.Load(source, directory, manifest.Levels, areas, errors);
         if (errors.Count > 0 || rules is null)
@@ -34,7 +35,7 @@ public static class GameContentLoader
             return AuthoringResult<GameContent>.Failure(errors);
         }
         var content = ContentSet.Create(
-            rules, classes, monsters, levels, new ItemCatalog(items, affixes, loot), new SpellCatalog(spells));
+            rules, classes, monsters, levels, new ItemCatalog(items, affixes, loot, uniques), new SpellCatalog(spells));
         return content.Succeeded
             ? AuthoringResult<GameContent>.Success(new GameContent(content.Value!, areas))
             : AuthoringResult<GameContent>.Failure(content.Errors);

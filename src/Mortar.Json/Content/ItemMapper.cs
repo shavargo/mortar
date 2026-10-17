@@ -58,7 +58,37 @@ internal static class ItemMapper
             dto.GoldWeight ?? 0,
             dto.ItemWeight ?? 0,
             dto.Gold is null ? default : fields.ReadRange(dto.Gold, "gold"),
-            dto.MagicPercent ?? 0);
+            dto.MagicPercent ?? 0,
+            dto.UniqueChance ?? 0);
+    }
+
+    public static UniqueDefinition ToUnique(string source, int index, UniqueDto dto, List<AuthoringError> errors)
+    {
+        var fields = new Fields(source, errors, $"uniques entry {index}");
+        return new UniqueDefinition(
+            fields.Text(dto.Id, "id"),
+            fields.Text(dto.Name, "name"),
+            fields.Text(dto.BaseItem, "baseItem"),
+            fields.Int(dto.MinLevel, "minLevel"),
+            ToPowers(fields, dto.Powers),
+            dto.Value ?? 0);
+    }
+
+    private static IReadOnlyList<UniquePower> ToPowers(Fields fields, List<UniquePowerDto?>? powers)
+    {
+        if (!fields.Present(powers, "powers")) return Array.Empty<UniquePower>();
+        var list = new List<UniquePower>();
+        for (var i = 0; i < powers!.Count; i++)
+        {
+            var power = powers[i];
+            if (power is null)
+            {
+                fields.Present(power, $"powers[{i}]");
+                continue;
+            }
+            list.Add(new UniquePower(fields.Text(power.Affix, $"powers[{i}].affix"), fields.Int(power.Value, $"powers[{i}].value")));
+        }
+        return list;
     }
 
     private static Stats ToRequirements(StatsDto? dto) =>

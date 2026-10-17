@@ -20,9 +20,11 @@ internal static class ItemChecks
         ContentValidator.CheckUniqueIds(items.Bases.Select(b => b.Id), "item", errors);
         ContentValidator.CheckUniqueIds(items.Affixes.Select(a => a.Id), "affix", errors);
         ContentValidator.CheckUniqueIds(items.LootTables.Select(t => t.Id), "loot table", errors);
+        ContentValidator.CheckUniqueIds(items.Uniques.Select(u => u.Id), "unique", errors);
         foreach (var item in items.Bases) CheckBase(item, errors);
         foreach (var affix in items.Affixes) CheckAffix(affix, errors);
         foreach (var table in items.LootTables) CheckLootTable(table, errors);
+        foreach (var unique in items.Uniques) CheckUnique(unique, errors);
         CheckWeightTotal(items.Bases.Select(b => (long)Math.Max(0, b.DropWeight)), "items", "dropWeight", errors);
         CheckWeightTotal(items.Affixes.Select(a => (long)Math.Max(0, a.Weight)), "affixes", "weight", errors);
         CheckReferences(items, spells, classes, monsters, errors);
@@ -188,6 +190,23 @@ internal static class ItemChecks
         else if (weights.Sum() < 1) errors.Add(source, "noneWeight, goldWeight, and itemWeight must add up to at least 1");
         if (table.GoldWeight > 0) DefinitionChecks.CheckRange(source, "gold", table.Gold, 1, errors);
         if (table.MagicPercent < 0 || table.MagicPercent > 100) errors.Add(source, "magicPercent must be between 0 and 100");
+        if (table.UniqueChance < 0 || table.UniqueChance > 100) errors.Add(source, "uniqueChance must be between 0 and 100");
+    }
+
+    private static void CheckUnique(UniqueDefinition unique, List<AuthoringError> errors)
+    {
+        var source = $"unique '{unique.Id}'";
+        if (string.IsNullOrWhiteSpace(unique.Name)) errors.Add(source, "name is required");
+        if (string.IsNullOrWhiteSpace(unique.BaseItemId)) errors.Add(source, "baseItem is required");
+        if (unique.MinLevel < 1 || unique.MinLevel > MaxValue)
+        {
+            errors.Add(source, $"minLevel must be between 1 and {MaxValue}");
+        }
+        if (unique.Value < 0 || unique.Value > MaxValue) errors.Add(source, $"value must be between 0 and {MaxValue}");
+        foreach (var power in unique.Powers)
+        {
+            if (string.IsNullOrWhiteSpace(power.AffixId)) errors.Add(source, "power affix is required");
+        }
     }
 
     private static void CheckWeightTotal(IEnumerable<long> weights, string source, string field, List<AuthoringError> errors)
@@ -203,6 +222,7 @@ internal static class ItemChecks
         List<AuthoringError> errors)
     {
         var bases = new HashSet<string>(items.Bases.Select(b => b.Id), StringComparer.Ordinal);
+        var affixes = items.Affixes.ToDictionary(a => a.Id, StringComparer.Ordinal);
         var tables = new HashSet<string>(items.LootTables.Select(t => t.Id), StringComparer.Ordinal);
         var spellIds = new HashSet<string>(spells.Spells.Select(s => s.Id), StringComparer.Ordinal);
         foreach (var definition in classes)
@@ -233,6 +253,36 @@ internal static class ItemChecks
             if (item.SpellId is not null && !spellIds.Contains(item.SpellId))
             {
                 errors.Add(source, $"spell references unknown spell '{item.SpellId}'");
+            }
+        }
+        CheckUniqueReferences(items, bases, affixes, errors);
+    }
+
+    private static void CheckUniqueReferences(
+        ItemCatalog items,
+        HashSet<string> bases,
+        Dictionary<string, AffixDefinition> affixes,
+        List<AuthoringError> errors)
+    {
+        foreach (var unique in items.Uniques)
+        {
+            var source = $"unique '{unique.Id}'";
+            if (!string.IsNullOrWhiteSpace(unique.BaseItemId) && !bases.Contains(unique.BaseItemId))
+            {
+                errors.Add(source, $"base references unknown item '{unique.BaseItemId}'");
+            }
+            foreach (var power in unique.Powers)
+            {
+                if (string.IsNullOrWhiteSpace(power.AffixId)) continue;
+                if (!affixes.TryGetValue(power.AffixId, out var affix))
+                {
+                    errors.Add(source, $"power references unknown affix '{power.AffixId}'");
+                    continue;
+                }
+                if (power.Value < affix.Value.Min || power.Value > affix.Value.Max)
+                {
+                    errors.Add(source, $"power value must be between {affix.Value.Min} and {affix.Value.Max}");
+                }
             }
         }
     }

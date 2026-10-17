@@ -13,6 +13,10 @@ internal static class ItemContentLoader
         LoadList<LootListDto, LootTableDto, LootTableDefinition>(
             manifest, directory, entry, "loot", "tables", file => file.Tables, ItemMapper.ToLootTable, errors);
 
+    public static List<UniqueDefinition> LoadUniques(string manifest, string directory, string? entry, List<AuthoringError> errors) =>
+        LoadList<UniqueListDto, UniqueDto, UniqueDefinition>(
+            manifest, directory, entry, "uniques", "uniques", file => file.Uniques, ItemMapper.ToUnique, errors);
+
     private static List<TDefinition> LoadList<TFile, TEntry, TDefinition>(
         string manifest,
         string directory,

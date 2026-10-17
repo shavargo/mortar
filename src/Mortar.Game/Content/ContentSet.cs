@@ -10,6 +10,7 @@ public sealed class ContentSet
     private readonly Dictionary<string, ItemBaseDefinition> _itemBases;
     private readonly Dictionary<string, AffixDefinition> _affixes;
     private readonly Dictionary<string, LootTableDefinition> _lootTables;
+    private readonly Dictionary<string, UniqueDefinition> _uniques;
     private readonly Dictionary<string, SpellDefinition> _spells;
 
     private ContentSet(
@@ -31,6 +32,7 @@ public sealed class ContentSet
         _itemBases = items.Bases.ToDictionary(b => b.Id, StringComparer.Ordinal);
         _affixes = items.Affixes.ToDictionary(a => a.Id, StringComparer.Ordinal);
         _lootTables = items.LootTables.ToDictionary(t => t.Id, StringComparer.Ordinal);
+        _uniques = items.Uniques.ToDictionary(u => u.Id, StringComparer.Ordinal);
         _spells = spells.Spells.ToDictionary(s => s.Id, StringComparer.Ordinal);
     }
 
@@ -49,6 +51,8 @@ public sealed class ContentSet
     public IReadOnlyList<ItemBaseDefinition> ItemBases => Items.Bases;
 
     public IReadOnlyList<AffixDefinition> Affixes => Items.Affixes;
+
+    public IReadOnlyList<UniqueDefinition> Uniques => Items.Uniques;
 
     /// <summary>0 when the content has a town, otherwise 1.</summary>
     public int ShallowestLevel => Levels[0].Depth;
@@ -92,6 +96,11 @@ public sealed class ContentSet
         _affixes.TryGetValue(id, out definition);
 
     public LootTableDefinition LootTable(string id) => _lootTables[id];
+
+    public UniqueDefinition Unique(string id) => _uniques[id];
+
+    public bool TryGetUnique(string id, [NotNullWhen(true)] out UniqueDefinition? definition) =>
+        _uniques.TryGetValue(id, out definition);
 
     public SpellDefinition Spell(string id) => _spells[id];
 

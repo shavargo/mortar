@@ -100,17 +100,37 @@ internal static class TestGameContent
     public static AffixDefinition Affix(string id, string position, string bonus, int value, params string[] slots) =>
         new AffixDefinition(id, id, position, slots, new IntRange(1, 10), 1, bonus, new IntRange(value, value));
 
-    public static LootTableDefinition Loot(string id = "loot", int rolls = 1, int none = 0, int gold = 0, int item = 1, int magicPercent = 0) =>
-        new LootTableDefinition(id, rolls, none, gold, item, new IntRange(5, 5), magicPercent);
+    public static UniquePower Power(string affixId, int value) => new UniquePower(affixId, value);
+
+    public static UniqueDefinition Unique(
+        string id = "relic",
+        string name = "Relic",
+        string baseItemId = "knife",
+        int minLevel = 1,
+        IReadOnlyList<UniquePower>? powers = null,
+        int value = 0) =>
+        new UniqueDefinition(id, name, baseItemId, minLevel, powers ?? new[] { Power("keen", 3) }, value);
+
+    public static LootTableDefinition Loot(
+        string id = "loot",
+        int rolls = 1,
+        int none = 0,
+        int gold = 0,
+        int item = 1,
+        int magicPercent = 0,
+        int uniqueChance = 0) =>
+        new LootTableDefinition(id, rolls, none, gold, item, new IntRange(5, 5), magicPercent, uniqueChance);
 
     public static ItemCatalog Items(
         IReadOnlyList<ItemBaseDefinition>? bases = null,
         IReadOnlyList<AffixDefinition>? affixes = null,
-        IReadOnlyList<LootTableDefinition>? loot = null) =>
+        IReadOnlyList<LootTableDefinition>? loot = null,
+        IReadOnlyList<UniqueDefinition>? uniques = null) =>
         new ItemCatalog(
             bases ?? Array.Empty<ItemBaseDefinition>(),
             affixes ?? Array.Empty<AffixDefinition>(),
-            loot ?? Array.Empty<LootTableDefinition>());
+            loot ?? Array.Empty<LootTableDefinition>(),
+            uniques ?? Array.Empty<UniqueDefinition>());
 
     public static AuthoringResult<ContentSet> Create(
         IReadOnlyList<MonsterDefinition>? monsters = null,

@@ -2,7 +2,15 @@ namespace Mortar.Game.Content;
 
 public sealed class LootTableDefinition
 {
-    public LootTableDefinition(string id, int rolls, int noneWeight, int goldWeight, int itemWeight, IntRange gold, int magicPercent)
+    public LootTableDefinition(
+        string id,
+        int rolls,
+        int noneWeight,
+        int goldWeight,
+        int itemWeight,
+        IntRange gold,
+        int magicPercent,
+        int uniqueChance = 0)
     {
         Id = id;
         Rolls = rolls;
@@ -11,6 +19,7 @@ public sealed class LootTableDefinition
         ItemWeight = itemWeight;
         Gold = gold;
         MagicPercent = magicPercent;
+        UniqueChance = uniqueChance;
     }
 
     public string Id { get; }
@@ -26,4 +35,6 @@ public sealed class LootTableDefinition
     public IntRange Gold { get; }
 
     public int MagicPercent { get; }
+
+    public int UniqueChance { get; }
 }

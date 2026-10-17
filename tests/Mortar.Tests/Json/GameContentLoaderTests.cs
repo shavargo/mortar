@@ -136,6 +136,8 @@ public class GameContentLoaderTests
         Assert.Equal(21, content.ItemBases.Count);
         Assert.Equal(13, content.Affixes.Count);
         Assert.Equal(4, content.Items.LootTables.Count);
+        Assert.Empty(content.Uniques);
+        Assert.Equal(0, content.LootTable("common").UniqueChance);
         Assert.Equal("common", content.Monster("zombie").LootTableId);
         Assert.True(content.TryGetClass("warrior", out var warrior));
         Assert.Equal(new[] { "iron-knife", "padded-vest", "healing-draught", "healing-draught" }, warrior!.StartingItems);

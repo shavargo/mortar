@@ -110,4 +110,33 @@ internal sealed class LootTableDto
     public RangeDto? Gold { get; set; }
 
     public int? MagicPercent { get; set; }
+
+    public int? UniqueChance { get; set; }
+}
+
+internal sealed class UniqueListDto
+{
+    public List<UniqueDto?>? Uniques { get; set; }
+}
+
+internal sealed class UniqueDto
+{
+    public string? Id { get; set; }
+
+    public string? Name { get; set; }
+
+    public string? BaseItem { get; set; }
+
+    public int? MinLevel { get; set; }
+
+    public List<UniquePowerDto?>? Powers { get; set; }
+
+    public int? Value { get; set; }
+}
+
+internal sealed class UniquePowerDto
+{
+    public string? Affix { get; set; }
+
+    public int? Value { get; set; }
 }
