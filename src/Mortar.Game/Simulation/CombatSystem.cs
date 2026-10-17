@@ -89,6 +89,8 @@ internal static class CombatSystem
         if (outcome != AttackOutcome.Hit) return;
         target.Life -= damage;
         target.LastAttackerId = attacker.Id;
+        if (attacker.Kind == ActorKind.Player) DurabilitySystem.OnPlayerHitLanded(world);
+        if (target.Kind == ActorKind.Player) DurabilitySystem.OnPlayerDamaged(world);
         if (target.Life > 0 && damage * 100 >= target.Profile.MaxLife * world.Content.Rules.HitRecoveryPercent)
         {
             var recovery = target.Profile.Timings.RecoveryTicks;

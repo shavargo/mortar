@@ -122,6 +122,11 @@ internal static class ProjectileSystem
         events.Add(new ProjectileHit(events.Tick, projectile.Id, projectile.OwnerId, target.Id, damage));
         target.Life -= damage;
         target.LastAttackerId = projectile.OwnerId;
+        if (projectile.OwnerId == Actor.PlayerId && projectile.Kind == ProjectileKinds.Arrow)
+        {
+            DurabilitySystem.OnPlayerHitLanded(world);
+        }
+        if (target.Kind == ActorKind.Player) DurabilitySystem.OnPlayerDamaged(world);
         if (target.Life > 0 && damage * 100 >= target.Profile.MaxLife * world.Content.Rules.HitRecoveryPercent)
         {
             var recovery = target.Profile.Timings.RecoveryTicks;

@@ -43,6 +43,8 @@ public sealed class Item
         StackCount = stackCount;
         Charges = charges;
         Identified = identified;
+        MaxDurability = definition.MaxDurability;
+        Durability = definition.MaxDurability;
     }
 
     public int Id { get; }
@@ -62,6 +64,10 @@ public sealed class Item
     public int Charges { get; internal set; }
 
     public bool Identified { get; internal set; }
+
+    public int Durability { get; internal set; }
+
+    public int MaxDurability { get; }
 
     public ItemQuality Quality => Prefix is null && Suffix is null ? ItemQuality.Normal : ItemQuality.Magic;
 
