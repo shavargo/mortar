@@ -22,6 +22,7 @@ internal static class WorldRestorer
     private static World Build(WorldSnapshot snapshot, ContentSet content, ILevelGenerator generator)
     {
         var fromV1 = snapshot.Version == 1;
+        var fromPreV3 = snapshot.Version < 3;
         if (!SaveMigration.TryMigrate(snapshot, out var migrateError))
         {
             throw new SaveException(migrateError!);
@@ -36,17 +37,21 @@ internal static class WorldRestorer
         Check.That(snapshot.NextProjectileId <= SaveLimits.MaxId, "nextProjectileId is too large");
         Check.That(snapshot.NextProjectileId >= 1, "nextProjectileId must be at least 1");
         Check.That((snapshot.RngIncrement & 1UL) == 1UL, "rngIncrement must be odd");
+        if (snapshot.ActiveVendor is not null)
+        {
+            Check.That(VendorKinds.IsKnown(snapshot.ActiveVendor), $"unknown active vendor '{snapshot.ActiveVendor}'");
+        }
         var player = Check.Present(snapshot.Player, "player");
         var world = PlayerRestorer.CreateWorld(snapshot, player, content, generator);
         var ids = new RestoredIds();
         foreach (var level in Check.Present(snapshot.Levels, "levels"))
         {
-            LevelRestorer.Restore(world, Check.Present(level, "level"), ids, fromV1);
+            LevelRestorer.Restore(world, Check.Present(level, "level"), ids, fromV1, fromPreV3);
         }
-        PlayerRestorer.Place(world, player, snapshot.Depth, ids, fromV1);
-        RestoreStock(world, world.Smith, snapshot.SmithStock, ids, fromV1);
-        RestoreStock(world, world.Healer, snapshot.HealerStock, ids, fromV1);
-        RestoreStock(world, world.Sage, snapshot.SageStock, ids, fromV1);
+        PlayerRestorer.Place(world, player, snapshot.Depth, ids, fromV1, fromPreV3);
+        RestoreStock(world, world.Smith, snapshot.SmithStock, ids, fromV1, fromPreV3);
+        RestoreStock(world, world.Healer, snapshot.HealerStock, ids, fromV1, fromPreV3);
+        RestoreStock(world, world.Sage, snapshot.SageStock, ids, fromV1, fromPreV3);
         Check.That(snapshot.NextActorId > ids.MaxActorId, $"nextActorId must be greater than every actor id ({ids.MaxActorId})");
         Check.That(snapshot.NextItemId > ids.MaxItemId, $"nextItemId must be greater than every item id ({ids.MaxItemId})");
         Check.That(snapshot.NextProjectileId > ids.MaxProjectileId, $"nextProjectileId must be greater than every projectile id ({ids.MaxProjectileId})");
@@ -54,6 +59,7 @@ internal static class WorldRestorer
         world.NextActorId = snapshot.NextActorId;
         world.NextItemId = snapshot.NextItemId;
         world.NextProjectileId = snapshot.NextProjectileId;
+        world.ActiveVendor = snapshot.ActiveVendor;
         world.NextStockRegenTick = snapshot.NextStockRegenTick > 0
             ? snapshot.NextStockRegenTick
             : snapshot.Tick + content.Rules.VendorStockRegenTicks;
@@ -68,12 +74,13 @@ internal static class WorldRestorer
     }
 
     private static void RestoreStock(
-        World world, VendorState vendor, List<ItemSnapshot?>? stock, RestoredIds ids, bool fromV1)
+        World world, VendorState vendor, List<ItemSnapshot?>? stock, RestoredIds ids, bool fromV1, bool fromPreV3)
     {
         if (stock is null) return;
         foreach (var entry in stock)
         {
-            var item = ItemRestorer.Restore(world.Content, Check.Present(entry, $"{vendor.Kind} stock item"), ids, $"{vendor.Kind} stock item", fromV1);
+            var item = ItemRestorer.Restore(
+                world.Content, Check.Present(entry, $"{vendor.Kind} stock item"), ids, $"{vendor.Kind} stock item", fromV1, fromPreV3);
             vendor.MutableStock.Add(item);
         }
     }

@@ -5,7 +5,8 @@ namespace Mortar.Game.Saves;
 
 internal static class ItemRestorer
 {
-    public static Item Restore(ContentSet content, ItemSnapshot snapshot, RestoredIds ids, string where, bool fromV1 = false)
+    public static Item Restore(
+        ContentSet content, ItemSnapshot snapshot, RestoredIds ids, string where, bool fromV1 = false, bool fromPreV3 = false)
     {
         ids.ClaimItem(snapshot.Id);
         var baseId = Check.Text(snapshot.Base, $"{where} base");
@@ -21,7 +22,12 @@ internal static class ItemRestorer
             ? definition.MaxCharges
             : Check.Range(snapshot.Charges, 0, definition.MaxCharges, $"{where} charges");
         var identified = fromV1 || snapshot.Identified;
-        return new Item(snapshot.Id, definition, itemLevel, armor, prefix, suffix, stackCount, charges, identified);
+        var item = new Item(snapshot.Id, definition, itemLevel, armor, prefix, suffix, stackCount, charges, identified);
+        if (!fromPreV3)
+        {
+            item.Durability = Check.Range(snapshot.Durability, 0, definition.MaxDurability, $"{where} durability");
+        }
+        return item;
     }
 
     private static RolledAffix? RestoreAffix(

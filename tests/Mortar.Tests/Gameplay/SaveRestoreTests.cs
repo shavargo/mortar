@@ -35,7 +35,7 @@ public class SaveRestoreTests
 
     private static readonly Dictionary<string, (Action<WorldSnapshot> Corrupt, string Error)> Corruptions = new()
     {
-        ["version"] = (s => s.Version = 3, "unsupported version 3"),
+        ["version"] = (s => s.Version = 4, "unsupported version 4"),
         ["tick"] = (s => s.Tick = -1, "tick must not be negative"),
         ["rng"] = (s => s.RngIncrement = 2, "rngIncrement must be odd"),
         ["missing player"] = (s => s.Player = null, "player is missing"),
@@ -152,13 +152,61 @@ public class SaveRestoreTests
         Assert.Null(restored.Portal);
         Assert.Empty(restored.Level.Projectiles);
         Assert.Equal(1, restored.NextProjectileId);
+        Assert.Null(restored.ActiveVendor);
+        Assert.Empty(restored.Smith.Stock);
+        Assert.Equal(restored.TickCount + restored.Content.Rules.VendorStockRegenTicks, restored.NextStockRegenTick);
         Assert.All(restored.Belongings.Inventory.Items.Select(entry => entry.Item), item => Assert.True(item.Identified));
-        Assert.All(restored.Belongings.Equipment.Worn, item => Assert.True(item.Identified));
+        Assert.All(restored.Belongings.Equipment.Worn, item =>
+        {
+            Assert.True(item.Identified);
+            Assert.Equal(item.MaxDurability, item.Durability);
+        });
         for (var slot = 0; slot < Belt.Slots; slot++)
         {
             var belted = restored.Belongings.Belt.Get(slot);
             if (belted is not null) Assert.True(belted.Identified);
         }
+    }
+
+    [Fact]
+    public void Version2_MigratesDurabilityStocksAndClearsVendorSession()
+    {
+        var world = BusyWorld();
+        var weapon = world.Belongings.Equipment.Get(EquipmentSlot.Weapon)!;
+        weapon.Durability = Math.Max(0, weapon.MaxDurability - 5);
+        world.ActiveVendor = VendorKinds.Smith;
+        world.Smith.MutableStock.Add(ItemFactory.CreatePlain(world, TestGameContent.Weapon()));
+        world.NextStockRegenTick = 99;
+        var snapshot = WorldSnapshot.Capture(world);
+        snapshot.Version = 2;
+        snapshot.ActiveVendor = VendorKinds.Smith;
+        Assert.NotEmpty(snapshot.SmithStock!);
+        var restored = Restore(snapshot);
+        Assert.Null(restored.ActiveVendor);
+        Assert.Empty(restored.Smith.Stock);
+        Assert.Empty(restored.Healer.Stock);
+        Assert.Empty(restored.Sage.Stock);
+        Assert.Equal(restored.TickCount + restored.Content.Rules.VendorStockRegenTicks, restored.NextStockRegenTick);
+        Assert.All(restored.Belongings.Equipment.Worn, item => Assert.Equal(item.MaxDurability, item.Durability));
+        Assert.All(restored.Belongings.Inventory.Items.Select(entry => entry.Item), item =>
+            Assert.Equal(item.MaxDurability, item.Durability));
+    }
+
+    [Fact]
+    public void RoundTrip_KeepsDurabilityActiveVendorAndStocks()
+    {
+        var world = BusyWorld();
+        var weapon = world.Belongings.Equipment.Get(EquipmentSlot.Weapon)!;
+        weapon.Durability = Math.Max(0, weapon.MaxDurability / 2);
+        world.ActiveVendor = VendorKinds.Smith;
+        world.Smith.MutableStock.Add(ItemFactory.CreatePlain(world, TestGameContent.Weapon()));
+        world.NextStockRegenTick = world.TickCount + 50;
+        var restored = Restore(WorldSnapshot.Capture(world));
+        Assert.Equal(WorldHash.Compute(world), WorldHash.Compute(restored));
+        Assert.Equal(weapon.Durability, restored.Belongings.Equipment.Get(EquipmentSlot.Weapon)!.Durability);
+        Assert.Equal(VendorKinds.Smith, restored.ActiveVendor);
+        Assert.Equal(world.Smith.Stock.Select(i => i.Id), restored.Smith.Stock.Select(i => i.Id));
+        Assert.Equal(world.NextStockRegenTick, restored.NextStockRegenTick);
     }
 
     private static World BusyWorld()

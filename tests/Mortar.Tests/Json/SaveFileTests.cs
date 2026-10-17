@@ -73,7 +73,7 @@ public class SaveFileTests
     }
 
     [Theory]
-    [InlineData("\"version\": 2,", "\"version\": 2, \"cheat\": 1,", "save is not valid")]
+    [InlineData("\"version\": 3,", "\"version\": 3, \"cheat\": 1,", "save is not valid")]
     [InlineData("\"levels\": [", "\"levels\": [ null,", "save is invalid: level is missing")]
     public void FromJson_RejectsEditedSaves(string find, string replace, string error)
     {
@@ -99,7 +99,7 @@ public class SaveFileTests
     public void FromJson_CapitalizedVersion_LoadsLikeTheLoader()
     {
         var world = TestWorlds.Create(TestContent);
-        var json = SaveFile.ToJson(world).Replace("\"version\": 2", "\"Version\": 2");
+        var json = SaveFile.ToJson(world).Replace("\"version\": 3", "\"Version\": 3");
         var loaded = SaveFile.FromJson(json, TestContent, Generator());
         Assert.True(loaded.Succeeded, loaded.Error);
         Assert.Equal(WorldHash.Compute(world), WorldHash.Compute(loaded.World!));
@@ -109,12 +109,28 @@ public class SaveFileTests
     public void FromJson_Version1_IsAcceptedAndMigrated()
     {
         var world = TestWorlds.Create(TestContent);
-        var json = SaveFile.ToJson(world).Replace("\"version\": 2", "\"version\": 1");
+        var json = SaveFile.ToJson(world).Replace("\"version\": 3", "\"version\": 1");
         var loaded = SaveFile.FromJson(json, TestContent, Generator());
         Assert.True(loaded.Succeeded, loaded.Error);
         Assert.Equal(1, loaded.World!.NextProjectileId);
         Assert.Null(loaded.World.Portal);
         Assert.Empty(loaded.World.Progress.Spells);
+        Assert.Null(loaded.World.ActiveVendor);
+        Assert.Empty(loaded.World.Smith.Stock);
+    }
+
+    [Fact]
+    public void FromJson_Version2_IsAcceptedAndMigrated()
+    {
+        var world = TestWorlds.Create(TestContent);
+        var json = SaveFile.ToJson(world).Replace("\"version\": 3", "\"version\": 2");
+        var loaded = SaveFile.FromJson(json, TestContent, Generator());
+        Assert.True(loaded.Succeeded, loaded.Error);
+        Assert.Null(loaded.World!.ActiveVendor);
+        Assert.Empty(loaded.World.Smith.Stock);
+        Assert.Equal(
+            loaded.World.TickCount + loaded.World.Content.Rules.VendorStockRegenTicks,
+            loaded.World.NextStockRegenTick);
     }
 
     [Fact]

@@ -26,6 +26,7 @@ internal static class SnapshotCapture
                 TownY = portal.TownCell.Y,
             }
             : null,
+        ActiveVendor = world.ActiveVendor,
         NextStockRegenTick = world.NextStockRegenTick,
         SmithStock = CaptureStock(world.Smith),
         HealerStock = CaptureStock(world.Healer),
@@ -141,6 +142,7 @@ internal static class SnapshotCapture
         StackCount = item.StackCount,
         Charges = item.Charges,
         Identified = item.Identified,
+        Durability = item.Durability,
         Prefix = CaptureAffix(item.Prefix),
         Suffix = CaptureAffix(item.Suffix),
     };

@@ -24,6 +24,14 @@ Points at the other files, relative to itself: `rules` (file), `classes` (folder
 | `minimumExperiencePercent` | Kill experience never drops below this percent of base experience; 0–100. |
 | `experienceThresholds` | Total experience to reach level 2, 3, …; strictly increasing. The maximum level is the number of thresholds + 1. |
 | `maxSpellLevel` | Cap for a known spell's level (books raise it up to this). |
+| `vendorStockRegenTicks` | World ticks between full vendor stock refills (default 144000 ≈ 2 hours at 20 Hz). |
+| `vendorSellPercent` | Sell price is buy price × this percent ÷ 100. |
+| `vendorMagicBuyMult` | Magic buy price is `value` × this (floored). |
+| `vendorRepairPercent` | Repair fee uses `value × missing / max ×` this percent ÷ 100 (min 1 if damaged). |
+| `vendorIdentifyFee` | Flat gold cost for the sage identify service. |
+| `vendorHealFee` | Flat gold cost for the healer (may be 0). |
+| `vendorSmithSlots`, `vendorHealerSlots`, `vendorSageSlots` | How many stock slots each vendor rolls on fill/regen. |
+| `vendorSmithMagicPercent` | Chance a smith stock item is magic (identified). |
 
 Hit chance = attacker accuracy − defender armor class + level difference × `toHitPerLevelDifference`.
 
@@ -57,18 +65,21 @@ Optional `startingItems` lists item ids the class starts with. Each is created p
 
 An optional `town` entry (`{ "area": "…" }`) adds a safe town at depth 0: its area must use mode `fixed` with exactly one exit (`X`), it has no spawns or boss, and new games start there. The shipped content has a town and four cathedral levels (`content/areas/`).
 
-The shipped levels are built from these files: `content/tilesets/cathedral.json` and `content/tilesets/town.json` (the town adds `grass`, `road`, `water`, and `tree` grounds), the cathedral rooms in `content/rooms/cathedral/`, the areas in `content/areas/` (`town` and `cathedral-1` to `cathedral-4`), and the town map in `content/maps/town.json`. The town tileset declares custom markers `F` smith, `H` healer, and `G` sage; they are recorded in the layout for later milestones and do nothing yet.
+The shipped levels are built from these files: `content/tilesets/cathedral.json` and `content/tilesets/town.json` (the town adds `grass`, `road`, `water`, and `tree` grounds), the cathedral rooms in `content/rooms/cathedral/`, the areas in `content/areas/` (`town` and `cathedral-1` to `cathedral-4`), and the town map in `content/maps/town.json`. The town tileset declares custom markers `F` smith, `H` healer, and `G` sage. Adjacent `Talk` arms a vendor session; buy / sell / repair / identify / heal use that session while the player stays within Chebyshev distance 1.
 
 ## `items/*.json`
 
-One item base per file: `id`, `name`, `icon`, `slot`, `size` (`width` 1–2, `height` 1–3), `itemLevel` (only monsters of at least this level drop it), `dropWeight` (0 never drops), and optional `requirements` (`strength`, `dexterity`, `vitality`, `magic`; missing ones are 0, compared against the player's base stats).
+One item base per file: `id`, `name`, `icon`, `slot`, `size` (`width` 1–2, `height` 1–3), `itemLevel` (only monsters of at least this level drop it), `dropWeight` (0 never drops), `value` (≥ 0; buy price and repair/sell base), `maxDurability` (≥ 0; equippable bases need at least 1), and optional `requirements` (`strength`, `dexterity`, `vitality`, `magic`; missing ones are 0, compared against the player's base stats).
 
-`slot` is one of `weapon`, `body`, `head`, `shield`, `ring`, `amulet`, `potion`, `ammo`. Rings, amulets, potions, and ammo are 1×1.
+`slot` is one of `weapon`, `body`, `head`, `shield`, `ring`, `amulet`, `potion`, `ammo`, `scroll`, `book`. Rings, amulets, potions, ammo, scrolls, and books are 1×1.
 
 - Weapons need `damage` (`min`, `max`), which replaces the class's unarmed damage. Optional `swing` (`attackTicks`, `hitFrame`) replaces the class's attack timings. Ranged weapons set `ranged: true` and `ammo` (an ammo base id). Staves may set `spell` and `maxCharges`.
 - Body, head, and shield items need `armor` (`min`, `max`); each dropped item rolls its armor value once. Shields may have `blockChance` (percent).
 - Potions need `potion` (`restores`: `life` or `mana`, and `amount`).
 - Ammo needs `stackMax` greater than 1. Optional `stackMax` on other bases defaults to 1. Spellbooks and scrolls use `spell`; books teach or raise that spell, scrolls cast once and are consumed.
+- `maxDurability` 0 means durability does not apply (potions, ammo, books, scrolls). Spawned and shop gear starts at full durability; weapons wear on a successful player hit, body and shield wear when the player is struck. Affixes still apply at 0 durability in this slice.
+
+Vendor buy price is `value` (× `vendorMagicBuyMult` if magic, floored). Sell price is that buy price × `vendorSellPercent` / 100 when the vendor accepts the item's slot (smith: weapons/armor/shields/rings/amulets; healer: potions; sage: scrolls/books). Shop stock regenerates on the world tick timer; goods are always identified; item level uses the deepest visited dungeon depth (at least 1).
 
 The inventory is 10×4 cells and the belt holds 8 potions or ammo stacks. Gold is a counter, not an item. Magic loot may drop unidentified; affix bonuses apply only while identified.
 

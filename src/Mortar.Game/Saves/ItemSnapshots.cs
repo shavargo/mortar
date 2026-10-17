@@ -16,6 +16,8 @@ public sealed class ItemSnapshot
 
     public bool Identified { get; set; } = true;
 
+    public int Durability { get; set; }
+
     public AffixRollSnapshot? Prefix { get; set; }
 
     public AffixRollSnapshot? Suffix { get; set; }

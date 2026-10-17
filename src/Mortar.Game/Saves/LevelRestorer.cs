@@ -6,7 +6,7 @@ namespace Mortar.Game.Saves;
 
 internal static class LevelRestorer
 {
-    public static void Restore(World world, LevelSnapshot snapshot, RestoredIds ids, bool fromV1)
+    public static void Restore(World world, LevelSnapshot snapshot, RestoredIds ids, bool fromV1, bool fromPreV3)
     {
         var depth = snapshot.Depth;
         Check.That(depth >= world.Content.ShallowestLevel && depth <= world.Content.DeepestLevel, $"level depth {depth} is not in the content");
@@ -25,7 +25,7 @@ internal static class LevelRestorer
         }
         foreach (var ground in Check.Present(snapshot.GroundItems, $"level {depth} groundItems"))
         {
-            level.AddGroundItem(RestoreGround(world, level, Check.Present(ground, $"level {depth} ground item"), ids, fromV1));
+            level.AddGroundItem(RestoreGround(world, level, Check.Present(ground, $"level {depth} ground item"), ids, fromV1, fromPreV3));
         }
         foreach (var projectile in snapshot.Projectiles ?? Enumerable.Empty<ProjectileSnapshot?>())
         {
@@ -33,7 +33,8 @@ internal static class LevelRestorer
         }
     }
 
-    private static GroundItem RestoreGround(World world, LevelState level, GroundItemSnapshot snapshot, RestoredIds ids, bool fromV1)
+    private static GroundItem RestoreGround(
+        World world, LevelState level, GroundItemSnapshot snapshot, RestoredIds ids, bool fromV1, bool fromPreV3)
     {
         var cell = new Cell(snapshot.X, snapshot.Y);
         var where = $"level {level.Depth} ground item {snapshot.Id}";
@@ -44,7 +45,7 @@ internal static class LevelRestorer
             return new GroundItem(snapshot.Id, cell, null, Check.Range(snapshot.Gold, 1, int.MaxValue, $"{where} gold"));
         }
         Check.That(snapshot.Gold == 0, $"{where} has both gold and an item");
-        var item = ItemRestorer.Restore(world.Content, snapshot.Item, ids, where, fromV1);
+        var item = ItemRestorer.Restore(world.Content, snapshot.Item, ids, where, fromV1, fromPreV3);
         Check.That(item.Id == snapshot.Id, $"{where} must have the same id as its item");
         return new GroundItem(item.Id, cell, item, 0);
     }

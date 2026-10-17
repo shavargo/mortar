@@ -5,7 +5,7 @@ namespace Mortar.Game.Saves;
 /// <summary>Plain data for a whole world. Values read from a file may be missing or invalid; <see cref="World.Restore"/> checks all of them.</summary>
 public sealed class WorldSnapshot
 {
-    public const int CurrentVersion = 2;
+    public const int CurrentVersion = 3;
 
     public int Version { get; set; }
 
@@ -26,6 +26,8 @@ public sealed class WorldSnapshot
     public ulong RngIncrement { get; set; }
 
     public PortalSnapshot? Portal { get; set; }
+
+    public string? ActiveVendor { get; set; }
 
     public long NextStockRegenTick { get; set; }
 

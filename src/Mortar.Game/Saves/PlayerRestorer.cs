@@ -16,9 +16,9 @@ internal static class PlayerRestorer
         return World.ForRestore(content, generator, snapshot.Seed, definition!, progress, rng);
     }
 
-    public static void Place(World world, PlayerSnapshot player, int depth, RestoredIds ids, bool fromV1)
+    public static void Place(World world, PlayerSnapshot player, int depth, RestoredIds ids, bool fromV1, bool fromPreV3)
     {
-        RestoreBelongings(world, player, ids, fromV1);
+        RestoreBelongings(world, player, ids, fromV1, fromPreV3);
         RestoreSpells(world, player);
         world.RefreshPlayer();
         var level = world.FindLevel(depth);
@@ -69,7 +69,7 @@ internal static class PlayerRestorer
             $"player experience must be between {min} and {max} for level {level}");
     }
 
-    private static void RestoreBelongings(World world, PlayerSnapshot player, RestoredIds ids, bool fromV1)
+    private static void RestoreBelongings(World world, PlayerSnapshot player, RestoredIds ids, bool fromV1, bool fromPreV3)
     {
         var belongings = world.Belongings;
         Check.That(player.Gold >= 0, "player gold must not be negative");
@@ -78,7 +78,8 @@ internal static class PlayerRestorer
         foreach (var stored in Check.Present(player.Inventory, "player inventory"))
         {
             var entry = Check.Present(stored, "inventory entry");
-            var item = ItemRestorer.Restore(world.Content, Check.Present(entry.Item, "inventory item"), ids, "inventory item", fromV1);
+            var item = ItemRestorer.Restore(
+                world.Content, Check.Present(entry.Item, "inventory item"), ids, "inventory item", fromV1, fromPreV3);
             Check.That(
                 belongings.Inventory.TryPlace(item, new Cell(entry.X, entry.Y)),
                 $"inventory item {item.Id} overlaps another item or lies outside the grid");
@@ -86,7 +87,8 @@ internal static class PlayerRestorer
         foreach (var belted in Check.Present(player.Belt, "player belt"))
         {
             var entry = Check.Present(belted, "belt entry");
-            var item = ItemRestorer.Restore(world.Content, Check.Present(entry.Item, "belt item"), ids, "belt item", fromV1);
+            var item = ItemRestorer.Restore(
+                world.Content, Check.Present(entry.Item, "belt item"), ids, "belt item", fromV1, fromPreV3);
             Check.That(
                 belongings.Belt.TryPut(item, entry.Slot),
                 $"belt item {item.Id} must be a potion or ammo and needs an empty slot from 0 to {Belt.Slots - 1}");
@@ -95,7 +97,8 @@ internal static class PlayerRestorer
         {
             var entry = Check.Present(worn, "equipment entry");
             var slot = Check.EnumValue<EquipmentSlot>(entry.Slot, "equipment slot");
-            var item = ItemRestorer.Restore(world.Content, Check.Present(entry.Item, $"{slot} item"), ids, $"{slot} item", fromV1);
+            var item = ItemRestorer.Restore(
+                world.Content, Check.Present(entry.Item, $"{slot} item"), ids, $"{slot} item", fromV1, fromPreV3);
             Check.That(Equipment.Accepts(slot, item.Definition), $"item {item.Id} cannot be worn as {slot}");
             Check.That(belongings.Equipment.Get(slot) is null, $"{slot} is equipped twice");
             belongings.Equipment.Set(slot, item);

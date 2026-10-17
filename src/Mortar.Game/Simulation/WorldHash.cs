@@ -108,6 +108,7 @@ public static class WorldHash
     {
         hasher.Add((long)item.Id).Add(item.Definition.Id).Add((long)item.ItemLevel).Add((long)item.ArmorValue);
         hasher.Add((long)item.StackCount).Add((long)item.Charges).Add(item.Identified);
+        hasher.Add((long)item.Durability);
         AddAffix(hasher, item.Prefix);
         AddAffix(hasher, item.Suffix);
     }

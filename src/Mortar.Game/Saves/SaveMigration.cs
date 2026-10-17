@@ -6,13 +6,19 @@ internal static class SaveMigration
     {
         error = null;
         if (snapshot.Version == WorldSnapshot.CurrentVersion) return true;
-        if (snapshot.Version != 1)
+        if (snapshot.Version == 1)
         {
-            error = $"unsupported version {snapshot.Version}; this build reads version {WorldSnapshot.CurrentVersion}";
-            return false;
+            MigrateV1ToV2(snapshot);
+            MigrateV2ToV3(snapshot);
+            return true;
         }
-        MigrateV1ToV2(snapshot);
-        return true;
+        if (snapshot.Version == 2)
+        {
+            MigrateV2ToV3(snapshot);
+            return true;
+        }
+        error = $"unsupported version {snapshot.Version}; this build reads version {WorldSnapshot.CurrentVersion}";
+        return false;
     }
 
     private static void MigrateV1ToV2(WorldSnapshot snapshot)
@@ -32,6 +38,16 @@ internal static class SaveMigration
             }
         }
         MarkItemsIdentified(snapshot);
+    }
+
+    private static void MigrateV2ToV3(WorldSnapshot snapshot)
+    {
+        snapshot.Version = 3;
+        snapshot.ActiveVendor = null;
+        snapshot.SmithStock = null;
+        snapshot.HealerStock = null;
+        snapshot.SageStock = null;
+        snapshot.NextStockRegenTick = 0;
     }
 
     private static void MarkItemsIdentified(WorldSnapshot snapshot)
