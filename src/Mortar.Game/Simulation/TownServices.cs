@@ -68,8 +68,10 @@ internal static class TownServices
         if (item.Identified) return "item is already identified";
         var price = world.Content.Rules.VendorIdentifyFee;
         if (world.Belongings.Gold < price) return "not enough gold";
+        var error = SpellSystem.IdentifyItem(world, itemId, events);
+        if (error is not null) return error;
         world.Belongings.Gold -= price;
-        return SpellSystem.IdentifyItem(world, itemId, events);
+        return null;
     }
 
     public static string? Heal(World world, EventSink events)

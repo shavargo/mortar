@@ -133,7 +133,31 @@ public class VendorServiceTests
         var events = world.Tick(new Command[] { new IdentifyServiceCommand(item.Id) });
 
         Assert.Equal("item is already identified", Assert.Single(events.OfType<CommandRejected>()).Reason);
+        Assert.True(item.Identified);
         Assert.Equal(60, world.Belongings.Gold);
+    }
+
+    [Fact]
+    public void IdentifyService_CannotAfford_RejectsWithoutMutating()
+    {
+        var world = ArmedAt(VendorKinds.Sage, new Cell(4, 1));
+        var affix = TestGameContent.Affix("keen", AffixPositions.Prefix, BonusKinds.ToHit, 3, ItemSlots.Weapon);
+        var item = new Item(
+            world.NextItemId++,
+            TestGameContent.Weapon(value: 50),
+            1,
+            0,
+            TestItems.Roll(affix, 3),
+            null,
+            identified: false);
+        Assert.True(world.Belongings.Stow(item));
+        world.Belongings.Gold = 49;
+
+        var events = world.Tick(new Command[] { new IdentifyServiceCommand(item.Id) });
+
+        Assert.Equal("not enough gold", Assert.Single(events.OfType<CommandRejected>()).Reason);
+        Assert.False(item.Identified);
+        Assert.Equal(49, world.Belongings.Gold);
     }
 
     [Fact]
