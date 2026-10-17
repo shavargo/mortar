@@ -73,7 +73,7 @@ public class SaveFileTests
     }
 
     [Theory]
-    [InlineData("\"version\": 1,", "\"version\": 1, \"cheat\": 1,", "save is not valid")]
+    [InlineData("\"version\": 2,", "\"version\": 2, \"cheat\": 1,", "save is not valid")]
     [InlineData("\"levels\": [", "\"levels\": [ null,", "save is invalid: level is missing")]
     public void FromJson_RejectsEditedSaves(string find, string replace, string error)
     {
@@ -99,10 +99,22 @@ public class SaveFileTests
     public void FromJson_CapitalizedVersion_LoadsLikeTheLoader()
     {
         var world = TestWorlds.Create(TestContent);
-        var json = SaveFile.ToJson(world).Replace("\"version\": 1", "\"Version\": 1");
+        var json = SaveFile.ToJson(world).Replace("\"version\": 2", "\"Version\": 2");
         var loaded = SaveFile.FromJson(json, TestContent, Generator());
         Assert.True(loaded.Succeeded, loaded.Error);
         Assert.Equal(WorldHash.Compute(world), WorldHash.Compute(loaded.World!));
+    }
+
+    [Fact]
+    public void FromJson_Version1_IsAcceptedAndMigrated()
+    {
+        var world = TestWorlds.Create(TestContent);
+        var json = SaveFile.ToJson(world).Replace("\"version\": 2", "\"version\": 1");
+        var loaded = SaveFile.FromJson(json, TestContent, Generator());
+        Assert.True(loaded.Succeeded, loaded.Error);
+        Assert.Equal(1, loaded.World!.NextProjectileId);
+        Assert.Null(loaded.World.Portal);
+        Assert.Empty(loaded.World.Progress.Spells);
     }
 
     [Fact]

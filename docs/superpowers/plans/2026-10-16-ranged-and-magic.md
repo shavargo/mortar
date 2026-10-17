@@ -153,9 +153,9 @@ docs/content.md, docs/saves.md          update
 
 **Files:** Snapshots, restorers, migration, `docs/saves.md`, `docs/content.md`; tests.
 
-- [ ] Persist spells, portals, projectiles, identified, charges, stacks.
-- [ ] v1 migration; round-trip hash test.
-- [ ] Commit: `save spells portals and ammo as version 2`
+- [x] Persist spells, portals, projectiles, identified, charges, stacks.
+- [x] v1 migration; round-trip hash test.
+- [x] Commit: `save spells portals and ammo as version 2`
 
 ### Task 10: Final review
 

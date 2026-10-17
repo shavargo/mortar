@@ -16,9 +16,10 @@ internal static class PlayerRestorer
         return World.ForRestore(content, generator, snapshot.Seed, definition!, progress, rng);
     }
 
-    public static void Place(World world, PlayerSnapshot player, int depth, RestoredIds ids)
+    public static void Place(World world, PlayerSnapshot player, int depth, RestoredIds ids, bool fromV1)
     {
-        RestoreBelongings(world, player, ids);
+        RestoreBelongings(world, player, ids, fromV1);
+        RestoreSpells(world, player);
         world.RefreshPlayer();
         var level = world.FindLevel(depth);
         Check.That(level is not null, $"current depth {depth} is not a saved level");
@@ -28,6 +29,18 @@ internal static class PlayerRestorer
         Check.That(actor.Definition == world.PlayerClass.Id, "player actor definition must match the class");
         world.Depth = depth;
         ActorRestorer.Place(level!, world.Player, actor, "player");
+    }
+
+    private static void RestoreSpells(World world, PlayerSnapshot player)
+    {
+        foreach (var entry in player.Spells ?? Enumerable.Empty<KnownSpellSnapshot?>())
+        {
+            var spell = Check.Present(entry, "known spell");
+            var id = Check.Text(spell.Id, "known spell id");
+            Check.That(world.Content.TryGetSpell(id, out _), $"unknown spell '{id}'");
+            var level = Check.Range(spell.Level, 1, world.Content.Rules.MaxSpellLevel, $"spell '{id}' level");
+            world.Progress.SetSpell(id, level);
+        }
     }
 
     private static PlayerProgress RestoreProgress(PlayerSnapshot player, ClassDefinition definition, GameRules rules)
@@ -56,7 +69,7 @@ internal static class PlayerRestorer
             $"player experience must be between {min} and {max} for level {level}");
     }
 
-    private static void RestoreBelongings(World world, PlayerSnapshot player, RestoredIds ids)
+    private static void RestoreBelongings(World world, PlayerSnapshot player, RestoredIds ids, bool fromV1)
     {
         var belongings = world.Belongings;
         Check.That(player.Gold >= 0, "player gold must not be negative");
@@ -65,7 +78,7 @@ internal static class PlayerRestorer
         foreach (var stored in Check.Present(player.Inventory, "player inventory"))
         {
             var entry = Check.Present(stored, "inventory entry");
-            var item = ItemRestorer.Restore(world.Content, Check.Present(entry.Item, "inventory item"), ids, "inventory item");
+            var item = ItemRestorer.Restore(world.Content, Check.Present(entry.Item, "inventory item"), ids, "inventory item", fromV1);
             Check.That(
                 belongings.Inventory.TryPlace(item, new Cell(entry.X, entry.Y)),
                 $"inventory item {item.Id} overlaps another item or lies outside the grid");
@@ -73,16 +86,16 @@ internal static class PlayerRestorer
         foreach (var belted in Check.Present(player.Belt, "player belt"))
         {
             var entry = Check.Present(belted, "belt entry");
-            var item = ItemRestorer.Restore(world.Content, Check.Present(entry.Item, "belt item"), ids, "belt item");
+            var item = ItemRestorer.Restore(world.Content, Check.Present(entry.Item, "belt item"), ids, "belt item", fromV1);
             Check.That(
                 belongings.Belt.TryPut(item, entry.Slot),
-                $"belt item {item.Id} must be a potion and needs an empty slot from 0 to {Belt.Slots - 1}");
+                $"belt item {item.Id} must be a potion or ammo and needs an empty slot from 0 to {Belt.Slots - 1}");
         }
         foreach (var worn in Check.Present(player.Equipment, "player equipment"))
         {
             var entry = Check.Present(worn, "equipment entry");
             var slot = Check.EnumValue<EquipmentSlot>(entry.Slot, "equipment slot");
-            var item = ItemRestorer.Restore(world.Content, Check.Present(entry.Item, $"{slot} item"), ids, $"{slot} item");
+            var item = ItemRestorer.Restore(world.Content, Check.Present(entry.Item, $"{slot} item"), ids, $"{slot} item", fromV1);
             Check.That(Equipment.Accepts(slot, item.Definition), $"item {item.Id} cannot be worn as {slot}");
             Check.That(belongings.Equipment.Get(slot) is null, $"{slot} is equipped twice");
             belongings.Equipment.Set(slot, item);

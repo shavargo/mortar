@@ -2,6 +2,8 @@ using Mortar.Core.Model;
 using Mortar.Game;
 using Mortar.Game.Commands;
 using Mortar.Game.Content;
+using Mortar.Game.Events;
+using Mortar.Game.Items;
 using Mortar.Game.Saves;
 using Mortar.Game.Simulation;
 using Mortar.Tests.Gameplay.Support;
@@ -10,18 +12,30 @@ namespace Mortar.Tests.Gameplay;
 
 public class SaveRestoreTests
 {
-    private static readonly ContentSet Content = TestGameContent.Valid(
-        monsters: new[] { TestGameContent.Monster("zombie", loot: "loot") },
-        rules: TestGameContent.Rules(minHit: 95),
-        items: TestGameContent.Items(
-            new[] { TestGameContent.Weapon(), TestGameContent.Armor(), TestGameContent.Potion() },
-            new[] { TestGameContent.Affix("keen", AffixPositions.Prefix, BonusKinds.ToHit, 3, ItemSlots.Weapon) },
-            new[] { TestGameContent.Loot(gold: 1, item: 1, magicPercent: 50) }),
-        classes: new[] { TestGameContent.Warrior("knife", "vest", "tonic", "tonic") });
+    private static readonly ContentSet Content = CreateContent();
+
+    private static ContentSet CreateContent()
+    {
+        var result = ContentSet.Create(
+            TestGameContent.Rules(minHit: 95),
+            new[] { TestGameContent.Warrior("knife", "vest", "tonic", "tonic") },
+            new[] { TestGameContent.Monster("zombie", loot: "loot") },
+            new[] { TestGameContent.Level(1), TestGameContent.Level(2) },
+            TestGameContent.Items(
+                new[] { TestGameContent.Weapon(), TestGameContent.Armor(), TestGameContent.Potion() },
+                new[] { TestGameContent.Affix("keen", AffixPositions.Prefix, BonusKinds.ToHit, 3, ItemSlots.Weapon) },
+                new[] { TestGameContent.Loot(gold: 1, item: 1, magicPercent: 50) }),
+            new SpellCatalog(new[]
+            {
+                new SpellDefinition(
+                    "firebolt", "Firebolt", SpellShapes.Projectile, 6, 6, 3, 8, new IntRange(4, 4), 0, 0, 2, 0),
+            }));
+        return result.Value ?? throw new InvalidOperationException(string.Join("; ", result.Errors));
+    }
 
     private static readonly Dictionary<string, (Action<WorldSnapshot> Corrupt, string Error)> Corruptions = new()
     {
-        ["version"] = (s => s.Version = 2, "unsupported version 2"),
+        ["version"] = (s => s.Version = 3, "unsupported version 3"),
         ["tick"] = (s => s.Tick = -1, "tick must not be negative"),
         ["rng"] = (s => s.RngIncrement = 2, "rngIncrement must be odd"),
         ["missing player"] = (s => s.Player = null, "player is missing"),
@@ -100,6 +114,51 @@ public class SaveRestoreTests
     public void NullSnapshot_IsRejected()
     {
         Assert.Equal("save is empty", World.Restore(null!, Content, Generator()).Error);
+    }
+
+    [Fact]
+    public void RoundTrip_KeepsSpellsPortalAndProjectiles()
+    {
+        var world = BusyWorld();
+        world.Progress.SetSpell("firebolt", 2);
+        world.Portal = new PortalPair(1, new Cell(4, 4), new Cell(2, 2));
+        var sink = new EventSink(world.TickCount);
+        var shot = ProjectileSystem.Spawn(
+            world, world.Player, ProjectileKinds.Arrow, new Cell(5, 1), range: 8, damageMin: 1, damageMax: 1, sink);
+        var restored = Restore(WorldSnapshot.Capture(world));
+        Assert.Equal(WorldHash.Compute(world), WorldHash.Compute(restored));
+        Assert.Equal(2, restored.Progress.SpellLevel("firebolt"));
+        Assert.NotNull(restored.Portal);
+        Assert.Equal(world.Portal.DungeonCell, restored.Portal!.DungeonCell);
+        Assert.Equal(world.Portal.TownCell, restored.Portal.TownCell);
+        var restoredShot = Assert.Single(restored.Level.Projectiles);
+        Assert.Equal(shot.Id, restoredShot.Id);
+        Assert.Equal(shot.Cell, restoredShot.Cell);
+        Assert.Equal(shot.Kind, restoredShot.Kind);
+    }
+
+    [Fact]
+    public void Version1_MigratesToEmptySpellsPortalAndProjectiles()
+    {
+        var world = BusyWorld();
+        world.Progress.SetSpell("firebolt", 1);
+        world.Portal = new PortalPair(1, new Cell(3, 3), new Cell(1, 1));
+        ProjectileSystem.Spawn(
+            world, world.Player, ProjectileKinds.Arrow, new Cell(5, 1), range: 4, damageMin: 1, damageMax: 1, new EventSink(0));
+        var snapshot = WorldSnapshot.Capture(world);
+        snapshot.Version = 1;
+        var restored = Restore(snapshot);
+        Assert.Empty(restored.Progress.Spells);
+        Assert.Null(restored.Portal);
+        Assert.Empty(restored.Level.Projectiles);
+        Assert.Equal(1, restored.NextProjectileId);
+        Assert.All(restored.Belongings.Inventory.Items.Select(entry => entry.Item), item => Assert.True(item.Identified));
+        Assert.All(restored.Belongings.Equipment.Worn, item => Assert.True(item.Identified));
+        for (var slot = 0; slot < Belt.Slots; slot++)
+        {
+            var belted = restored.Belongings.Belt.Get(slot);
+            if (belted is not null) Assert.True(belted.Identified);
+        }
     }
 
     private static World BusyWorld()

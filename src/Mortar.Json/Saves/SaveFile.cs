@@ -87,7 +87,7 @@ public static class SaveFile
             {
                 return "save has no version number";
             }
-            return number == WorldSnapshot.CurrentVersion
+            return number == WorldSnapshot.CurrentVersion || number == 1
                 ? null
                 : $"unsupported save version {number}; this build reads version {WorldSnapshot.CurrentVersion}";
         }

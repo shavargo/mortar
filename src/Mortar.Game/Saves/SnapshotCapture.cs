@@ -13,8 +13,19 @@ internal static class SnapshotCapture
         Depth = world.Depth,
         NextActorId = world.NextActorId,
         NextItemId = world.NextItemId,
+        NextProjectileId = world.NextProjectileId,
         RngState = world.Rng.State,
         RngIncrement = world.Rng.Increment,
+        Portal = world.Portal is { } portal
+            ? new PortalSnapshot
+            {
+                DungeonDepth = portal.DungeonDepth,
+                DungeonX = portal.DungeonCell.X,
+                DungeonY = portal.DungeonCell.Y,
+                TownX = portal.TownCell.X,
+                TownY = portal.TownCell.Y,
+            }
+            : null,
         Player = CapturePlayer(world),
         Levels = world.VisitedDepths.Select(depth => (LevelSnapshot?)CaptureLevel(world.GetLevel(depth))).ToList(),
     };
@@ -44,6 +55,9 @@ internal static class SnapshotCapture
                 .Where(slot => belongings.Equipment.Get(slot) is not null)
                 .Select(slot => (EquippedItemSnapshot?)new EquippedItemSnapshot { Slot = slot.ToString(), Item = CaptureItem(belongings.Equipment.Get(slot)!) })
                 .ToList(),
+            Spells = progress.Spells
+                .Select(spell => (KnownSpellSnapshot?)new KnownSpellSnapshot { Id = spell.SpellId, Level = spell.Level })
+                .ToList(),
         };
     }
 
@@ -60,6 +74,22 @@ internal static class SnapshotCapture
             Y = ground.Cell.Y,
             Gold = ground.Gold,
             Item = ground.Item is null ? null : CaptureItem(ground.Item),
+        }).ToList(),
+        Projectiles = level.Projectiles.Select(projectile => (ProjectileSnapshot?)new ProjectileSnapshot
+        {
+            Id = projectile.Id,
+            OwnerId = projectile.OwnerId,
+            Kind = projectile.Kind,
+            X = projectile.Cell.X,
+            Y = projectile.Cell.Y,
+            AimX = projectile.Aim.X,
+            AimY = projectile.Aim.Y,
+            RemainingRange = projectile.RemainingRange,
+            DamageMin = projectile.DamageMin,
+            DamageMax = projectile.DamageMax,
+            HitsMonsters = projectile.HitsMonsters,
+            HitsPlayer = projectile.HitsPlayer,
+            Radius = projectile.Radius,
         }).ToList(),
     };
 
@@ -81,10 +111,17 @@ internal static class SnapshotCapture
         ActionElapsed = actor.ActionElapsed,
         ActionDuration = actor.ActionDuration,
         ActionTargetId = actor.ActionTargetId,
+        ActionSpellId = actor.ActionSpellId,
+        ActionAimX = actor.ActionAim.X,
+        ActionAimY = actor.ActionAim.Y,
+        ActionItemId = actor.ActionItemId,
         Intent = actor.Intent.ToString(),
         IntentX = actor.IntentCell.X,
         IntentY = actor.IntentCell.Y,
         IntentTargetId = actor.IntentTargetId,
+        IntentSpellId = actor.IntentSpellId,
+        IntentFromStaff = actor.IntentFromStaff,
+        IntentItemId = actor.IntentItemId,
     };
 
     private static ItemSnapshot CaptureItem(Item item) => new ItemSnapshot

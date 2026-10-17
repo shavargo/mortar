@@ -49,10 +49,16 @@ internal static class ActorRestorer
         var duration = Check.Range(snapshot.ActionDuration, 0, DefinitionChecks.MaxValue, $"{where} actionDuration");
         actor.StartAction(action, duration, Check.Range(snapshot.ActionTargetId, 0, int.MaxValue, $"{where} actionTargetId"));
         actor.ActionElapsed = Check.Range(snapshot.ActionElapsed, 0, duration, $"{where} actionElapsed");
+        if (action == ActionKind.Casting)
+        {
+            actor.ActionSpellId = snapshot.ActionSpellId ?? "";
+            actor.ActionAim = new Cell(snapshot.ActionAimX, snapshot.ActionAimY);
+            actor.ActionItemId = Check.Range(snapshot.ActionItemId, 0, int.MaxValue, $"{where} actionItemId");
+        }
         var intent = Check.EnumValue<IntentKind>(snapshot.Intent, $"{where} intent");
         var intentCell = new Cell(snapshot.IntentX, snapshot.IntentY);
         var intentTarget = Check.Range(snapshot.IntentTargetId, 0, int.MaxValue, $"{where} intentTargetId");
-        if (intent == IntentKind.MoveTo || intent == IntentKind.PickUp)
+        if (intent == IntentKind.MoveTo || intent == IntentKind.PickUp || intent == IntentKind.Cast)
         {
             Check.That(level.InBounds(intentCell), $"{where} intent cell is outside the level");
         }
@@ -60,6 +66,14 @@ internal static class ActorRestorer
         {
             case IntentKind.MoveTo: actor.SetMoveIntent(intentCell); break;
             case IntentKind.Attack: actor.SetAttackIntent(intentTarget); break;
+            case IntentKind.Cast:
+                actor.SetCastIntent(
+                    snapshot.IntentSpellId ?? "",
+                    intentTarget,
+                    intentCell,
+                    snapshot.IntentFromStaff,
+                    Check.Range(snapshot.IntentItemId, 0, int.MaxValue, $"{where} intentItemId"));
+                break;
             case IntentKind.PickUp: actor.SetPickUpIntent(intentTarget, intentCell); break;
             default: actor.ClearIntent(); break;
         }

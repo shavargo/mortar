@@ -5,7 +5,7 @@ namespace Mortar.Game.Saves;
 
 internal static class ItemRestorer
 {
-    public static Item Restore(ContentSet content, ItemSnapshot snapshot, RestoredIds ids, string where)
+    public static Item Restore(ContentSet content, ItemSnapshot snapshot, RestoredIds ids, string where, bool fromV1 = false)
     {
         ids.ClaimItem(snapshot.Id);
         var baseId = Check.Text(snapshot.Base, $"{where} base");
@@ -17,8 +17,11 @@ internal static class ItemRestorer
         var suffix = RestoreAffix(content, snapshot.Suffix, definition, itemLevel, AffixPositions.Suffix, $"{where} suffix");
         var stackMax = definition.StackMax;
         var stackCount = snapshot.StackCount <= 0 ? 1 : Check.Range(snapshot.StackCount, 1, stackMax, $"{where} stackCount");
-        var charges = Check.Range(snapshot.Charges, 0, Math.Max(definition.MaxCharges, snapshot.Charges), $"{where} charges");
-        return new Item(snapshot.Id, definition, itemLevel, armor, prefix, suffix, stackCount, charges, snapshot.Identified);
+        var charges = fromV1 && definition.MaxCharges > 0
+            ? definition.MaxCharges
+            : Check.Range(snapshot.Charges, 0, Math.Max(definition.MaxCharges, snapshot.Charges), $"{where} charges");
+        var identified = fromV1 || snapshot.Identified;
+        return new Item(snapshot.Id, definition, itemLevel, armor, prefix, suffix, stackCount, charges, identified);
     }
 
     private static RolledAffix? RestoreAffix(
