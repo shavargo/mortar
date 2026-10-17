@@ -17,6 +17,10 @@ public static class WorldHash
             hasher.Add((long)portal.TownCell.X).Add((long)portal.TownCell.Y);
         }
         hasher.Add(world.ActiveVendor ?? "");
+        hasher.Add(world.NextStockRegenTick);
+        AddVendorStock(hasher, world.Smith);
+        AddVendorStock(hasher, world.Healer);
+        AddVendorStock(hasher, world.Sage);
         hasher.Add(world.Rng.State).Add(world.Rng.Increment);
         AddProgress(hasher, world.Progress);
         AddBelongings(hasher, world.Belongings);
@@ -68,6 +72,12 @@ public static class WorldHash
         hasher.Add((long)actor.Intent).Add((long)actor.IntentCell.X).Add((long)actor.IntentCell.Y).Add((long)actor.IntentTargetId);
         hasher.Add(actor.IntentSpellId).Add(actor.IntentFromStaff).Add((long)actor.IntentItemId);
         hasher.Add((long)actor.Profile.Level).Add((long)actor.Profile.MaxLife).Add((long)actor.Profile.MaxMana);
+    }
+
+    private static void AddVendorStock(StateHasher hasher, VendorState vendor)
+    {
+        hasher.Add(vendor.Kind).Add((long)vendor.Stock.Count);
+        foreach (var item in vendor.Stock) AddItem(hasher, item);
     }
 
     private static void AddBelongings(StateHasher hasher, Belongings belongings)

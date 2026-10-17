@@ -54,6 +54,8 @@ public sealed class World
 
     public VendorState Sage { get; } = new VendorState(VendorKinds.Sage);
 
+    public long NextStockRegenTick { get; internal set; }
+
     public IReadOnlyList<int> VisitedDepths => _levels.Keys.OrderBy(depth => depth).ToList();
 
     internal Pcg32 Rng { get; }
@@ -77,7 +79,9 @@ public sealed class World
         world.RefreshPlayer();
         world.Player.RestoreVitals();
         var error = LevelEntry.Enter(world, content.ShallowestLevel, MarkerKinds.Entrance);
-        return error is null ? WorldResult.Success(world) : WorldResult.Failure(error);
+        if (error is not null) return WorldResult.Failure(error);
+        VendorStockSystem.Initialize(world);
+        return WorldResult.Success(world);
     }
 
     public static WorldResult Restore(WorldSnapshot snapshot, ContentSet content, ILevelGenerator generator) =>

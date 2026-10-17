@@ -96,7 +96,7 @@ public class VendorSessionTests
     }
 
     [Fact]
-    public void VendorState_StubsExistOnWorld()
+    public void VendorState_ExistsOnWorld()
     {
         var world = TestWorlds.CreateWithTown();
         Assert.Equal(VendorKinds.Smith, world.Smith.Kind);
@@ -105,6 +105,7 @@ public class VendorSessionTests
         Assert.Empty(world.Smith.Stock);
         Assert.Empty(world.Healer.Stock);
         Assert.Empty(world.Sage.Stock);
+        Assert.Equal(world.Content.Rules.VendorStockRegenTicks, world.NextStockRegenTick);
     }
 
     private static World ArmedAtSmith()

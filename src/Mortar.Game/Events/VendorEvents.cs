@@ -12,3 +12,13 @@ public sealed class VendorSessionEnded : GameEvent
 
     protected override string Describe() => $"vendor session ended ({VendorKind})";
 }
+
+public sealed class VendorStockRefreshed : GameEvent
+{
+    public VendorStockRefreshed(long tick)
+        : base(tick)
+    {
+    }
+
+    protected override string Describe() => "vendor stock refreshed";
+}

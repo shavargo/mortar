@@ -26,9 +26,16 @@ internal static class SnapshotCapture
                 TownY = portal.TownCell.Y,
             }
             : null,
+        NextStockRegenTick = world.NextStockRegenTick,
+        SmithStock = CaptureStock(world.Smith),
+        HealerStock = CaptureStock(world.Healer),
+        SageStock = CaptureStock(world.Sage),
         Player = CapturePlayer(world),
         Levels = world.VisitedDepths.Select(depth => (LevelSnapshot?)CaptureLevel(world.GetLevel(depth))).ToList(),
     };
+
+    private static List<ItemSnapshot?> CaptureStock(VendorState vendor) =>
+        vendor.Stock.Select(item => (ItemSnapshot?)CaptureItem(item)).ToList();
 
     private static PlayerSnapshot CapturePlayer(World world)
     {

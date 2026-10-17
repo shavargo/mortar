@@ -26,6 +26,7 @@ internal static class TickRunner
         DeathSystem.Process(world, events);
         PickupSystem.Process(world, events);
         VendorSession.Update(world, events);
+        VendorStockSystem.Update(world, events);
         return events.Events;
     }
 }

@@ -1,4 +1,5 @@
 using Mortar.Game.Content;
+using Mortar.Game.Items;
 using Mortar.Game.Simulation;
 
 namespace Mortar.Game.Saves;
@@ -43,6 +44,9 @@ internal static class WorldRestorer
             LevelRestorer.Restore(world, Check.Present(level, "level"), ids, fromV1);
         }
         PlayerRestorer.Place(world, player, snapshot.Depth, ids, fromV1);
+        RestoreStock(world, world.Smith, snapshot.SmithStock, ids, fromV1);
+        RestoreStock(world, world.Healer, snapshot.HealerStock, ids, fromV1);
+        RestoreStock(world, world.Sage, snapshot.SageStock, ids, fromV1);
         Check.That(snapshot.NextActorId > ids.MaxActorId, $"nextActorId must be greater than every actor id ({ids.MaxActorId})");
         Check.That(snapshot.NextItemId > ids.MaxItemId, $"nextItemId must be greater than every item id ({ids.MaxItemId})");
         Check.That(snapshot.NextProjectileId > ids.MaxProjectileId, $"nextProjectileId must be greater than every projectile id ({ids.MaxProjectileId})");
@@ -50,6 +54,9 @@ internal static class WorldRestorer
         world.NextActorId = snapshot.NextActorId;
         world.NextItemId = snapshot.NextItemId;
         world.NextProjectileId = snapshot.NextProjectileId;
+        world.NextStockRegenTick = snapshot.NextStockRegenTick > 0
+            ? snapshot.NextStockRegenTick
+            : snapshot.Tick + content.Rules.VendorStockRegenTicks;
         if (snapshot.Portal is { } portal)
         {
             world.Portal = new PortalPair(
@@ -58,5 +65,16 @@ internal static class WorldRestorer
                 new Cell(portal.TownX, portal.TownY));
         }
         return world;
+    }
+
+    private static void RestoreStock(
+        World world, VendorState vendor, List<ItemSnapshot?>? stock, RestoredIds ids, bool fromV1)
+    {
+        if (stock is null) return;
+        foreach (var entry in stock)
+        {
+            var item = ItemRestorer.Restore(world.Content, Check.Present(entry, $"{vendor.Kind} stock item"), ids, $"{vendor.Kind} stock item", fromV1);
+            vendor.MutableStock.Add(item);
+        }
     }
 }

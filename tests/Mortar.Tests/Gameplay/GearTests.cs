@@ -57,7 +57,9 @@ public class GearTests
         Assert.Equal(9, world.Player.Profile.ArmorClass);
         Assert.Equal(5, world.Player.Profile.Damage.Min);
         Assert.Equal(world.Player.Profile.MaxLife, world.Player.Life);
-        Assert.Equal(5, world.NextItemId);
+        Assert.Equal(
+            5 + world.Smith.Stock.Count + world.Healer.Stock.Count + world.Sage.Stock.Count,
+            world.NextItemId);
     }
 
     [Fact]

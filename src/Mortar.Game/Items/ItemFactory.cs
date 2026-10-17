@@ -19,6 +19,12 @@ internal static class ItemFactory
     public static Item? Roll(World world, int itemLevel, int magicPercent)
     {
         var bases = world.Content.ItemBases.Where(b => b.DropWeight > 0 && b.ItemLevel <= itemLevel).ToList();
+        return RollFrom(world, itemLevel, magicPercent, bases);
+    }
+
+    public static Item? RollFrom(
+        World world, int itemLevel, int magicPercent, IReadOnlyList<ItemBaseDefinition> bases)
+    {
         if (bases.Count == 0) return null;
         var definition = bases[world.Rng.PickWeighted(bases.Select(b => b.DropWeight).ToList())];
         var armor = definition.Armor is { } range ? world.Rng.NextInt(range.Min, range.Max + 1) : 0;

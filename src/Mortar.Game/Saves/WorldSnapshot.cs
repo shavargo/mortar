@@ -27,6 +27,14 @@ public sealed class WorldSnapshot
 
     public PortalSnapshot? Portal { get; set; }
 
+    public long NextStockRegenTick { get; set; }
+
+    public List<ItemSnapshot?>? SmithStock { get; set; }
+
+    public List<ItemSnapshot?>? HealerStock { get; set; }
+
+    public List<ItemSnapshot?>? SageStock { get; set; }
+
     public PlayerSnapshot? Player { get; set; }
 
     public List<LevelSnapshot?>? Levels { get; set; }
