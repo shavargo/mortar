@@ -31,6 +31,7 @@ internal static class SnapshotCapture
         SmithStock = CaptureStock(world.Smith),
         HealerStock = CaptureStock(world.Healer),
         SageStock = CaptureStock(world.Sage),
+        DroppedUniques = world.DroppedUniques.Select(id => (string?)id).ToList(),
         Player = CapturePlayer(world),
         Levels = world.VisitedDepths.Select(depth => (LevelSnapshot?)CaptureLevel(world.GetLevel(depth))).ToList(),
     };
@@ -143,6 +144,8 @@ internal static class SnapshotCapture
         Charges = item.Charges,
         Identified = item.Identified,
         Durability = item.Durability,
+        MaxDurability = item.MaxDurability,
+        UniqueId = item.UniqueId,
         Prefix = CaptureAffix(item.Prefix),
         Suffix = CaptureAffix(item.Suffix),
     };

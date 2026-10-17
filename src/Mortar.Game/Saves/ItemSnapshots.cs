@@ -18,6 +18,10 @@ public sealed class ItemSnapshot
 
     public int Durability { get; set; }
 
+    public int MaxDurability { get; set; }
+
+    public string? UniqueId { get; set; }
+
     public AffixRollSnapshot? Prefix { get; set; }
 
     public AffixRollSnapshot? Suffix { get; set; }

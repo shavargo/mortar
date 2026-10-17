@@ -73,7 +73,7 @@ public class SaveFileTests
     }
 
     [Theory]
-    [InlineData("\"version\": 3,", "\"version\": 3, \"cheat\": 1,", "save is not valid")]
+    [InlineData("\"version\": 4,", "\"version\": 4, \"cheat\": 1,", "save is not valid")]
     [InlineData("\"levels\": [", "\"levels\": [ null,", "save is invalid: level is missing")]
     public void FromJson_RejectsEditedSaves(string find, string replace, string error)
     {
@@ -99,7 +99,7 @@ public class SaveFileTests
     public void FromJson_CapitalizedVersion_LoadsLikeTheLoader()
     {
         var world = TestWorlds.Create(TestContent);
-        var json = SaveFile.ToJson(world).Replace("\"version\": 3", "\"Version\": 3");
+        var json = SaveFile.ToJson(world).Replace("\"version\": 4", "\"Version\": 4");
         var loaded = SaveFile.FromJson(json, TestContent, Generator());
         Assert.True(loaded.Succeeded, loaded.Error);
         Assert.Equal(WorldHash.Compute(world), WorldHash.Compute(loaded.World!));
@@ -109,7 +109,7 @@ public class SaveFileTests
     public void FromJson_Version1_IsAcceptedAndMigrated()
     {
         var world = TestWorlds.Create(TestContent);
-        var json = SaveFile.ToJson(world).Replace("\"version\": 3", "\"version\": 1");
+        var json = SaveFile.ToJson(world).Replace("\"version\": 4", "\"version\": 1");
         var loaded = SaveFile.FromJson(json, TestContent, Generator());
         Assert.True(loaded.Succeeded, loaded.Error);
         Assert.Equal(1, loaded.World!.NextProjectileId);
@@ -117,20 +117,32 @@ public class SaveFileTests
         Assert.Empty(loaded.World.Progress.Spells);
         Assert.Null(loaded.World.ActiveVendor);
         Assert.Empty(loaded.World.Smith.Stock);
+        Assert.Empty(loaded.World.DroppedUniques);
     }
 
     [Fact]
     public void FromJson_Version2_IsAcceptedAndMigrated()
     {
         var world = TestWorlds.Create(TestContent);
-        var json = SaveFile.ToJson(world).Replace("\"version\": 3", "\"version\": 2");
+        var json = SaveFile.ToJson(world).Replace("\"version\": 4", "\"version\": 2");
         var loaded = SaveFile.FromJson(json, TestContent, Generator());
         Assert.True(loaded.Succeeded, loaded.Error);
         Assert.Null(loaded.World!.ActiveVendor);
         Assert.Empty(loaded.World.Smith.Stock);
+        Assert.Empty(loaded.World.DroppedUniques);
         Assert.Equal(
             loaded.World.TickCount + loaded.World.Content.Rules.VendorStockRegenTicks,
             loaded.World.NextStockRegenTick);
+    }
+
+    [Fact]
+    public void FromJson_Version3_IsAcceptedAndMigrated()
+    {
+        var world = TestWorlds.Create(TestContent);
+        var json = SaveFile.ToJson(world).Replace("\"version\": 4", "\"version\": 3");
+        var loaded = SaveFile.FromJson(json, TestContent, Generator());
+        Assert.True(loaded.Succeeded, loaded.Error);
+        Assert.Empty(loaded.World!.DroppedUniques);
     }
 
     [Fact]

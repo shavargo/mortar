@@ -23,6 +23,7 @@ internal static class WorldRestorer
     {
         var fromV1 = snapshot.Version == 1;
         var fromPreV3 = snapshot.Version < 3;
+        var fromPreV4 = snapshot.Version < 4;
         if (!SaveMigration.TryMigrate(snapshot, out var migrateError))
         {
             throw new SaveException(migrateError!);
@@ -43,15 +44,16 @@ internal static class WorldRestorer
         }
         var player = Check.Present(snapshot.Player, "player");
         var world = PlayerRestorer.CreateWorld(snapshot, player, content, generator);
+        RestoreDroppedUniques(world, snapshot.DroppedUniques);
         var ids = new RestoredIds();
         foreach (var level in Check.Present(snapshot.Levels, "levels"))
         {
-            LevelRestorer.Restore(world, Check.Present(level, "level"), ids, fromV1, fromPreV3);
+            LevelRestorer.Restore(world, Check.Present(level, "level"), ids, fromV1, fromPreV3, fromPreV4);
         }
-        PlayerRestorer.Place(world, player, snapshot.Depth, ids, fromV1, fromPreV3);
-        RestoreStock(world, world.Smith, snapshot.SmithStock, ids, fromV1, fromPreV3);
-        RestoreStock(world, world.Healer, snapshot.HealerStock, ids, fromV1, fromPreV3);
-        RestoreStock(world, world.Sage, snapshot.SageStock, ids, fromV1, fromPreV3);
+        PlayerRestorer.Place(world, player, snapshot.Depth, ids, fromV1, fromPreV3, fromPreV4);
+        RestoreStock(world, world.Smith, snapshot.SmithStock, ids, fromV1, fromPreV3, fromPreV4);
+        RestoreStock(world, world.Healer, snapshot.HealerStock, ids, fromV1, fromPreV3, fromPreV4);
+        RestoreStock(world, world.Sage, snapshot.SageStock, ids, fromV1, fromPreV3, fromPreV4);
         Check.That(snapshot.NextActorId > ids.MaxActorId, $"nextActorId must be greater than every actor id ({ids.MaxActorId})");
         Check.That(snapshot.NextItemId > ids.MaxItemId, $"nextItemId must be greater than every item id ({ids.MaxItemId})");
         Check.That(snapshot.NextProjectileId > ids.MaxProjectileId, $"nextProjectileId must be greater than every projectile id ({ids.MaxProjectileId})");
@@ -73,14 +75,31 @@ internal static class WorldRestorer
         return world;
     }
 
+    private static void RestoreDroppedUniques(World world, List<string?>? dropped)
+    {
+        if (dropped is null) return;
+        foreach (var entry in dropped)
+        {
+            var id = Check.Text(entry, "dropped unique");
+            Check.That(world.Content.TryGetUnique(id, out _), $"unknown dropped unique '{id}'");
+            world.MarkUniqueDropped(id);
+        }
+    }
+
     private static void RestoreStock(
-        World world, VendorState vendor, List<ItemSnapshot?>? stock, RestoredIds ids, bool fromV1, bool fromPreV3)
+        World world, VendorState vendor, List<ItemSnapshot?>? stock, RestoredIds ids, bool fromV1, bool fromPreV3, bool fromPreV4)
     {
         if (stock is null) return;
         foreach (var entry in stock)
         {
             var item = ItemRestorer.Restore(
-                world.Content, Check.Present(entry, $"{vendor.Kind} stock item"), ids, $"{vendor.Kind} stock item", fromV1, fromPreV3);
+                world.Content,
+                Check.Present(entry, $"{vendor.Kind} stock item"),
+                ids,
+                $"{vendor.Kind} stock item",
+                fromV1,
+                fromPreV3,
+                fromPreV4);
             vendor.MutableStock.Add(item);
         }
     }

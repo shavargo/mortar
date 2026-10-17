@@ -24,7 +24,8 @@ public class SaveRestoreTests
             TestGameContent.Items(
                 new[] { TestGameContent.Weapon(), TestGameContent.Armor(), TestGameContent.Potion() },
                 new[] { TestGameContent.Affix("keen", AffixPositions.Prefix, BonusKinds.ToHit, 3, ItemSlots.Weapon) },
-                new[] { TestGameContent.Loot(gold: 1, item: 1, magicPercent: 50) }),
+                new[] { TestGameContent.Loot(gold: 1, item: 1, magicPercent: 50) },
+                new[] { TestGameContent.Unique("relic", "Relic Blade", "knife", value: 120) }),
             new SpellCatalog(new[]
             {
                 new SpellDefinition(
@@ -35,7 +36,15 @@ public class SaveRestoreTests
 
     private static readonly Dictionary<string, (Action<WorldSnapshot> Corrupt, string Error)> Corruptions = new()
     {
-        ["version"] = (s => s.Version = 4, "unsupported version 4"),
+        ["version"] = (s => s.Version = 5, "unsupported version 5"),
+        ["unknown unique"] = (s => Worn(s, "Weapon").UniqueId = "missing", "unknown unique 'missing'"),
+        ["max durability"] = (s => Worn(s, "Weapon").MaxDurability = 99, "maxDurability must be between"),
+        ["durability above max"] = (s =>
+        {
+            Worn(s, "Weapon").MaxDurability = 10;
+            Worn(s, "Weapon").Durability = 11;
+        }, "durability must be between"),
+        ["dropped unique"] = (s => s.DroppedUniques = new List<string?> { "missing" }, "unknown dropped unique 'missing'"),
         ["tick"] = (s => s.Tick = -1, "tick must not be negative"),
         ["rng"] = (s => s.RngIncrement = 2, "rngIncrement must be odd"),
         ["missing player"] = (s => s.Player = null, "player is missing"),
@@ -207,6 +216,56 @@ public class SaveRestoreTests
         Assert.Equal(VendorKinds.Smith, restored.ActiveVendor);
         Assert.Equal(world.Smith.Stock.Select(i => i.Id), restored.Smith.Stock.Select(i => i.Id));
         Assert.Equal(world.NextStockRegenTick, restored.NextStockRegenTick);
+    }
+
+    [Fact]
+    public void RoundTrip_KeepsUniqueReducedMaxAndDroppedFlags()
+    {
+        var world = BusyWorld();
+        var keen = TestGameContent.Affix("keen", AffixPositions.Prefix, BonusKinds.ToHit, 3, ItemSlots.Weapon);
+        var unique = TestItems.CreateUnique(
+            TestGameContent.Weapon(),
+            "relic",
+            "Relic Blade",
+            new[] { TestItems.Roll(keen, 3) },
+            id: world.NextItemId++,
+            uniqueValue: 120);
+        unique.Identified = true;
+        unique.MaxDurability = 10;
+        unique.Durability = 4;
+        Assert.True(world.Belongings.Stow(unique));
+        world.MarkUniqueDropped("relic");
+        var restored = Restore(WorldSnapshot.Capture(world));
+        Assert.Equal(WorldHash.Compute(world), WorldHash.Compute(restored));
+        var restoredUnique = restored.Belongings.Inventory.Items.Select(e => e.Item).Single(i => i.UniqueId == "relic");
+        Assert.Equal("Relic Blade", restoredUnique.UniqueName);
+        Assert.Equal(120, restoredUnique.UniqueValue);
+        Assert.Equal(10, restoredUnique.MaxDurability);
+        Assert.Equal(4, restoredUnique.Durability);
+        Assert.Equal(new[] { "relic" }, restored.DroppedUniques);
+        Assert.Equal("keen", Assert.Single(restoredUnique.UniquePowers).Definition.Id);
+    }
+
+    [Fact]
+    public void Version3_MigratesMaxFromDefinitionAndClearsUniques()
+    {
+        var world = BusyWorld();
+        var weapon = world.Belongings.Equipment.Get(EquipmentSlot.Weapon)!;
+        var reducedMax = Math.Max(1, weapon.MaxDurability / 2);
+        var reducedCurrent = Math.Max(0, reducedMax / 2);
+        weapon.MaxDurability = reducedMax;
+        weapon.Durability = reducedCurrent;
+        world.MarkUniqueDropped("relic");
+        var snapshot = WorldSnapshot.Capture(world);
+        snapshot.Version = 3;
+        snapshot.DroppedUniques = new List<string?> { "relic" };
+        Worn(snapshot, "Weapon").UniqueId = "relic";
+        var restored = Restore(snapshot);
+        Assert.Empty(restored.DroppedUniques);
+        var restoredWeapon = restored.Belongings.Equipment.Get(EquipmentSlot.Weapon)!;
+        Assert.Null(restoredWeapon.UniqueId);
+        Assert.Equal(restoredWeapon.Definition.MaxDurability, restoredWeapon.MaxDurability);
+        Assert.Equal(reducedCurrent, restoredWeapon.Durability);
     }
 
     private static World BusyWorld()

@@ -8,7 +8,7 @@ All times are in **ticks**. The simulation runs at 20 ticks per second, so `move
 
 ## `game.json`
 
-Points at the other files, relative to itself: `rules` (file), `classes` (folder), `monsters` (folder), `levels` (file), `items` (folder), `spells` (folder), `affixes` (file), and `loot` (file).
+Points at the other files, relative to itself: `rules` (file), `classes` (folder), `monsters` (folder), `levels` (file), `items` (folder), `spells` (folder), `affixes` (file), `loot` (file), and `uniques` (file).
 
 ## `rules.json`
 
@@ -42,6 +42,8 @@ Leveling up restores the player's life and mana.
 ## `classes/*.json`
 
 `id`, `name`, `spriteSet`, `baseStats` and `statCaps` (`strength`, `dexterity`, `vitality`, `magic`), `growth` (`lifeBase`, `lifePerVitality`, `lifePerLevel`, `manaBase`, `manaPerMagic`, `manaPerLevel`, `statPointsPerLevel`), `unarmedDamage` (`min`, `max`), and `timings`.
+
+Optional `classSkill` names the class ability the simulation runs for `ClassSkillCommand` (warrior uses `repair` for field repair).
 
 Optional `startingItems` lists item ids the class starts with. Each is created plain (no affixes, armor at its maximum). Equippable items fill empty slots; potions go to the belt; the rest go to the inventory. Items that don't fit are left out.
 
@@ -77,11 +79,11 @@ One item base per file: `id`, `name`, `icon`, `slot`, `size` (`width` 1–2, `he
 - Body, head, and shield items need `armor` (`min`, `max`); each dropped item rolls its armor value once. Shields may have `blockChance` (percent).
 - Potions need `potion` (`restores`: `life` or `mana`, and `amount`).
 - Ammo needs `stackMax` greater than 1. Optional `stackMax` on other bases defaults to 1. Spellbooks and scrolls use `spell`; books teach or raise that spell, scrolls cast once and are consumed.
-- `maxDurability` 0 means durability does not apply (potions, ammo, books, scrolls). Spawned and shop gear starts at full durability; weapons wear on a successful player hit, body and shield wear when the player is struck. Affixes still apply at 0 durability in this slice.
+- `maxDurability` 0 means durability does not apply (potions, ammo, books, scrolls). Spawned and shop gear starts at full durability; weapons wear on a successful player hit, body and shield wear when the player is struck. When an item's max durability is above 0 and current durability is 0, the item contributes nothing (no armor, block, weapon damage/swing, affixes, or unique powers) but remains equippable. Field repair can lower instance max; the smith restores current durability to the instance max without reducing it.
 
-Vendor buy price is `value` (× `vendorMagicBuyMult` if magic, floored). Sell price is that buy price × `vendorSellPercent` / 100 when the vendor accepts the item's slot (smith: weapons/armor/shields/rings/amulets; healer: potions; sage: scrolls/books). Shop stock regenerates on the world tick timer; goods are always identified; item level uses the deepest visited dungeon depth (at least 1).
+Vendor buy price is `value` (× `vendorMagicBuyMult` if magic or unique without a value override, floored; unique definitions may set `value` directly). Sell price is that buy price × `vendorSellPercent` / 100 when the vendor accepts the item's slot (smith: weapons/armor/shields/rings/amulets; healer: potions; sage: scrolls/books). Shop stock regenerates on the world tick timer; goods are always identified; shops do not roll uniques; item level uses the deepest visited dungeon depth (at least 1).
 
-The inventory is 10×4 cells and the belt holds 8 potions or ammo stacks. Gold is a counter, not an item. Magic loot may drop unidentified; affix bonuses apply only while identified.
+The inventory is 10×4 cells and the belt holds 8 potions or ammo stacks. Gold is a counter, not an item. Magic and unique loot may drop unidentified; affix and unique-power bonuses apply only while identified.
 
 ## `spells/*.json`
 
@@ -101,6 +103,12 @@ Town Portal and Identify are special ids handled by the simulation (open a dunge
 
 ## `loot.json`
 
-`tables` is a list. Each table has `id`, `rolls` (1–10), `noneWeight`, `goldWeight`, `itemWeight` (each roll picks one of nothing, a gold pile, or an item by these weights), `gold` (`min`, `max`; required when `goldWeight` is above 0), and `magicPercent` (the chance that an item is magic).
+`tables` is a list. Each table has `id`, `rolls` (1–10), `noneWeight`, `goldWeight`, `itemWeight` (each roll picks one of nothing, a gold pile, or an item by these weights), `gold` (`min`, `max`; required when `goldWeight` is above 0), `magicPercent` (the chance that an item is magic), and optional `uniqueChance` (0–100; chance to promote to a unique after the base is chosen, before magic).
 
-A magic item rolls a prefix, a suffix, or both (equal odds), from affixes allowed on its slot at its item level. Potions are never magic. Drops land on the nearest floor cells around the corpse, up to 3 tiles away.
+After a base is picked, if a `uniqueChance` roll succeeds and an eligible unique exists for that base (`minLevel` ≤ item level, not yet dropped this world), the drop becomes that unique (unidentified, full durability, fixed powers) and the unique id is flagged dropped for the rest of the world. Otherwise a magic item may roll a prefix, a suffix, or both (equal odds), from affixes allowed on its slot at its item level. Potions are never magic. Drops land on the nearest floor cells around the corpse, up to 3 tiles away.
+
+## `uniques.json`
+
+`uniques` is a list. Each unique has `id`, `name`, `baseItem` (an item base id; multiple uniques may share a base), `minLevel`, `powers` (ordered `{ affix, value }` with the affix in range), and optional `value` (buy-price override when above 0).
+
+Unidentified uniques show the base name; identified uniques show the unique name. Powers are looked up from content on restore (saves store only `uniqueId`). Each unique id drops at most once per world.
