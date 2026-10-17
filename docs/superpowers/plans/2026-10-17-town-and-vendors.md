@@ -101,17 +101,17 @@ docs/content.md, docs/saves.md
 
 **Files:** `Item` current/max; factory spawn full; `DurabilitySystem` / hooks in `CombatSystem`; tests.
 
-- [ ] Weapon −1 on successful player hit; body+shield −1 when player takes damage.
-- [ ] Floor at 0; no bonus gating yet.
-- [ ] Commit: `add minimal item durability wear`
+- [x] Weapon −1 on successful player hit; body+shield −1 when player takes damage.
+- [x] Floor at 0; no bonus gating yet.
+- [x] Commit: `add minimal item durability wear`
 
 ### Task 3: Vendor state, Talk, Leave, session
 
 **Files:** `VendorKinds`, `VendorState`, World fields, Talk/Leave commands, events, CommandSystem; tests with town content.
 
-- [ ] Talk at marker arms vendor; Leave clears; out-of-range / leave town auto-clears + event.
-- [ ] Reject Talk in dungeon / not adjacent / unknown marker.
-- [ ] Commit: `add vendor talk session`
+- [x] Talk at marker arms vendor; Leave clears; out-of-range / leave town auto-clears + event.
+- [x] Reject Talk in dungeon / not adjacent / unknown marker.
+- [x] Commit: `add vendor talk session`
 
 ### Task 4: Stock regen
 

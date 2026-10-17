@@ -46,6 +46,14 @@ public sealed class World
 
     public PortalPair? Portal { get; internal set; }
 
+    public string? ActiveVendor { get; internal set; }
+
+    public VendorState Smith { get; } = new VendorState(VendorKinds.Smith);
+
+    public VendorState Healer { get; } = new VendorState(VendorKinds.Healer);
+
+    public VendorState Sage { get; } = new VendorState(VendorKinds.Sage);
+
     public IReadOnlyList<int> VisitedDepths => _levels.Keys.OrderBy(depth => depth).ToList();
 
     internal Pcg32 Rng { get; }

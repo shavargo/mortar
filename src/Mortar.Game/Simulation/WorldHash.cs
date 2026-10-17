@@ -16,6 +16,7 @@ public static class WorldHash
             hasher.Add((long)portal.DungeonCell.X).Add((long)portal.DungeonCell.Y);
             hasher.Add((long)portal.TownCell.X).Add((long)portal.TownCell.Y);
         }
+        hasher.Add(world.ActiveVendor ?? "");
         hasher.Add(world.Rng.State).Add(world.Rng.Increment);
         AddProgress(hasher, world.Progress);
         AddBelongings(hasher, world.Belongings);

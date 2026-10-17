@@ -34,6 +34,10 @@ internal static class CommandSystem
                 return Stairs.Use(world, events);
             case UsePortalCommand _:
                 return PortalSystem.Use(world, events);
+            case TalkCommand talk:
+                return VendorSession.Talk(world, talk.VendorKind);
+            case LeaveVendorCommand _:
+                return VendorSession.Leave(world);
             case ClassSkillCommand _:
                 return ClassSkillSystem.Use(world, events);
             case PickUpCommand pickUp:

@@ -5,7 +5,7 @@ using Mortar.Game.Simulation;
 
 namespace Mortar.Tests.Gameplay.Support;
 
-/// <summary>'#' is wall; every other character is floor. Marker characters (E, X, S, B, W, C) also place markers.</summary>
+/// <summary>'#' is wall; every other character is floor. Marker characters (E, X, S, B, W, C, F, H, G) also place markers.</summary>
 internal static class TestLevels
 {
     public static Layout FromAscii(params string[] rows)
@@ -23,13 +23,26 @@ internal static class TestLevels
                 var index = y * width + x;
                 ground[index] = symbol == '#' ? 1 : 0;
                 walkable[index] = symbol != '#';
-                if (MarkerChars.TryGetKind(symbol, out var kind)) markers.Add(new Marker(kind, null, x, y));
+                if (TryMarkerKind(symbol, out var kind)) markers.Add(new Marker(kind, null, x, y));
             }
         }
         var cells = new LayoutCells(
             width, height, new[] { "floor", "wall" }, ground, new[] { "floor" },
             new int[width * height], new int[width * height], walkable);
         return new Layout("test", 0, 0, cells, markers, "test", Layout.CurrentFormatVersion);
+    }
+
+    private static bool TryMarkerKind(char symbol, out string kind)
+    {
+        if (MarkerChars.TryGetKind(symbol, out kind!)) return true;
+        kind = symbol switch
+        {
+            'F' => MarkerKinds.Smith,
+            'H' => MarkerKinds.Healer,
+            'G' => MarkerKinds.Sage,
+            _ => null!,
+        };
+        return kind is not null;
     }
 }
 

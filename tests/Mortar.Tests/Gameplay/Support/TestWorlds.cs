@@ -22,8 +22,8 @@ internal static class TestWorlds
     public static readonly string[] Town =
     {
         "#######",
-        "#E.S.X#",
-        "#.....#",
+        "#E...X#",
+        "#.FHG.#",
         "#######",
     };
 
