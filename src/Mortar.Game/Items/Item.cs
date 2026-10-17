@@ -6,6 +6,7 @@ public enum ItemQuality
 {
     Normal,
     Magic,
+    Unique,
 }
 
 public sealed class RolledAffix
@@ -32,7 +33,11 @@ public sealed class Item
         RolledAffix? suffix,
         int stackCount = 1,
         int charges = 0,
-        bool identified = true)
+        bool identified = true,
+        string? uniqueId = null,
+        string? uniqueName = null,
+        IReadOnlyList<RolledAffix>? uniquePowers = null,
+        int uniqueValue = 0)
     {
         Id = id;
         Definition = definition;
@@ -43,6 +48,10 @@ public sealed class Item
         StackCount = stackCount;
         Charges = charges;
         Identified = identified;
+        UniqueId = uniqueId;
+        UniqueName = uniqueName;
+        UniquePowers = uniquePowers ?? Array.Empty<RolledAffix>();
+        UniqueValue = uniqueValue;
         MaxDurability = definition.MaxDurability;
         Durability = definition.MaxDurability;
     }
@@ -59,6 +68,14 @@ public sealed class Item
 
     public RolledAffix? Suffix { get; }
 
+    public string? UniqueId { get; }
+
+    public string? UniqueName { get; }
+
+    public IReadOnlyList<RolledAffix> UniquePowers { get; }
+
+    public int UniqueValue { get; }
+
     public int StackCount { get; internal set; }
 
     public int Charges { get; internal set; }
@@ -67,14 +84,23 @@ public sealed class Item
 
     public int Durability { get; internal set; }
 
-    public int MaxDurability { get; }
+    public int MaxDurability { get; internal set; }
 
-    public ItemQuality Quality => Prefix is null && Suffix is null ? ItemQuality.Normal : ItemQuality.Magic;
+    public ItemQuality Quality =>
+        UniqueId is not null
+            ? ItemQuality.Unique
+            : Prefix is null && Suffix is null
+                ? ItemQuality.Normal
+                : ItemQuality.Magic;
 
     public string Name
     {
         get
         {
+            if (UniqueId is not null)
+            {
+                return Identified && UniqueName is not null ? UniqueName : Definition.Name;
+            }
             if (!Identified && Quality == ItemQuality.Magic)
             {
                 return $"Magic {Definition.Slot}";

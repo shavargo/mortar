@@ -44,6 +44,7 @@ public sealed class GearBonus
         WeaponSwing? swing = null;
         foreach (var item in equipment.Worn)
         {
+            if (IsBroken(item)) continue;
             totals.ArmorClass += item.ArmorValue;
             totals.BlockChance += item.Definition.BlockChance;
             if (item.Definition.Slot == ItemSlots.Weapon)
@@ -51,14 +52,15 @@ public sealed class GearBonus
                 weaponDamage = item.Definition.Damage;
                 swing = item.Definition.Swing;
             }
-            if (item.Identified)
-            {
-                if (item.Prefix is not null) totals.Apply(item.Prefix);
-                if (item.Suffix is not null) totals.Apply(item.Suffix);
-            }
+            if (!item.Identified) continue;
+            if (item.Prefix is not null) totals.Apply(item.Prefix);
+            if (item.Suffix is not null) totals.Apply(item.Suffix);
+            foreach (var power in item.UniquePowers) totals.Apply(power);
         }
         return new GearBonus(totals, weaponDamage, swing);
     }
+
+    private static bool IsBroken(Item item) => item.MaxDurability > 0 && item.Durability == 0;
 
     private sealed class Totals
     {

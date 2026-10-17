@@ -6,6 +6,12 @@ internal static class Pricing
 {
     public static int BuyPrice(Item item, GameRules rules)
     {
+        if (item.Quality == ItemQuality.Unique)
+        {
+            return item.UniqueValue > 0
+                ? item.UniqueValue
+                : item.Definition.Value * rules.VendorMagicBuyMult;
+        }
         var price = item.Definition.Value;
         return item.Quality == ItemQuality.Magic ? price * rules.VendorMagicBuyMult : price;
     }

@@ -77,20 +77,20 @@ docs/content.md, docs/saves.md
 
 **Files:** `UniqueDefinition`, catalog/ContentSet, JSON DTO/mapper/loader, `game.json`, empty/stub `uniques.json`, validators; tests in `ItemContentTests` or new `UniqueContentTests`.
 
-- [ ] `UniqueDefinition(id, name, baseItemId, minLevel, powers[], value?)`.
-- [ ] Power = affix id + fixed value; validate affix exists, value in affix range, base exists, unique ids unique, one unique per base **or** multiple per base allowed (DevilutionX allows multiple — **allow multiple per base**).
-- [ ] `LootTableDefinition` + DTO: `uniqueChance` (default 0 if omitted in tests; content sets 1/15).
-- [ ] Commit: `add unique item content model`
+- [x] `UniqueDefinition(id, name, baseItemId, minLevel, powers[], value?)`.
+- [x] Power = affix id + fixed value; validate affix exists, value in affix range, base exists, unique ids unique, one unique per base **or** multiple per base allowed (DevilutionX allows multiple — **allow multiple per base**).
+- [x] `LootTableDefinition` + DTO: `uniqueChance` (default 0 if omitted in tests; content sets 1/15).
+- [x] Commit: `add unique item content model`
 
 ### Task 2: Item unique quality + GearBonus broken gear
 
 **Files:** `Item.cs`, `GearBonus.cs`, `Pricing.cs`; flip durability test; unit tests for name/quality/bonus.
 
-- [ ] `ItemQuality.Unique`; `UniqueId` string?; mutable `MaxDurability`.
-- [ ] `Name`: unidentified unique → base name; identified → unique name from content (Item needs ContentSet or store display name — **store `UniqueName` on item at create** OR resolve via `world.Content` in a helper; prefer resolve in `Item.DisplayName(ContentSet)` only if Name stays parameter-free — simplest: store `uniqueName` string on item when created, empty if not unique).
-- [ ] `GearBonus.From`: skip items with max>0 and dur==0; apply unique powers from content when Identified (pass ContentSet into From, or bake powers as `IReadOnlyList<RolledAffix>` on the item at create — **bake RolledAffix list on item at create** so GearBonus stays ContentSet-free).
-- [ ] Replace `AffixesStillApplyAtZeroDurability` with `BrokenGearContributesNothing`.
-- [ ] Commit: `gate gear bonuses on durability and unique quality`
+- [x] `ItemQuality.Unique`; `UniqueId` string?; mutable `MaxDurability`.
+- [x] `Name`: unidentified unique → base name; identified → unique name from content (Item needs ContentSet or store display name — **store `UniqueName` on item at create** OR resolve via `world.Content` in a helper; prefer resolve in `Item.DisplayName(ContentSet)` only if Name stays parameter-free — simplest: store `uniqueName` string on item when created, empty if not unique).
+- [x] `GearBonus.From`: skip items with max>0 and dur==0; apply unique powers from content when Identified (pass ContentSet into From, or bake powers as `IReadOnlyList<RolledAffix>` on the item at create — **bake RolledAffix list on item at create** so GearBonus stays ContentSet-free).
+- [x] Replace `AffixesStillApplyAtZeroDurability` with `BrokenGearContributesNothing`.
+- [x] Commit: `gate gear bonuses on durability and unique quality`
 
 ### Task 3: Loot promotion + once-per-world flags
 

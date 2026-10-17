@@ -152,10 +152,10 @@ public class DurabilityTests
     }
 
     [Fact]
-    public void AffixesStillApplyAtZeroDurability()
+    public void BrokenGearContributesNothing()
     {
         var affix = TestGameContent.Affix("keen", AffixPositions.Prefix, BonusKinds.Damage, 3, ItemSlots.Weapon);
-        var knife = TestGameContent.Weapon(maxDurability: 1);
+        var knife = TestGameContent.Weapon(maxDurability: 1, damageMin: 4, damageMax: 6);
         var world = TestWorlds.Create(TestGameContent.Valid(
             rules: TestGameContent.Rules(minHit: 100, maxHit: 100),
             items: TestGameContent.Items(bases: new[] { knife }, affixes: new[] { affix })));
@@ -163,8 +163,11 @@ public class DurabilityTests
         weapon.Durability = 0;
         world.Belongings.Equipment.Set(EquipmentSlot.Weapon, weapon);
         world.RefreshPlayer();
+        var bonus = GearBonus.From(world.Belongings.Equipment);
         Assert.Equal(0, weapon.Durability);
-        Assert.Equal(3, GearBonus.From(world.Belongings.Equipment).Damage);
+        Assert.Equal(0, bonus.Damage);
+        Assert.Null(bonus.WeaponDamage);
+        Assert.Null(bonus.Swing);
     }
 
     private static Item Equip(World world, ItemBaseDefinition definition)
