@@ -55,7 +55,8 @@ internal static class CombatSystem
         if (target is null || !target.IsAlive) return;
         if (attacker.Kind != ActorKind.Player)
         {
-            SpawnArrow(world, attacker, target, events, range: 8);
+            var range = world.Content.Monster(attacker.DefinitionId).PreferredRange;
+            SpawnArrow(world, attacker, target, events, range > 0 ? range : 8);
             return;
         }
         var weapon = EquippedWeapon(world);

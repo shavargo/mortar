@@ -1,0 +1,16 @@
+{
+  "id": "skeleton-archer",
+  "name": "Bone Archer",
+  "spriteSet": "skeleton",
+  "level": 3,
+  "life": { "min": 8, "max": 12 },
+  "armorClass": 10,
+  "toHit": 50,
+  "damage": { "min": 2, "max": 5 },
+  "timings": { "moveTicks": 8, "attackTicks": 10, "hitFrame": 5, "recoveryTicks": 5 },
+  "sightRadius": 9,
+  "preferredRange": 6,
+  "experience": 70,
+  "ai": "ranged-kite",
+  "loot": "common"
+}

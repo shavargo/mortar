@@ -38,7 +38,8 @@ internal static class ContentMapper
             fields.ReadRange(dto.UnarmedDamage, "unarmedDamage"),
             fields.ReadTimings(dto.Timings),
             ToStartingItems(fields, dto.StartingItems),
-            ToStartingItems(fields, dto.StartingSpells, "startingSpells"));
+            ToStartingItems(fields, dto.StartingSpells, "startingSpells"),
+            string.IsNullOrWhiteSpace(dto.ClassSkill) ? "" : dto.ClassSkill!);
     }
 
     public static MonsterDefinition ToMonster(string source, MonsterDto dto, List<AuthoringError> errors)
@@ -61,7 +62,8 @@ internal static class ContentMapper
             dto.Minions is null ? null : new MinionSpec(
                 fields.Text(dto.Minions.Monster, "minions.monster"),
                 fields.ReadRange(dto.Minions.Count, "minions.count")),
-            string.IsNullOrWhiteSpace(dto.Loot) ? null : dto.Loot);
+            string.IsNullOrWhiteSpace(dto.Loot) ? null : dto.Loot,
+            dto.PreferredRange ?? 0);
     }
 
     public static LevelDefinition ToLevel(string source, int index, LevelDto dto, string areaId, List<AuthoringError> errors)

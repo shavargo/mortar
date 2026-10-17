@@ -37,8 +37,11 @@ internal static class TestGameContent
         int life = 10,
         int sight = 6,
         int experience = 50,
-        string? loot = null) =>
-        new MonsterDefinition(id, id, id, 1, new IntRange(life, life), 0, 50, new IntRange(1, 2), 0, Timings(), sight, experience, ai, minions, loot);
+        string? loot = null,
+        int preferredRange = 0) =>
+        new MonsterDefinition(
+            id, id, id, 1, new IntRange(life, life), 0, 50, new IntRange(1, 2), 0, Timings(), sight, experience, ai, minions, loot,
+            preferredRange);
 
     public static LevelDefinition Level(int depth, string monsterId = "zombie", string? bossId = null) =>
         new LevelDefinition(depth, "test", new[] { new SpawnEntry(monsterId, 1) }, bossId);

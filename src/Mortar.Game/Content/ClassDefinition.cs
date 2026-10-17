@@ -12,7 +12,8 @@ public sealed class ClassDefinition
         IntRange unarmedDamage,
         ActionTimings timings,
         IReadOnlyList<string> startingItems,
-        IReadOnlyList<string>? startingSpells = null)
+        IReadOnlyList<string>? startingSpells = null,
+        string classSkill = "")
     {
         Id = id;
         Name = name;
@@ -24,6 +25,7 @@ public sealed class ClassDefinition
         Timings = timings;
         StartingItems = startingItems.ToArray();
         StartingSpells = (startingSpells ?? Array.Empty<string>()).ToArray();
+        ClassSkill = classSkill ?? "";
     }
 
     public string Id { get; }
@@ -45,4 +47,6 @@ public sealed class ClassDefinition
     public IReadOnlyList<string> StartingItems { get; }
 
     public IReadOnlyList<string> StartingSpells { get; }
+
+    public string ClassSkill { get; }
 }

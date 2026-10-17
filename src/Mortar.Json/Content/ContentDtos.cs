@@ -115,6 +115,8 @@ internal sealed class ClassDto
     public List<string?>? StartingItems { get; set; }
 
     public List<string?>? StartingSpells { get; set; }
+
+    public string? ClassSkill { get; set; }
 }
 
 internal sealed class MinionsDto
@@ -155,6 +157,8 @@ internal sealed class MonsterDto
     public MinionsDto? Minions { get; set; }
 
     public string? Loot { get; set; }
+
+    public int? PreferredRange { get; set; }
 }
 
 internal sealed class LevelsDto

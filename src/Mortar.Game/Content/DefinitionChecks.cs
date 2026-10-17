@@ -29,6 +29,10 @@ internal static class DefinitionChecks
         CheckGrowth(source, definition.Growth, errors);
         CheckRange(source, "unarmedDamage", definition.UnarmedDamage, 0, errors);
         CheckTimings(source, definition.Timings, errors);
+        if (!string.IsNullOrEmpty(definition.ClassSkill) && !ClassSkills.IsKnown(definition.ClassSkill))
+        {
+            errors.Add(source, $"unknown classSkill '{definition.ClassSkill}'");
+        }
     }
 
     public static void CheckMonster(MonsterDefinition monster, Func<string, MonsterDefinition?> find, List<AuthoringError> errors)
@@ -73,6 +77,14 @@ internal static class DefinitionChecks
         {
             errors.Add(source, $"unknown ai '{monster.Ai}'");
             return;
+        }
+        if (monster.PreferredRange < 0 || monster.PreferredRange > MaxValue)
+        {
+            errors.Add(source, $"preferredRange must be between 0 and {MaxValue}");
+        }
+        if (monster.Ai == AiKinds.RangedKite && monster.PreferredRange < 1)
+        {
+            errors.Add(source, "ranged-kite monsters need preferredRange of at least 1");
         }
         if (monster.Ai != AiKinds.PackLeader)
         {

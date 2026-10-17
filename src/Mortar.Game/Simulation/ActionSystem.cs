@@ -1,3 +1,4 @@
+using Mortar.Game.Content;
 using Mortar.Game.Events;
 using Mortar.Game.Items;
 using Mortar.Game.Pathing;
@@ -102,6 +103,11 @@ internal static class ActionSystem
             ContinueRanged(world, actor, target, events);
             return;
         }
+        if (actor.Kind == ActorKind.Monster && IsRangedKite(world, actor))
+        {
+            ContinueMonsterRanged(world, actor, target, events);
+            return;
+        }
         if (Reach.CanStrike(actor.Cell, target.Cell, level.IsWalkable))
         {
             CombatSystem.StartAttack(actor, target, events);
@@ -109,6 +115,21 @@ internal static class ActionSystem
         }
         var path = Pathfinder.FindPathNextTo(actor.Cell, target.Cell, level.IsWalkable, level.IsFree);
         if (path is { Count: > 0 }) Movement.Step(level, actor, path[0], events);
+    }
+
+    private static bool IsRangedKite(World world, Actor actor) =>
+        world.Content.Monster(actor.DefinitionId).Ai == AiKinds.RangedKite;
+
+    private static void ContinueMonsterRanged(World world, Actor actor, Actor target, EventSink events)
+    {
+        var range = world.Content.Monster(actor.DefinitionId).PreferredRange;
+        if (actor.Cell.DistanceTo(target.Cell) <= range)
+        {
+            CombatSystem.StartShoot(actor, target, events);
+            return;
+        }
+        var path = Pathfinder.FindPathNextTo(actor.Cell, target.Cell, world.Level.IsWalkable, world.Level.IsFree);
+        if (path is { Count: > 0 }) Movement.Step(world.Level, actor, path[0], events);
     }
 
     private static void ContinueRanged(World world, Actor actor, Actor target, EventSink events)

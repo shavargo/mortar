@@ -15,5 +15,6 @@
   },
   "unarmedDamage": { "min": 1, "max": 2 },
   "timings": { "moveTicks": 6, "attackTicks": 10, "hitFrame": 5, "recoveryTicks": 5 },
-  "startingItems": ["short-bow", "arrows", "padded-vest", "healing-draught", "healing-draught"]
+  "startingItems": ["short-bow", "arrows", "padded-vest", "healing-draught", "healing-draught"],
+  "classSkill": "disarm"
 }

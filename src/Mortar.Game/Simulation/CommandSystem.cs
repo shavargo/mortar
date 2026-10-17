@@ -34,6 +34,8 @@ internal static class CommandSystem
                 return Stairs.Use(world, events);
             case UsePortalCommand _:
                 return PortalSystem.Use(world, events);
+            case ClassSkillCommand _:
+                return ClassSkillSystem.Use(world, events);
             case PickUpCommand pickUp:
                 return PickupSystem.Start(world, pickUp);
             case EquipCommand equip:

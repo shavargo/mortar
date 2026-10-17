@@ -17,7 +17,7 @@ public class GameContentLoaderTests
         Assert.True(result.Succeeded, string.Join("; ", result.Errors));
         var content = result.Value!.Content;
         Assert.True(content.TryGetClass("warrior", out _));
-        Assert.Equal(6, content.Monsters.Count);
+        Assert.Equal(7, content.Monsters.Count);
         Assert.Equal(0, content.ShallowestLevel);
         Assert.Equal(4, content.DeepestLevel);
         Assert.Equal("town", content.Level(0).AreaId);

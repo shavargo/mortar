@@ -14,7 +14,8 @@
       "area": "areas/cathedral-2.json",
       "spawns": [
         { "monster": "zombie", "weight": 2 },
-        { "monster": "skeleton", "weight": 3 },
+        { "monster": "skeleton", "weight": 2 },
+        { "monster": "skeleton-archer", "weight": 2 },
         { "monster": "imp-chieftain", "weight": 1 }
       ]
     },
@@ -22,7 +23,8 @@
       "depth": 3,
       "area": "areas/cathedral-3.json",
       "spawns": [
-        { "monster": "skeleton", "weight": 3 },
+        { "monster": "skeleton", "weight": 2 },
+        { "monster": "skeleton-archer", "weight": 2 },
         { "monster": "carrion-bat", "weight": 2 },
         { "monster": "imp-chieftain", "weight": 1 }
       ]
@@ -31,7 +33,8 @@
       "depth": 4,
       "area": "areas/cathedral-4.json",
       "spawns": [
-        { "monster": "skeleton", "weight": 2 },
+        { "monster": "skeleton", "weight": 1 },
+        { "monster": "skeleton-archer", "weight": 2 },
         { "monster": "carrion-bat", "weight": 2 },
         { "monster": "zombie", "weight": 1 }
       ],

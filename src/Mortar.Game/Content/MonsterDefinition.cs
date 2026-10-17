@@ -30,7 +30,8 @@ public sealed class MonsterDefinition
         int experience,
         string ai,
         MinionSpec? minions,
-        string? lootTableId)
+        string? lootTableId,
+        int preferredRange = 0)
     {
         Id = id;
         Name = name;
@@ -47,6 +48,7 @@ public sealed class MonsterDefinition
         Ai = ai;
         Minions = minions;
         LootTableId = lootTableId;
+        PreferredRange = preferredRange;
     }
 
     public string Id { get; }
@@ -78,4 +80,6 @@ public sealed class MonsterDefinition
     public MinionSpec? Minions { get; }
 
     public string? LootTableId { get; }
+
+    public int PreferredRange { get; }
 }
