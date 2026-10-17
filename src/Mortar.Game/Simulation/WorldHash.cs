@@ -110,7 +110,10 @@ public static class WorldHash
     {
         hasher.Add((long)item.Id).Add(item.Definition.Id).Add((long)item.ItemLevel).Add((long)item.ArmorValue);
         hasher.Add((long)item.StackCount).Add((long)item.Charges).Add(item.Identified);
-        hasher.Add((long)item.Durability);
+        hasher.Add((long)item.Durability).Add((long)item.MaxDurability);
+        hasher.Add(item.UniqueId ?? "").Add(item.UniqueName ?? "").Add((long)item.UniqueValue);
+        hasher.Add(item.UniquePowers.Count);
+        foreach (var power in item.UniquePowers) AddAffix(hasher, power);
         AddAffix(hasher, item.Prefix);
         AddAffix(hasher, item.Suffix);
     }
