@@ -65,6 +65,7 @@ internal static class ContentValidator
         {
             errors.Add(source, $"maxSpellLevel must be between 1 and {DefinitionChecks.MaxValue}");
         }
+        CheckVendorRules(rules, errors);
         for (var i = 0; i < rules.ExperienceThresholds.Count; i++)
         {
             var previous = i == 0 ? 0 : rules.ExperienceThresholds[i - 1];
@@ -73,6 +74,52 @@ internal static class ContentValidator
                 errors.Add(source, "experienceThresholds must be positive and strictly increasing");
                 break;
             }
+        }
+    }
+
+    private static void CheckVendorRules(GameRules rules, List<AuthoringError> errors)
+    {
+        const string source = "rules";
+        const int max = DefinitionChecks.MaxValue;
+        if (rules.VendorStockRegenTicks < 1 || rules.VendorStockRegenTicks > max)
+        {
+            errors.Add(source, $"vendorStockRegenTicks must be between 1 and {max}");
+        }
+        if (rules.VendorSellPercent < 0 || rules.VendorSellPercent > 100)
+        {
+            errors.Add(source, "vendorSellPercent must be between 0 and 100");
+        }
+        if (rules.VendorMagicBuyMult < 1 || rules.VendorMagicBuyMult > max)
+        {
+            errors.Add(source, $"vendorMagicBuyMult must be between 1 and {max}");
+        }
+        if (rules.VendorRepairPercent < 0 || rules.VendorRepairPercent > 100)
+        {
+            errors.Add(source, "vendorRepairPercent must be between 0 and 100");
+        }
+        if (rules.VendorIdentifyFee < 0 || rules.VendorIdentifyFee > max)
+        {
+            errors.Add(source, $"vendorIdentifyFee must be between 0 and {max}");
+        }
+        if (rules.VendorHealFee < 0 || rules.VendorHealFee > max)
+        {
+            errors.Add(source, $"vendorHealFee must be between 0 and {max}");
+        }
+        if (rules.VendorSmithSlots < 0 || rules.VendorSmithSlots > max)
+        {
+            errors.Add(source, $"vendorSmithSlots must be between 0 and {max}");
+        }
+        if (rules.VendorHealerSlots < 0 || rules.VendorHealerSlots > max)
+        {
+            errors.Add(source, $"vendorHealerSlots must be between 0 and {max}");
+        }
+        if (rules.VendorSageSlots < 0 || rules.VendorSageSlots > max)
+        {
+            errors.Add(source, $"vendorSageSlots must be between 0 and {max}");
+        }
+        if (rules.VendorSmithMagicPercent < 0 || rules.VendorSmithMagicPercent > 100)
+        {
+            errors.Add(source, "vendorSmithMagicPercent must be between 0 and 100");
         }
     }
 

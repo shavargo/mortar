@@ -15,7 +15,17 @@ public sealed class GameRules
         int experiencePercentPerLevel,
         int minimumExperiencePercent,
         IReadOnlyList<long> experienceThresholds,
-        int maxSpellLevel = 15)
+        int maxSpellLevel = 15,
+        int vendorStockRegenTicks = 144000,
+        int vendorSellPercent = 25,
+        int vendorMagicBuyMult = 3,
+        int vendorRepairPercent = 50,
+        int vendorIdentifyFee = 50,
+        int vendorHealFee = 0,
+        int vendorSmithSlots = 8,
+        int vendorHealerSlots = 6,
+        int vendorSageSlots = 6,
+        int vendorSmithMagicPercent = 40)
     {
         MinHitChance = minHitChance;
         MaxHitChance = maxHitChance;
@@ -30,6 +40,16 @@ public sealed class GameRules
         MinimumExperiencePercent = minimumExperiencePercent;
         ExperienceThresholds = experienceThresholds.ToArray();
         MaxSpellLevel = maxSpellLevel;
+        VendorStockRegenTicks = vendorStockRegenTicks;
+        VendorSellPercent = vendorSellPercent;
+        VendorMagicBuyMult = vendorMagicBuyMult;
+        VendorRepairPercent = vendorRepairPercent;
+        VendorIdentifyFee = vendorIdentifyFee;
+        VendorHealFee = vendorHealFee;
+        VendorSmithSlots = vendorSmithSlots;
+        VendorHealerSlots = vendorHealerSlots;
+        VendorSageSlots = vendorSageSlots;
+        VendorSmithMagicPercent = vendorSmithMagicPercent;
     }
 
     public int MinHitChance { get; }
@@ -60,6 +80,26 @@ public sealed class GameRules
     public IReadOnlyList<long> ExperienceThresholds { get; }
 
     public int MaxSpellLevel { get; }
+
+    public int VendorStockRegenTicks { get; }
+
+    public int VendorSellPercent { get; }
+
+    public int VendorMagicBuyMult { get; }
+
+    public int VendorRepairPercent { get; }
+
+    public int VendorIdentifyFee { get; }
+
+    public int VendorHealFee { get; }
+
+    public int VendorSmithSlots { get; }
+
+    public int VendorHealerSlots { get; }
+
+    public int VendorSageSlots { get; }
+
+    public int VendorSmithMagicPercent { get; }
 
     public int MaxLevel => ExperienceThresholds.Count + 1;
 }

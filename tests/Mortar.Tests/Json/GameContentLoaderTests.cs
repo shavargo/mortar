@@ -147,6 +147,29 @@ public class GameContentLoaderTests
     }
 
     [Fact]
+    public void RepoContent_HasVendorRulesAndItemEconomyFields()
+    {
+        var content = GameContentLoader.Load(ContentFixture.Manifest).Value!.Content;
+        var rules = content.Rules;
+        Assert.Equal(144000, rules.VendorStockRegenTicks);
+        Assert.Equal(25, rules.VendorSellPercent);
+        Assert.Equal(3, rules.VendorMagicBuyMult);
+        Assert.Equal(50, rules.VendorRepairPercent);
+        Assert.Equal(50, rules.VendorIdentifyFee);
+        Assert.Equal(0, rules.VendorHealFee);
+        Assert.Equal(8, rules.VendorSmithSlots);
+        Assert.Equal(6, rules.VendorHealerSlots);
+        Assert.Equal(6, rules.VendorSageSlots);
+        Assert.Equal(40, rules.VendorSmithMagicPercent);
+        Assert.True(content.TryGetItemBase("iron-knife", out var knife));
+        Assert.True(knife!.Value > 0);
+        Assert.True(knife.MaxDurability >= 1);
+        Assert.True(content.TryGetItemBase("healing-draught", out var draught));
+        Assert.True(draught!.Value > 0);
+        Assert.Equal(0, draught.MaxDurability);
+    }
+
+    [Fact]
     public void RepoContent_StartsTheWarriorEquipped()
     {
         var content = GameContentLoader.Load(ContentFixture.Manifest).Value!;

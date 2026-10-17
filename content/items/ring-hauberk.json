@@ -6,6 +6,8 @@
   "size": { "width": 2, "height": 3 },
   "itemLevel": 4,
   "dropWeight": 2,
+  "value": 280,
+  "maxDurability": 70,
   "requirements": { "strength": 34 },
   "armor": { "min": 14, "max": 20 }
 }

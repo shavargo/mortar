@@ -6,5 +6,7 @@
   "size": { "width": 2, "height": 3 },
   "itemLevel": 1,
   "dropWeight": 6,
+  "value": 50,
+  "maxDurability": 45,
   "armor": { "min": 3, "max": 6 }
 }

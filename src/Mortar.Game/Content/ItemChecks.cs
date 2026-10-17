@@ -54,6 +54,20 @@ internal static class ItemChecks
         CheckPotion(source, item, errors);
         CheckRangedAndStacks(source, item, errors);
         CheckSpellItem(source, item, errors);
+        CheckValueAndDurability(source, item, errors);
+    }
+
+    private static void CheckValueAndDurability(string source, ItemBaseDefinition item, List<AuthoringError> errors)
+    {
+        if (item.Value < 0 || item.Value > MaxValue) errors.Add(source, $"value must be between 0 and {MaxValue}");
+        if (item.MaxDurability < 0 || item.MaxDurability > MaxValue)
+        {
+            errors.Add(source, $"maxDurability must be between 0 and {MaxValue}");
+        }
+        if (item.IsEquippable && item.MaxDurability < 1)
+        {
+            errors.Add(source, "equippable items need maxDurability of at least 1");
+        }
     }
 
     private static void CheckSize(string source, ItemBaseDefinition item, List<AuthoringError> errors)

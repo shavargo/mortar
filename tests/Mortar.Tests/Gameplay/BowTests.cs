@@ -17,7 +17,7 @@ public class BowTests
     private static readonly ItemBaseDefinition Bow = new ItemBaseDefinition(
         "bow", "Bow", "bow", ItemSlots.Weapon, 1, 2, 1, 1, default,
         new IntRange(3, 3), new WeaponSwing(6, 3), null, 0, null,
-        ranged: true, ammoId: "arrows", range: 8);
+        ranged: true, ammoId: "arrows", range: 8, value: 80, maxDurability: 30);
 
     private static ContentSet BowContent() =>
         TestGameContent.Valid(

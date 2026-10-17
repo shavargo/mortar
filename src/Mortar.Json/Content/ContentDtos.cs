@@ -46,6 +46,26 @@ internal sealed class RulesDto
     public List<long>? ExperienceThresholds { get; set; }
 
     public int? MaxSpellLevel { get; set; }
+
+    public int? VendorStockRegenTicks { get; set; }
+
+    public int? VendorSellPercent { get; set; }
+
+    public int? VendorMagicBuyMult { get; set; }
+
+    public int? VendorRepairPercent { get; set; }
+
+    public int? VendorIdentifyFee { get; set; }
+
+    public int? VendorHealFee { get; set; }
+
+    public int? VendorSmithSlots { get; set; }
+
+    public int? VendorHealerSlots { get; set; }
+
+    public int? VendorSageSlots { get; set; }
+
+    public int? VendorSmithMagicPercent { get; set; }
 }
 
 internal sealed class StatsDto

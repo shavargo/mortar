@@ -6,5 +6,7 @@
   "size": { "width": 1, "height": 1 },
   "itemLevel": 1,
   "dropWeight": 4,
+  "value": 60,
+  "maxDurability": 0,
   "potion": { "restores": "mana", "amount": 20 }
 }

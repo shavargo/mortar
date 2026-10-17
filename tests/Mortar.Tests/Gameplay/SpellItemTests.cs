@@ -32,7 +32,7 @@ public class SpellItemTests
     private static ItemBaseDefinition Staff() => new ItemBaseDefinition(
         "staff", "Staff", "staff", ItemSlots.Weapon, 1, 3, 1, 0, default,
         new IntRange(1, 2), new WeaponSwing(8, 4), null, 0, null,
-        spellId: "firebolt", maxCharges: 5);
+        spellId: "firebolt", maxCharges: 5, value: 100, maxDurability: 40);
 
     private static World WorldWith(params ItemBaseDefinition[] extras)
     {

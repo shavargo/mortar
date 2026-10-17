@@ -5,5 +5,7 @@
   "slot": "ring",
   "size": { "width": 1, "height": 1 },
   "itemLevel": 2,
-  "dropWeight": 2
+  "dropWeight": 2,
+  "value": 90,
+  "maxDurability": 20
 }

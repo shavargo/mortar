@@ -131,6 +131,51 @@ public class ContentValidatorTests
         AssertError(TestGameContent.Create(rules: rules), "rules", "strictly increasing");
     }
 
+    [Fact]
+    public void VendorRules_HaveTownDefaults()
+    {
+        var rules = TestGameContent.Rules();
+        Assert.Equal(144000, rules.VendorStockRegenTicks);
+        Assert.Equal(25, rules.VendorSellPercent);
+        Assert.Equal(3, rules.VendorMagicBuyMult);
+        Assert.Equal(50, rules.VendorRepairPercent);
+        Assert.Equal(50, rules.VendorIdentifyFee);
+        Assert.Equal(0, rules.VendorHealFee);
+        Assert.Equal(8, rules.VendorSmithSlots);
+        Assert.Equal(6, rules.VendorHealerSlots);
+        Assert.Equal(6, rules.VendorSageSlots);
+        Assert.Equal(40, rules.VendorSmithMagicPercent);
+    }
+
+    [Theory]
+    [InlineData(-1, 25, 3, 50, 50, 0, 8, 6, 6, 40, "vendorStockRegenTicks")]
+    [InlineData(144000, 101, 3, 50, 50, 0, 8, 6, 6, 40, "vendorSellPercent")]
+    [InlineData(144000, 25, 0, 50, 50, 0, 8, 6, 6, 40, "vendorMagicBuyMult")]
+    [InlineData(144000, 25, 3, -1, 50, 0, 8, 6, 6, 40, "vendorRepairPercent")]
+    [InlineData(144000, 25, 3, 50, -1, 0, 8, 6, 6, 40, "vendorIdentifyFee")]
+    [InlineData(144000, 25, 3, 50, 50, -1, 8, 6, 6, 40, "vendorHealFee")]
+    [InlineData(144000, 25, 3, 50, 50, 0, -1, 6, 6, 40, "vendorSmithSlots")]
+    [InlineData(144000, 25, 3, 50, 50, 0, 8, -1, 6, 40, "vendorHealerSlots")]
+    [InlineData(144000, 25, 3, 50, 50, 0, 8, 6, -1, 40, "vendorSageSlots")]
+    [InlineData(144000, 25, 3, 50, 50, 0, 8, 6, 6, 101, "vendorSmithMagicPercent")]
+    public void VendorRules_RejectOutOfRange(
+        int regen, int sell, int magicBuy, int repair, int identify, int heal,
+        int smithSlots, int healerSlots, int sageSlots, int smithMagic, string fragment)
+    {
+        var rules = TestGameContent.Rules(
+            vendorStockRegenTicks: regen,
+            vendorSellPercent: sell,
+            vendorMagicBuyMult: magicBuy,
+            vendorRepairPercent: repair,
+            vendorIdentifyFee: identify,
+            vendorHealFee: heal,
+            vendorSmithSlots: smithSlots,
+            vendorHealerSlots: healerSlots,
+            vendorSageSlots: sageSlots,
+            vendorSmithMagicPercent: smithMagic);
+        AssertError(TestGameContent.Create(rules: rules), "rules", fragment);
+    }
+
     [Theory]
     [InlineData(101, 25)]
     [InlineData(-1, 25)]

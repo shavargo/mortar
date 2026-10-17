@@ -56,7 +56,9 @@ public sealed class ItemBaseDefinition
         int stackMax = 1,
         string? spellId = null,
         int maxCharges = 0,
-        int range = 0)
+        int range = 0,
+        int value = 0,
+        int maxDurability = 0)
     {
         Id = id;
         Name = name;
@@ -78,6 +80,8 @@ public sealed class ItemBaseDefinition
         SpellId = spellId;
         MaxCharges = maxCharges;
         Range = range;
+        Value = value;
+        MaxDurability = maxDurability;
     }
 
     public string Id { get; }
@@ -119,6 +123,10 @@ public sealed class ItemBaseDefinition
     public int MaxCharges { get; }
 
     public int Range { get; }
+
+    public int Value { get; }
+
+    public int MaxDurability { get; }
 
     public bool IsEquippable => ItemSlots.IsEquippable(Slot);
 

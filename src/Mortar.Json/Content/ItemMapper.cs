@@ -29,7 +29,9 @@ internal static class ItemMapper
             dto.StackMax ?? 1,
             string.IsNullOrWhiteSpace(dto.Spell) ? null : dto.Spell,
             dto.MaxCharges ?? 0,
-            dto.Range ?? 0);
+            dto.Range ?? 0,
+            dto.Value ?? 0,
+            dto.MaxDurability ?? 0);
     }
 
     public static AffixDefinition ToAffix(string source, int index, AffixDto dto, List<AuthoringError> errors)

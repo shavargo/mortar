@@ -6,6 +6,8 @@
   "size": { "width": 1, "height": 2 },
   "itemLevel": 1,
   "dropWeight": 6,
+  "value": 40,
+  "maxDurability": 35,
   "damage": { "min": 2, "max": 5 },
   "swing": { "attackTicks": 11, "hitFrame": 6 }
 }

@@ -11,10 +11,30 @@ internal static class TestGameContent
         int recoveryPercent = 20,
         long[]? thresholds = null,
         int experiencePercentPerLevel = 10,
-        int minimumExperiencePercent = 0) =>
+        int minimumExperiencePercent = 0,
+        int vendorStockRegenTicks = 144000,
+        int vendorSellPercent = 25,
+        int vendorMagicBuyMult = 3,
+        int vendorRepairPercent = 50,
+        int vendorIdentifyFee = 50,
+        int vendorHealFee = 0,
+        int vendorSmithSlots = 8,
+        int vendorHealerSlots = 6,
+        int vendorSageSlots = 6,
+        int vendorSmithMagicPercent = 40) =>
         new GameRules(
             minHit, maxHit, 50, 1, 1, 2, 5, 10, recoveryPercent,
-            experiencePercentPerLevel, minimumExperiencePercent, thresholds ?? new long[] { 100, 300, 600 });
+            experiencePercentPerLevel, minimumExperiencePercent, thresholds ?? new long[] { 100, 300, 600 },
+            vendorStockRegenTicks: vendorStockRegenTicks,
+            vendorSellPercent: vendorSellPercent,
+            vendorMagicBuyMult: vendorMagicBuyMult,
+            vendorRepairPercent: vendorRepairPercent,
+            vendorIdentifyFee: vendorIdentifyFee,
+            vendorHealFee: vendorHealFee,
+            vendorSmithSlots: vendorSmithSlots,
+            vendorHealerSlots: vendorHealerSlots,
+            vendorSageSlots: vendorSageSlots,
+            vendorSmithMagicPercent: vendorSmithMagicPercent);
 
     public static ActionTimings Timings(int move = 4, int attack = 6, int hit = 3, int recovery = 3) =>
         new ActionTimings(move, attack, hit, recovery);
@@ -52,21 +72,30 @@ internal static class TestGameContent
     public static LevelDefinition[] WithTown() => new[] { Town(), Level(1), Level(2) };
 
     public static ItemBaseDefinition Weapon(
-        string id = "knife", int damageMin = 3, int damageMax = 5, int strength = 0, WeaponSwing? swing = null, int itemLevel = 1, int dropWeight = 1) =>
+        string id = "knife", int damageMin = 3, int damageMax = 5, int strength = 0, WeaponSwing? swing = null,
+        int itemLevel = 1, int dropWeight = 1, int value = 50, int maxDurability = 30) =>
         new ItemBaseDefinition(
             id, id, id, ItemSlots.Weapon, 1, 2, itemLevel, dropWeight, new Stats(strength, 0, 0, 0),
-            new IntRange(damageMin, damageMax), swing, null, 0, null);
+            new IntRange(damageMin, damageMax), swing, null, 0, null, value: value, maxDurability: maxDurability);
 
     public static ItemBaseDefinition Armor(
-        string id = "vest", string slot = ItemSlots.Body, int armor = 5, int width = 2, int height = 2, int blockChance = 0, int dropWeight = 1) =>
+        string id = "vest", string slot = ItemSlots.Body, int armor = 5, int width = 2, int height = 2,
+        int blockChance = 0, int dropWeight = 1, int value = 40, int maxDurability = 40) =>
         new ItemBaseDefinition(
-            id, id, id, slot, width, height, 1, dropWeight, default, null, null, new IntRange(armor, armor), blockChance, null);
+            id, id, id, slot, width, height, 1, dropWeight, default, null, null, new IntRange(armor, armor), blockChance, null,
+            value: value, maxDurability: maxDurability);
 
-    public static ItemBaseDefinition Ring(string id = "ring", int dropWeight = 1) =>
-        new ItemBaseDefinition(id, id, id, ItemSlots.Ring, 1, 1, 1, dropWeight, default, null, null, null, 0, null);
+    public static ItemBaseDefinition Ring(string id = "ring", int dropWeight = 1, int value = 75, int maxDurability = 20) =>
+        new ItemBaseDefinition(
+            id, id, id, ItemSlots.Ring, 1, 1, 1, dropWeight, default, null, null, null, 0, null,
+            value: value, maxDurability: maxDurability);
 
-    public static ItemBaseDefinition Potion(string id = "tonic", int amount = 20, string restores = PotionKinds.Life, int dropWeight = 1) =>
-        new ItemBaseDefinition(id, id, id, ItemSlots.Potion, 1, 1, 1, dropWeight, default, null, null, null, 0, new PotionEffect(restores, amount));
+    public static ItemBaseDefinition Potion(
+        string id = "tonic", int amount = 20, string restores = PotionKinds.Life, int dropWeight = 1,
+        int value = 40, int maxDurability = 0) =>
+        new ItemBaseDefinition(
+            id, id, id, ItemSlots.Potion, 1, 1, 1, dropWeight, default, null, null, null, 0, new PotionEffect(restores, amount),
+            value: value, maxDurability: maxDurability);
 
     public static AffixDefinition Affix(string id, string position, string bonus, int value, params string[] slots) =>
         new AffixDefinition(id, id, position, slots, new IntRange(1, 10), 1, bonus, new IntRange(value, value));

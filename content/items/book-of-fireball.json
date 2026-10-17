@@ -6,5 +6,7 @@
   "size": { "width": 1, "height": 1 },
   "itemLevel": 4,
   "dropWeight": 1,
+  "value": 400,
+  "maxDurability": 0,
   "spell": "fireball"
 }

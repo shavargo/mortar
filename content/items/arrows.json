@@ -6,5 +6,7 @@
   "size": { "width": 1, "height": 1 },
   "itemLevel": 1,
   "dropWeight": 8,
+  "value": 20,
+  "maxDurability": 0,
   "stackMax": 40
 }

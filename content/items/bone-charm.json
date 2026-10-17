@@ -5,5 +5,7 @@
   "slot": "amulet",
   "size": { "width": 1, "height": 1 },
   "itemLevel": 3,
-  "dropWeight": 1
+  "dropWeight": 1,
+  "value": 150,
+  "maxDurability": 20
 }

@@ -60,6 +60,10 @@ internal sealed class ItemBaseDto
     public int? MaxCharges { get; set; }
 
     public int? Range { get; set; }
+
+    public int? Value { get; set; }
+
+    public int? MaxDurability { get; set; }
 }
 
 internal sealed class AffixListDto

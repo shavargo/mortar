@@ -22,7 +22,17 @@ internal static class ContentMapper
             fields.Int(dto.ExperiencePercentPerLevel, "experiencePercentPerLevel"),
             fields.Int(dto.MinimumExperiencePercent, "minimumExperiencePercent"),
             dto.ExperienceThresholds ?? new List<long>(),
-            dto.MaxSpellLevel ?? 15);
+            dto.MaxSpellLevel ?? 15,
+            dto.VendorStockRegenTicks ?? 144000,
+            dto.VendorSellPercent ?? 25,
+            dto.VendorMagicBuyMult ?? 3,
+            dto.VendorRepairPercent ?? 50,
+            dto.VendorIdentifyFee ?? 50,
+            dto.VendorHealFee ?? 0,
+            dto.VendorSmithSlots ?? 8,
+            dto.VendorHealerSlots ?? 6,
+            dto.VendorSageSlots ?? 6,
+            dto.VendorSmithMagicPercent ?? 40);
     }
 
     public static ClassDefinition ToClass(string source, ClassDto dto, List<AuthoringError> errors)

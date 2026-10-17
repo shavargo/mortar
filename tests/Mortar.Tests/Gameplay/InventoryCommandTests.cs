@@ -13,7 +13,8 @@ public class InventoryCommandTests
     private static readonly ItemBaseDefinition Knife = TestGameContent.Weapon();
     private static readonly ItemBaseDefinition Sword = TestGameContent.Weapon("sword", strength: 30);
     private static readonly ItemBaseDefinition Maul = new ItemBaseDefinition(
-        "maul", "maul", "maul", ItemSlots.Weapon, 2, 3, 1, 1, default, new IntRange(5, 9), null, null, 0, null);
+        "maul", "maul", "maul", ItemSlots.Weapon, 2, 3, 1, 1, default, new IntRange(5, 9), null, null, 0, null,
+        value: 60, maxDurability: 40);
     private static readonly ItemBaseDefinition Vest = TestGameContent.Armor();
     private static readonly ItemBaseDefinition Ring = TestGameContent.Ring();
     private static readonly ItemBaseDefinition Tonic = TestGameContent.Potion();

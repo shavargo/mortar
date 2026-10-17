@@ -24,8 +24,33 @@ public class ItemContentTests
     [Fact]
     public void WeaponWithoutDamage_IsRejected()
     {
-        var club = new ItemBaseDefinition("club", "club", "club", ItemSlots.Weapon, 1, 2, 1, 1, default, null, null, null, 0, null);
+        var club = new ItemBaseDefinition("club", "club", "club", ItemSlots.Weapon, 1, 2, 1, 1, default, null, null, null, 0, null, value: 10, maxDurability: 20);
         AssertError(Create(bases: club), "item 'club'", "weapons need damage");
+    }
+
+    [Fact]
+    public void NegativeValue_IsRejected()
+    {
+        var knife = TestGameContent.Weapon(value: -1);
+        AssertError(Create(bases: knife), "item 'knife'", "value must be between 0");
+    }
+
+    [Fact]
+    public void EquippableWithoutMaxDurability_IsRejected()
+    {
+        var knife = new ItemBaseDefinition(
+            "knife", "knife", "knife", ItemSlots.Weapon, 1, 2, 1, 1, default,
+            new IntRange(2, 4), null, null, 0, null, value: 25, maxDurability: 0);
+        AssertError(Create(bases: knife), "item 'knife'", "equippable items need maxDurability of at least 1");
+    }
+
+    [Fact]
+    public void PotionMayHaveZeroMaxDurability()
+    {
+        var tonic = TestGameContent.Potion(value: 40, maxDurability: 0);
+        var content = TestGameContent.Valid(items: TestGameContent.Items(new[] { tonic }));
+        Assert.Equal(40, content.ItemBase("tonic").Value);
+        Assert.Equal(0, content.ItemBase("tonic").MaxDurability);
     }
 
     [Fact]
