@@ -93,9 +93,9 @@ docs/content.md, docs/saves.md
 
 **Files:** `GameRules`, `ItemBaseDefinition`, loaders/validators, `content/rules.json`, item JSON samples; tests.
 
-- [ ] Add rules fields listed above; validate ranges.
-- [ ] Add `value` (≥ 0) and `maxDurability` (≥ 0) on item bases; gear that can be worn/wielded needs `maxDurability` ≥ 1 except rings/amulets may use a small default if omitted (plan: require explicit on weapon/body/head/shield; rings/amulets default 20 in loader or require explicit — **require explicit for all equippable**).
-- [ ] Commit: `add item value durability and vendor rules`
+- [x] Add rules fields listed above; validate ranges.
+- [x] Add `value` (≥ 0) and `maxDurability` (≥ 0) on item bases; gear that can be worn/wielded needs `maxDurability` ≥ 1 except rings/amulets may use a small default if omitted (plan: require explicit on weapon/body/head/shield; rings/amulets default 20 in loader or require explicit — **require explicit for all equippable**).
+- [x] Commit: `add item value durability and vendor rules`
 
 ### Task 2: Minimal durability in combat
 
@@ -117,39 +117,39 @@ docs/content.md, docs/saves.md
 
 **Files:** `VendorStockSystem`, TickRunner step, content pools (filter bases by slot + dropWeight), World create initial fill; tests.
 
-- [ ] Regen all vendors on deadline; schedule next; event.
-- [ ] Item level from deepest visited dungeon depth; identified shop items.
-- [ ] Commit: `add timed vendor stock regen`
+- [x] Regen all vendors on deadline; schedule next; event.
+- [x] Item level from deepest visited dungeon depth; identified shop items.
+- [x] Commit: `add timed vendor stock regen`
 
 ### Task 5: Pricing + Buy / Sell
 
 **Files:** `Pricing`, Buy/Sell commands, TownServices; tests.
 
-- [ ] Buy removes stock, stows, spends; sell takes item, grants gold; wrong vendor / can't afford / bag full reject cleanly.
-- [ ] Commit: `add vendor buy and sell`
+- [x] Buy removes stock, stows, spends; sell takes item, grants gold; wrong vendor / can't afford / bag full reject cleanly.
+- [x] Commit: `add vendor buy and sell`
 
 ### Task 6: Repair, Identify service, Heal service
 
 **Files:** TownServices; smith repair; sage identify (reuse `SpellSystem.IdentifyItem` or shared helper); healer full life (+ mana? **life only** this slice); tests.
 
-- [ ] Repair fee then `current = max`.
-- [ ] Identify fee then identify.
-- [ ] Heal fee then `Life = MaxLife`.
-- [ ] Commit: `add vendor repair identify and heal`
+- [x] Repair fee then `current = max`.
+- [x] Identify fee then identify.
+- [x] Heal fee then `Life = MaxLife`.
+- [x] Commit: `add vendor repair identify and heal`
 
 ### Task 7: Saves v3 + docs
 
 **Files:** Snapshots, capture, restorers, migration, `docs/saves.md`, `docs/content.md`; tests.
 
-- [ ] Persist durability, stocks, active vendor, next regen tick.
-- [ ] v2→v3 migration; round-trip hash.
-- [ ] Commit: `save vendors and durability as version 3`
+- [x] Persist durability, stocks, active vendor, next regen tick.
+- [x] v2→v3 migration; round-trip hash.
+- [x] Commit: `save vendors and durability as version 3`
 
 ### Task 8: Final review
 
-- [ ] `dotnet test Mortar.slnx` green; Release 0 warnings.
-- [ ] Review against Review Focus; fix Important issues.
-- [ ] Commit any fixes; mark town-first milestone complete.
+- [x] `dotnet test Mortar.slnx` green; Release 0 warnings.
+- [x] Review against Review Focus; fix Important issues.
+- [x] Commit any fixes; mark town-first milestone complete.
 
 ## Later (not this plan)
 
