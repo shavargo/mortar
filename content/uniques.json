@@ -1,3 +1,92 @@
 {
-  "uniques": []
+  "uniques": [
+    {
+      "id": "crypt-whittler",
+      "name": "Crypt Whittler",
+      "baseItem": "iron-knife",
+      "minLevel": 1,
+      "powers": [
+        { "affix": "keen", "value": 5 },
+        { "affix": "barbed", "value": 1 }
+      ],
+      "value": 180
+    },
+    {
+      "id": "vigil-vest",
+      "name": "Vigil Vest",
+      "baseItem": "padded-vest",
+      "minLevel": 1,
+      "powers": [
+        { "affix": "hardened", "value": 3 },
+        { "affix": "hale", "value": 7 }
+      ],
+      "value": 220
+    },
+    {
+      "id": "pew-board",
+      "name": "Pew Board",
+      "baseItem": "plank-shield",
+      "minLevel": 1,
+      "powers": [
+        { "affix": "hardened", "value": 2 },
+        { "affix": "of-deftness", "value": 3 }
+      ],
+      "value": 160
+    },
+    {
+      "id": "bell-cleaver",
+      "name": "Bell Cleaver",
+      "baseItem": "hatchet",
+      "minLevel": 2,
+      "powers": [
+        { "affix": "barbed", "value": 2 },
+        { "affix": "of-brawn", "value": 4 }
+      ],
+      "value": 280
+    },
+    {
+      "id": "tithe-band",
+      "name": "Tithe Band",
+      "baseItem": "copper-band",
+      "minLevel": 2,
+      "powers": [
+        { "affix": "keen", "value": 4 },
+        { "affix": "of-wells", "value": 8 }
+      ],
+      "value": 300
+    },
+    {
+      "id": "sextons-pot",
+      "name": "Sexton's Pot",
+      "baseItem": "iron-pot-helm",
+      "minLevel": 3,
+      "powers": [
+        { "affix": "hardened", "value": 4 },
+        { "affix": "of-lore", "value": 3 }
+      ],
+      "value": 360
+    },
+    {
+      "id": "processional-edge",
+      "name": "Processional Edge",
+      "baseItem": "broad-blade",
+      "minLevel": 4,
+      "powers": [
+        { "affix": "serrated", "value": 3 },
+        { "affix": "honed", "value": 9 }
+      ],
+      "value": 720
+    },
+    {
+      "id": "cloister-mail",
+      "name": "Cloister Mail",
+      "baseItem": "ring-hauberk",
+      "minLevel": 4,
+      "powers": [
+        { "affix": "tempered", "value": 6 },
+        { "affix": "of-hearth", "value": 4 }
+      ],
+      "value": 900
+    }
+  ]
 }

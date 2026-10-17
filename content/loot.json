@@ -1,8 +1,8 @@
 {
   "tables": [
-    { "id": "swarm", "rolls": 1, "noneWeight": 75, "goldWeight": 20, "itemWeight": 5, "gold": { "min": 2, "max": 6 }, "magicPercent": 10 },
-    { "id": "common", "rolls": 1, "noneWeight": 55, "goldWeight": 30, "itemWeight": 15, "gold": { "min": 4, "max": 14 }, "magicPercent": 15 },
-    { "id": "pack", "rolls": 2, "noneWeight": 45, "goldWeight": 30, "itemWeight": 25, "gold": { "min": 8, "max": 20 }, "magicPercent": 20 },
-    { "id": "boss", "rolls": 4, "noneWeight": 0, "goldWeight": 1, "itemWeight": 3, "gold": { "min": 60, "max": 140 }, "magicPercent": 60 }
+    { "id": "swarm", "rolls": 1, "noneWeight": 75, "goldWeight": 20, "itemWeight": 5, "gold": { "min": 2, "max": 6 }, "magicPercent": 10, "uniqueChance": 1 },
+    { "id": "common", "rolls": 1, "noneWeight": 55, "goldWeight": 30, "itemWeight": 15, "gold": { "min": 4, "max": 14 }, "magicPercent": 15, "uniqueChance": 1 },
+    { "id": "pack", "rolls": 2, "noneWeight": 45, "goldWeight": 30, "itemWeight": 25, "gold": { "min": 8, "max": 20 }, "magicPercent": 20, "uniqueChance": 1 },
+    { "id": "boss", "rolls": 4, "noneWeight": 0, "goldWeight": 1, "itemWeight": 3, "gold": { "min": 60, "max": 140 }, "magicPercent": 60, "uniqueChance": 15 }
   ]
 }

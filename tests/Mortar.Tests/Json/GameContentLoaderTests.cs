@@ -136,8 +136,15 @@ public class GameContentLoaderTests
         Assert.Equal(21, content.ItemBases.Count);
         Assert.Equal(13, content.Affixes.Count);
         Assert.Equal(4, content.Items.LootTables.Count);
-        Assert.Empty(content.Uniques);
-        Assert.Equal(0, content.LootTable("common").UniqueChance);
+        Assert.Equal(8, content.Uniques.Count);
+        Assert.True(content.TryGetUnique("crypt-whittler", out var cryptWhittler));
+        Assert.Equal("iron-knife", cryptWhittler!.BaseItemId);
+        Assert.True(content.TryGetUnique("cloister-mail", out var cloisterMail));
+        Assert.Equal("ring-hauberk", cloisterMail!.BaseItemId);
+        Assert.Equal(1, content.LootTable("swarm").UniqueChance);
+        Assert.Equal(1, content.LootTable("common").UniqueChance);
+        Assert.Equal(1, content.LootTable("pack").UniqueChance);
+        Assert.Equal(15, content.LootTable("boss").UniqueChance);
         Assert.Equal("common", content.Monster("zombie").LootTableId);
         Assert.True(content.TryGetClass("warrior", out var warrior));
         Assert.Equal(new[] { "iron-knife", "padded-vest", "healing-draught", "healing-draught" }, warrior!.StartingItems);
