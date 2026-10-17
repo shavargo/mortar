@@ -2,7 +2,7 @@
 
 The Unity layer lives in two folders:
 
-- `unity/com.backwoods.mortar`: the UPM package (runtime, editor tools, tests).
+- `unity/com.mortar.unity`: the UPM package (runtime, editor tools, tests).
 - `unity/Mortar.Sample`: a sample project that references the package from disk and contains the playable scene.
 
 ## Setup
@@ -14,7 +14,7 @@ The Unity layer lives in two folders:
    pwsh -File tools/unity/sync.ps1
    ```
 
-   This publishes `Mortar.Json` for netstandard2.1 into `com.backwoods.mortar/Plugins/` and copies `content/` into `Mortar.Sample/Assets/StreamingAssets/content/`. Both folders are gitignored; run the script again after changing simulation code or content.
+   This publishes `Mortar.Json` for netstandard2.1 into `com.mortar.unity/Plugins/` and copies `content/` into `Mortar.Sample/Assets/StreamingAssets/content/`. Both folders are gitignored; run the script again after changing simulation code or content.
 3. Open `unity/Mortar.Sample` in the editor and open `Assets/Scenes/Game.unity`.
 
 ## Tests

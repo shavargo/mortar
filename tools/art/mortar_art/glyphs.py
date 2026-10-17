@@ -13,7 +13,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 from .config import REPO_ROOT
 
-RESOURCES_ROOT = REPO_ROOT / "unity" / "com.backwoods.mortar" / "Runtime" / "Resources" / "Mortar"
+RESOURCES_ROOT = REPO_ROOT / "unity" / "com.mortar.unity" / "Runtime" / "Resources" / "Mortar"
 FONT_PATH = RESOURCES_ROOT / "DejaVuSansMono.ttf"
 ATLAS_PATH = RESOURCES_ROOT / "GlyphAtlas.png"
 

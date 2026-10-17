@@ -33,7 +33,7 @@ sprite bake (step 6); audio beyond empty hook points; Unity tests in CI.
 
 ```
 unity/
-  com.backwoods.mortar/          UPM package
+  com.mortar.unity/          UPM package
     package.json                 unity 6000.3
     Plugins/                     Mortar.*.dll + needed dependency DLLs (gitignored)
     Runtime/                     Mortar.Unity assembly (UI built in C#, one theme file)
@@ -41,7 +41,7 @@ unity/
     Tests/Editor/                edit-mode tests
     Tests/Runtime/               play-mode tests
   Mortar.Sample/                 Unity project
-    Packages/manifest.json       "com.backwoods.mortar": "file:../../com.backwoods.mortar"
+    Packages/manifest.json       "com.mortar.unity": "file:../../com.mortar.unity"
     Assets/Scenes/Game.unity
     Assets/Art/                  generated placeholders (committed after review)
     Assets/StreamingAssets/content/   copy of content/ (gitignored)

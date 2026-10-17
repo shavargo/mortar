@@ -17,8 +17,8 @@ unity/**/UserSettings/
 unity/**/*.csproj
 unity/**/*.sln
 unity/**/.vsconfig
-unity/com.backwoods.mortar/Plugins/
-unity/com.backwoods.mortar/Plugins.meta
+unity/com.mortar.unity/Plugins/
+unity/com.mortar.unity/Plugins.meta
 unity/Mortar.Sample/Assets/StreamingAssets/
 unity/Mortar.Sample/Assets/StreamingAssets.meta
 

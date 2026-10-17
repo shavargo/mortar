@@ -21,7 +21,7 @@
 - Python: `from __future__ import annotations`, double quotes, type hints, module docstring, like the existing `tools/art` modules. `mortar_art/bake_geometry.py` is stdlib-only because Blender's bundled Python imports it.
 - pytest runs from `tools/art` as `.venv\Scripts\python -m pytest -W error -q -p no:cacheprovider` and must stay warning-free.
 - Unity tests: `pwsh -File tools/unity/test.ps1 -Platform EditMode|PlayMode [-Filter X]`. Only one Unity process may open `unity/Mortar.Sample` at a time; the user's editor must be closed for batch runs.
-- Commit messages: short, one line, present tense, no prefixes. Stage by explicit path. Never stage `.env`, `.superpowers/`, `bin/`, `obj/`, `out/`, `tools/art/out/`, `tools/art/.venv/`, Unity `Library/`, `Temp/`, `Logs/`, `UserSettings/`, `unity/com.backwoods.mortar/Plugins/`, or `Assets/StreamingAssets/`.
+- Commit messages: short, one line, present tense, no prefixes. Stage by explicit path. Never stage `.env`, `.superpowers/`, `bin/`, `obj/`, `out/`, `tools/art/out/`, `tools/art/.venv/`, Unity `Library/`, `Temp/`, `Logs/`, `UserSettings/`, `unity/com.mortar.unity/Plugins/`, or `Assets/StreamingAssets/`.
 - Baked art is committed only after the user approves the review contact sheet.
 
 ## Design Interpretations
@@ -58,7 +58,7 @@ tools/art/
   mortar_art/bake_runner.py        new: run Blender, collect errors
   tests/test_blender.py, test_bake_geometry.py, test_actors.py, test_sheets.py,
   tests/test_bake_runner.py, test_bake_cli.py, test_bake_smoke.py, test_models.py
-unity/com.backwoods.mortar/
+unity/com.mortar.unity/
   Runtime/Art/ClipInfo.cs, ActorClip.cs, ClipNames.cs, ClipSet.cs     new
   Runtime/Art/SpriteKeys.cs, SpriteCatalog.cs                         modified
   Runtime/Views/ActorAnimator.cs, AnimMoment.cs, ClipFrame.cs,
@@ -1810,10 +1810,10 @@ git commit -m "add blender actor bake"
 ### Task 6: Actor clips in the sprite catalog
 
 **Files:**
-- Create: `unity/com.backwoods.mortar/Runtime/Art/ClipInfo.cs`, `Runtime/Art/ActorClip.cs`, `Runtime/Art/ClipNames.cs`, `Tests/Editor/TestClipInfo.cs`, `Tests/Editor/ActorClipTests.cs`
+- Create: `unity/com.mortar.unity/Runtime/Art/ClipInfo.cs`, `Runtime/Art/ActorClip.cs`, `Runtime/Art/ClipNames.cs`, `Tests/Editor/TestClipInfo.cs`, `Tests/Editor/ActorClipTests.cs`
 - Modify: `Runtime/Art/SpriteKeys.cs`, `Runtime/Art/SpriteCatalog.cs`, `Editor/ArtImport.cs`, `Editor/SpriteCatalogBuilder.cs`, `Tests/Editor/SpriteCatalogTests.cs`, `Tests/Editor/ArtImportTests.cs`
 
-(All paths below are under `unity/com.backwoods.mortar/`.)
+(All paths below are under `unity/com.mortar.unity/`.)
 
 **Interfaces:**
 - Produces: `ClipInfo` (`FromJson(string) -> ClipInfo`, properties `Frames, Directions, Fps, Loop, HitFrame, FrameWidth, FrameHeight, PivotX, PivotY, Seconds`); `ActorClip(string key, Texture2D? sheet, ClipInfo info)` with `Key, Frames, Fps, Loop, HitFrame, Seconds, Directions`, `Frame(Direction, int) -> Sprite`, `const float PixelsPerUnit = 128f`; `ClipNames.Idle|Walk|Attack|Hit|Death`; `SpriteKeys.Clip(string id, string clip) -> "actors/{id}/{clip}"`; `SpriteCatalog.SetClips(IEnumerable<ActorClip>)`, `SpriteCatalog.Clip(string spriteSet, string clipName) -> ActorClip?`, `SpriteCatalog.Clips`, `SpriteCatalog.ClipCount`; `ArtImport.IsSheet(string assetPath)` and `IsSheet(string assetPath, Func<string, bool> fileExists)`.
@@ -2336,7 +2336,7 @@ Expected: EditMode all pass (88 before + 16 new); PlayMode 44 passed + 1 skipped
 - [ ] **Step 9: Commit**
 
 ```powershell
-git add unity/com.backwoods.mortar/Runtime/Art unity/com.backwoods.mortar/Editor/ArtImport.cs unity/com.backwoods.mortar/Editor/SpriteCatalogBuilder.cs unity/com.backwoods.mortar/Tests/Editor
+git add unity/com.mortar.unity/Runtime/Art unity/com.mortar.unity/Editor/ArtImport.cs unity/com.mortar.unity/Editor/SpriteCatalogBuilder.cs unity/com.mortar.unity/Tests/Editor
 git status --short
 git commit -m "add actor clips to the sprite catalog"
 ```
@@ -2348,7 +2348,7 @@ Stage the new `.cs.meta` files Unity generated next to new scripts as well (`git
 ### Task 7: Clip sets and the actor animator
 
 **Files:**
-- Create: `unity/com.backwoods.mortar/Runtime/Art/ClipSet.cs`, `Runtime/Views/ActorAnimator.cs`, `Runtime/Views/AnimMoment.cs`, `Runtime/Views/ClipFrame.cs`, `Tests/Editor/ClipSetTests.cs`, `Tests/Editor/ActorAnimatorTests.cs`
+- Create: `unity/com.mortar.unity/Runtime/Art/ClipSet.cs`, `Runtime/Views/ActorAnimator.cs`, `Runtime/Views/AnimMoment.cs`, `Runtime/Views/ClipFrame.cs`, `Tests/Editor/ClipSetTests.cs`, `Tests/Editor/ActorAnimatorTests.cs`
 
 **Interfaces:**
 - Consumes: `ActorClip`, `ClipNames`, `SpriteCatalog.Clip`, `ActorPose.Progress(int elapsed, int duration, float alpha)`, `Mortar.Game.Simulation.ActionKind` (`Idle, Moving, Attacking, Recovering`).
@@ -2718,7 +2718,7 @@ Expected: all pass, no `warning CS` in the log.
 - [ ] **Step 7: Commit**
 
 ```powershell
-git add unity/com.backwoods.mortar/Runtime/Art/ClipSet.cs unity/com.backwoods.mortar/Runtime/Art/ClipSet.cs.meta unity/com.backwoods.mortar/Runtime/Views unity/com.backwoods.mortar/Tests/Editor
+git add unity/com.mortar.unity/Runtime/Art/ClipSet.cs unity/com.mortar.unity/Runtime/Art/ClipSet.cs.meta unity/com.mortar.unity/Runtime/Views unity/com.mortar.unity/Tests/Editor
 git status --short
 git commit -m "add actor animator"
 ```
@@ -2728,7 +2728,7 @@ git commit -m "add actor animator"
 ### Task 8: Play clips on actors and town NPCs
 
 **Files:**
-- Create: `unity/com.backwoods.mortar/Runtime/Views/PropAnimator.cs`, `Tests/Runtime/TestClips.cs`, `Tests/Runtime/BakedActorTests.cs`
+- Create: `unity/com.mortar.unity/Runtime/Views/PropAnimator.cs`, `Tests/Runtime/TestClips.cs`, `Tests/Runtime/BakedActorTests.cs`
 - Modify: `Runtime/Views/ActorView.cs`, `Runtime/Views/ActorViews.cs`, `Runtime/Views/MarkerProps.cs`
 
 **Interfaces:**
@@ -3160,7 +3160,7 @@ Expected: EditMode all pass; PlayMode 47 passed + 1 skipped (44 + 3 new). Existi
 - [ ] **Step 8: Commit**
 
 ```powershell
-git add unity/com.backwoods.mortar/Runtime/Views unity/com.backwoods.mortar/Tests/Runtime
+git add unity/com.mortar.unity/Runtime/Views unity/com.mortar.unity/Tests/Runtime
 git status --short
 git commit -m "play baked clips on actors and town npcs"
 ```

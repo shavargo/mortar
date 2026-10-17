@@ -5,7 +5,7 @@ import pytest
 from mortar_art import glyphs
 from mortar_art.config import REPO_ROOT
 
-SETTINGS_PATH = REPO_ROOT / "unity" / "com.backwoods.mortar" / "Runtime" / "Ascii" / "AsciiSettings.cs"
+SETTINGS_PATH = REPO_ROOT / "unity" / "com.mortar.unity" / "Runtime" / "Ascii" / "AsciiSettings.cs"
 
 
 @pytest.fixture(scope="module")

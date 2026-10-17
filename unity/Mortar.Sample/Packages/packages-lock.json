@@ -1,7 +1,7 @@
 {
   "dependencies": {
-    "com.backwoods.mortar": {
-      "version": "file:../../com.backwoods.mortar",
+    "com.mortar.unity": {
+      "version": "file:../../com.mortar.unity",
       "depth": 0,
       "source": "local",
       "dependencies": {

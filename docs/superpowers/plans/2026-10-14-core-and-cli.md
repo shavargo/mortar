@@ -5911,7 +5911,7 @@ git commit -m "add mortar cli with generate and preview"
 ```
 MIT License
 
-Copyright (c) 2026 Backwoods Web Solutions
+Copyright (c) 2026 Mortar contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

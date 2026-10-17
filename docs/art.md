@@ -76,4 +76,4 @@ The bake checks each file against its recorded hash, so a changed model fails lo
 Every model under `tools/art/models` is CC0 (public domain dedication); each pack folder's
 `LICENSE.txt` names its source: KayKit Adventurers and KayKit Skeletons by Kay Lousberg, and
 models by Quaternius. DejaVu Sans Mono ships with its own licence in
-`unity/com.backwoods.mortar/Runtime/Resources/Mortar/DejaVuSansMono-LICENSE.txt`.
+`unity/com.mortar.unity/Runtime/Resources/Mortar/DejaVuSansMono-LICENSE.txt`.

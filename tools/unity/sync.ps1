@@ -2,7 +2,7 @@ param([string]$Configuration = 'Release')
 $ErrorActionPreference = 'Stop'
 
 $root = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
-$package = Join-Path $root 'unity\com.backwoods.mortar'
+$package = Join-Path $root 'unity\com.mortar.unity'
 $plugins = Join-Path $package 'Plugins'
 $streaming = Join-Path $root 'unity\Mortar.Sample\Assets\StreamingAssets'
 $publish = Join-Path $root 'out\unity-publish'

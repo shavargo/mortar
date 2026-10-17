@@ -1,11 +1,11 @@
 {
-  "name": "com.backwoods.mortar",
+  "name": "com.mortar.unity",
   "version": "0.1.0",
   "displayName": "Mortar",
   "description": "Unity layer for the Mortar ARPG framework: rendering, input, HUD and screens on top of the engine-free simulation.",
   "unity": "6000.3",
   "license": "MIT",
-  "author": { "name": "Backwoods Web Solutions" },
+  "author": { "name": "Mortar contributors" },
   "dependencies": {
     "com.unity.inputsystem": "1.20.1"
   }

@@ -15,7 +15,7 @@
 - No Blizzard or Diablo names anywhere. Models stay CC0; the only non-CC0 asset is DejaVu Sans Mono, committed with its licence file.
 - Unity scripts compile as C# 9: block-scoped namespaces, explicit `using` directives, no records, no `init`, no file-scoped namespaces, no collection expressions. Every assembly folder keeps its `csc.rsp` with `-nullable:enable -warnaserror+`; serialized fields need initializers (CS0649 is an error).
 - Never use `?.` or `??` on `UnityEngine.Object` values; compare with `== null`.
-- Built-in render pipeline, gamma colour space. Shaders live in `unity/com.backwoods.mortar/Runtime/Resources/Mortar/` and load with `Resources.Load`, so builds include them. Full-screen passes sample with `tex2Dlod` (no gradients inside branches or loops).
+- Built-in render pipeline, gamma colour space. Shaders live in `unity/com.mortar.unity/Runtime/Resources/Mortar/` and load with `Resources.Load`, so builds include them. Full-screen passes sample with `tex2Dlod` (no gradients inside branches or loops).
 - Cell size is fixed at 6×10 screen pixels; the glyph atlas has 16 slots: 0 is blank, 1–11 the brightness ramp by ink coverage, 12–15 are `- / | \`.
 - The glyph slot rules in `mortar_art/glyphs.py` and `GlyphRules.cs` must match; a pytest test checks the shared constants.
 - The interface is never filtered. Names and numbers stay plain text.
@@ -26,7 +26,7 @@
 - pytest runs from `tools/art` as `.venv\Scripts\python -m pytest -W error -q -p no:cacheprovider` and must stay warning-free.
 - Unity tests: `pwsh -File tools/unity/test.ps1 -Platform EditMode|PlayMode [-Filter X]`. Only one Unity process may open `unity/Mortar.Sample` at a time; the user's editor must be closed for batch runs.
 - Unity writes `.meta` files for new package and asset files on its next run (any test run). Commit each `.meta` with its file.
-- Commit messages: short, one line, present tense, no prefixes. Stage by explicit path. Never stage `.env`, `.superpowers/`, `bin/`, `obj/`, `out/`, `tools/art/out/`, `tools/art/.venv/`, Unity `Library/`, `Temp/`, `Logs/`, `UserSettings/`, `unity/com.backwoods.mortar/Plugins/`, or `Assets/StreamingAssets/`.
+- Commit messages: short, one line, present tense, no prefixes. Stage by explicit path. Never stage `.env`, `.superpowers/`, `bin/`, `obj/`, `out/`, `tools/art/out/`, `tools/art/.venv/`, Unity `Library/`, `Temp/`, `Logs/`, `UserSettings/`, `unity/com.mortar.unity/Plugins/`, or `Assets/StreamingAssets/`.
 - Baked art and glyph icons are committed only after the user approves them.
 
 ## Design Interpretations
@@ -61,7 +61,7 @@ tools/art/
   tests/test_glyphs.py, test_glyphs_cli.py, test_glyph_icons.py      new
   tests/test_bake_geometry.py, test_sheets.py                         modified (Task 7)
   tests/test_models.py              new (Task 8)
-unity/com.backwoods.mortar/
+unity/com.mortar.unity/
   Runtime/Resources/Mortar/DejaVuSansMono.ttf, DejaVuSansMono-LICENSE.txt, GlyphAtlas.png      new
   Runtime/Resources/Mortar/Ascii.shader, Downsample.cginc, Glyph.cginc, Bloom.cginc            new
   Runtime/Resources/Mortar/AsciiMask.shader, Mask.cginc, StrokeSprite.shader, GlowSprite.shader new
@@ -94,7 +94,7 @@ docs/art.md (new), docs/unity.md, README.md, docs/superpowers/specs/2026-10-15-3
 ### Task 1: The font and the glyph atlas
 
 **Files:**
-- Create: `unity/com.backwoods.mortar/Runtime/Resources/Mortar/DejaVuSansMono.ttf`, `DejaVuSansMono-LICENSE.txt`, `GlyphAtlas.png` (with Unity `.meta` files, and `Runtime/Resources.meta`, `Runtime/Resources/Mortar.meta`)
+- Create: `unity/com.mortar.unity/Runtime/Resources/Mortar/DejaVuSansMono.ttf`, `DejaVuSansMono-LICENSE.txt`, `GlyphAtlas.png` (with Unity `.meta` files, and `Runtime/Resources.meta`, `Runtime/Resources/Mortar.meta`)
 - Create: `tools/art/mortar_art/glyphs.py`, `tools/art/glyphs.py`
 - Test: `tools/art/tests/test_glyphs.py`, `tools/art/tests/test_glyphs_cli.py`
 
@@ -111,9 +111,9 @@ From the repo root:
 New-Item -ItemType Directory -Force tools/art/out/fonts | Out-Null
 Invoke-WebRequest https://github.com/dejavu-fonts/dejavu-fonts/releases/download/version_2_37/dejavu-fonts-ttf-2.37.zip -OutFile tools/art/out/fonts/dejavu.zip
 Expand-Archive tools/art/out/fonts/dejavu.zip tools/art/out/fonts -Force
-New-Item -ItemType Directory -Force unity/com.backwoods.mortar/Runtime/Resources/Mortar | Out-Null
-Copy-Item tools/art/out/fonts/dejavu-fonts-ttf-2.37/ttf/DejaVuSansMono.ttf unity/com.backwoods.mortar/Runtime/Resources/Mortar/
-Copy-Item tools/art/out/fonts/dejavu-fonts-ttf-2.37/LICENSE unity/com.backwoods.mortar/Runtime/Resources/Mortar/DejaVuSansMono-LICENSE.txt
+New-Item -ItemType Directory -Force unity/com.mortar.unity/Runtime/Resources/Mortar | Out-Null
+Copy-Item tools/art/out/fonts/dejavu-fonts-ttf-2.37/ttf/DejaVuSansMono.ttf unity/com.mortar.unity/Runtime/Resources/Mortar/
+Copy-Item tools/art/out/fonts/dejavu-fonts-ttf-2.37/LICENSE unity/com.mortar.unity/Runtime/Resources/Mortar/DejaVuSansMono-LICENSE.txt
 ```
 
 Open the copied licence and confirm it is the DejaVu licence (Bitstream Vera terms plus public-domain changes), which allows bundling. If the download fails or the licence differs, stop and report.
@@ -130,7 +130,7 @@ import pytest
 from mortar_art import glyphs
 from mortar_art.config import REPO_ROOT
 
-SETTINGS_PATH = REPO_ROOT / "unity" / "com.backwoods.mortar" / "Runtime" / "Ascii" / "AsciiSettings.cs"
+SETTINGS_PATH = REPO_ROOT / "unity" / "com.mortar.unity" / "Runtime" / "Ascii" / "AsciiSettings.cs"
 
 
 @pytest.fixture(scope="module")
@@ -298,7 +298,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 from .config import REPO_ROOT
 
-RESOURCES_ROOT = REPO_ROOT / "unity" / "com.backwoods.mortar" / "Runtime" / "Resources" / "Mortar"
+RESOURCES_ROOT = REPO_ROOT / "unity" / "com.mortar.unity" / "Runtime" / "Resources" / "Mortar"
 FONT_PATH = RESOURCES_ROOT / "DejaVuSansMono.ttf"
 ATLAS_PATH = RESOURCES_ROOT / "GlyphAtlas.png"
 
@@ -434,7 +434,7 @@ Expected: PASS, with `test_slot_constants_match_the_unity_settings` skipped.
 - [ ] **Step 7: Generate the atlas and let Unity import it**
 
 Run (from `tools/art`): `.venv\Scripts\python glyphs.py atlas`
-Expected: `[GLYPHS] Ramp ' ...'` (12 characters) and `[GLYPHS] Wrote unity/com.backwoods.mortar/Runtime/Resources/Mortar/GlyphAtlas.png`.
+Expected: `[GLYPHS] Ramp ' ...'` (12 characters) and `[GLYPHS] Wrote unity/com.mortar.unity/Runtime/Resources/Mortar/GlyphAtlas.png`.
 
 Then run `pwsh -File tools/unity/test.ps1 -Platform EditMode` (editor closed) so Unity imports the new files and writes their `.meta` files.
 Expected: all EditMode tests still pass, and `Runtime/Resources.meta`, `Runtime/Resources/Mortar.meta`, and a `.meta` beside each new file exist.
@@ -445,7 +445,7 @@ Run: `.venv\Scripts\python -m pytest -W error -q -p no:cacheprovider`
 Expected: all pass.
 
 ```powershell
-git add tools/art/glyphs.py tools/art/mortar_art/glyphs.py tools/art/tests/test_glyphs.py tools/art/tests/test_glyphs_cli.py unity/com.backwoods.mortar/Runtime/Resources.meta unity/com.backwoods.mortar/Runtime/Resources/Mortar.meta unity/com.backwoods.mortar/Runtime/Resources/Mortar/DejaVuSansMono.ttf unity/com.backwoods.mortar/Runtime/Resources/Mortar/DejaVuSansMono.ttf.meta unity/com.backwoods.mortar/Runtime/Resources/Mortar/DejaVuSansMono-LICENSE.txt unity/com.backwoods.mortar/Runtime/Resources/Mortar/DejaVuSansMono-LICENSE.txt.meta unity/com.backwoods.mortar/Runtime/Resources/Mortar/GlyphAtlas.png unity/com.backwoods.mortar/Runtime/Resources/Mortar/GlyphAtlas.png.meta
+git add tools/art/glyphs.py tools/art/mortar_art/glyphs.py tools/art/tests/test_glyphs.py tools/art/tests/test_glyphs_cli.py unity/com.mortar.unity/Runtime/Resources.meta unity/com.mortar.unity/Runtime/Resources/Mortar.meta unity/com.mortar.unity/Runtime/Resources/Mortar/DejaVuSansMono.ttf unity/com.mortar.unity/Runtime/Resources/Mortar/DejaVuSansMono.ttf.meta unity/com.mortar.unity/Runtime/Resources/Mortar/DejaVuSansMono-LICENSE.txt unity/com.mortar.unity/Runtime/Resources/Mortar/DejaVuSansMono-LICENSE.txt.meta unity/com.mortar.unity/Runtime/Resources/Mortar/GlyphAtlas.png unity/com.mortar.unity/Runtime/Resources/Mortar/GlyphAtlas.png.meta
 git status --short
 git commit -m "add glyph atlas generator and dejavu sans mono"
 ```
@@ -455,9 +455,9 @@ git commit -m "add glyph atlas generator and dejavu sans mono"
 ### Task 2: Glyph rules, lookup textures and atlas import
 
 **Files:**
-- Create: `unity/com.backwoods.mortar/Runtime/Ascii/AsciiSettings.cs`, `CellGrid.cs`, `GlyphRules.cs`, `GlyphLookups.cs`
-- Modify: `unity/com.backwoods.mortar/Editor/ArtImport.cs`
-- Test: `unity/com.backwoods.mortar/Tests/Editor/GlyphRulesTests.cs`, `CellGridTests.cs`, `GlyphLookupsTests.cs`; modify `Tests/Editor/ArtImportTests.cs`
+- Create: `unity/com.mortar.unity/Runtime/Ascii/AsciiSettings.cs`, `CellGrid.cs`, `GlyphRules.cs`, `GlyphLookups.cs`
+- Modify: `unity/com.mortar.unity/Editor/ArtImport.cs`
+- Test: `unity/com.mortar.unity/Tests/Editor/GlyphRulesTests.cs`, `CellGridTests.cs`, `GlyphLookupsTests.cs`; modify `Tests/Editor/ArtImportTests.cs`
 
 **Interfaces:**
 - Consumes: `GlyphAtlas.png` from Task 1; the Python rules (`ramp_slot`, `edge_slot`) that these must match.
@@ -740,7 +740,7 @@ namespace Mortar.Unity
 In `Editor/ArtImport.cs`, add the constant and version below `MaxSheetSize`, the early branch at the top of `OnPreprocessTexture`, and the helper after `ConfigureSheet`:
 
 ```csharp
-        public const string GlyphAtlasPath = "Packages/com.backwoods.mortar/Runtime/Resources/Mortar/GlyphAtlas.png";
+        public const string GlyphAtlasPath = "Packages/com.mortar.unity/Runtime/Resources/Mortar/GlyphAtlas.png";
 
         public override uint GetVersion() => 1;
 
@@ -784,7 +784,7 @@ Expected: PASS, now including `test_slot_constants_match_the_unity_settings`.
 - [ ] **Step 7: Commit**
 
 ```powershell
-git add unity/com.backwoods.mortar/Runtime/Ascii.meta unity/com.backwoods.mortar/Runtime/Ascii unity/com.backwoods.mortar/Editor/ArtImport.cs unity/com.backwoods.mortar/Tests/Editor/GlyphRulesTests.cs unity/com.backwoods.mortar/Tests/Editor/GlyphRulesTests.cs.meta unity/com.backwoods.mortar/Tests/Editor/CellGridTests.cs unity/com.backwoods.mortar/Tests/Editor/CellGridTests.cs.meta unity/com.backwoods.mortar/Tests/Editor/GlyphLookupsTests.cs unity/com.backwoods.mortar/Tests/Editor/GlyphLookupsTests.cs.meta unity/com.backwoods.mortar/Tests/Editor/ArtImportTests.cs
+git add unity/com.mortar.unity/Runtime/Ascii.meta unity/com.mortar.unity/Runtime/Ascii unity/com.mortar.unity/Editor/ArtImport.cs unity/com.mortar.unity/Tests/Editor/GlyphRulesTests.cs unity/com.mortar.unity/Tests/Editor/GlyphRulesTests.cs.meta unity/com.mortar.unity/Tests/Editor/CellGridTests.cs unity/com.mortar.unity/Tests/Editor/CellGridTests.cs.meta unity/com.mortar.unity/Tests/Editor/GlyphLookupsTests.cs unity/com.mortar.unity/Tests/Editor/GlyphLookupsTests.cs.meta unity/com.mortar.unity/Tests/Editor/ArtImportTests.cs
 git status --short
 git commit -m "add glyph rules and lookup textures"
 ```
@@ -794,10 +794,10 @@ git commit -m "add glyph rules and lookup textures"
 ### Task 3: The glyph filter on the camera
 
 **Files:**
-- Create: `unity/com.backwoods.mortar/Runtime/Resources/Mortar/Ascii.shader`, `Downsample.cginc`, `Glyph.cginc`
-- Create: `unity/com.backwoods.mortar/Runtime/Ascii/AsciiResources.cs`, `AsciiMaterial.cs`, `AsciiFilter.cs`
-- Modify: `unity/com.backwoods.mortar/Runtime/Views/CameraFollow.cs`, `unity/com.backwoods.mortar/Tests/Runtime/ArtPreviewCapture.cs`
-- Test: `unity/com.backwoods.mortar/Tests/Runtime/AsciiScene.cs`, `AsciiFilterTests.cs`
+- Create: `unity/com.mortar.unity/Runtime/Resources/Mortar/Ascii.shader`, `Downsample.cginc`, `Glyph.cginc`
+- Create: `unity/com.mortar.unity/Runtime/Ascii/AsciiResources.cs`, `AsciiMaterial.cs`, `AsciiFilter.cs`
+- Modify: `unity/com.mortar.unity/Runtime/Views/CameraFollow.cs`, `unity/com.mortar.unity/Tests/Runtime/ArtPreviewCapture.cs`
+- Test: `unity/com.mortar.unity/Tests/Runtime/AsciiScene.cs`, `AsciiFilterTests.cs`
 
 **Interfaces:**
 - Consumes: `AsciiSettings`, `CellGrid`, `GlyphLookups.Ramp/Edges` (Task 2); `Resources/Mortar/GlyphAtlas.png` (Task 1).
@@ -1452,7 +1452,7 @@ If `AVerticalBoundaryShowsABarGlyph` fails, inspect the frame: `pwsh -File tools
 - [ ] **Step 9: Commit**
 
 ```powershell
-git add unity/com.backwoods.mortar/Runtime/Resources/Mortar unity/com.backwoods.mortar/Runtime/Ascii unity/com.backwoods.mortar/Runtime/Views/CameraFollow.cs unity/com.backwoods.mortar/Tests/Runtime/AsciiScene.cs unity/com.backwoods.mortar/Tests/Runtime/AsciiScene.cs.meta unity/com.backwoods.mortar/Tests/Runtime/AsciiFilterTests.cs unity/com.backwoods.mortar/Tests/Runtime/AsciiFilterTests.cs.meta unity/com.backwoods.mortar/Tests/Runtime/ArtPreviewCapture.cs
+git add unity/com.mortar.unity/Runtime/Resources/Mortar unity/com.mortar.unity/Runtime/Ascii unity/com.mortar.unity/Runtime/Views/CameraFollow.cs unity/com.mortar.unity/Tests/Runtime/AsciiScene.cs unity/com.mortar.unity/Tests/Runtime/AsciiScene.cs.meta unity/com.mortar.unity/Tests/Runtime/AsciiFilterTests.cs unity/com.mortar.unity/Tests/Runtime/AsciiFilterTests.cs.meta unity/com.mortar.unity/Tests/Runtime/ArtPreviewCapture.cs
 git status --short
 git commit -m "draw the world as glyphs"
 ```
@@ -1464,7 +1464,7 @@ git commit -m "draw the world as glyphs"
 ### Task 4: The player light
 
 **Files:**
-- Create: `unity/com.backwoods.mortar/Runtime/Ascii/LightFalloff.cs`, `AsciiLight.cs`, `PlayerLight.cs`
+- Create: `unity/com.mortar.unity/Runtime/Ascii/LightFalloff.cs`, `AsciiLight.cs`, `PlayerLight.cs`
 - Modify: `Runtime/Ascii/AsciiSettings.cs`, `GlyphLookups.cs`, `AsciiMaterial.cs`, `AsciiFilter.cs`; `Runtime/Resources/Mortar/Downsample.cginc`; `Runtime/App/MortarApp.cs`
 - Test: `Tests/Editor/GlyphLookupsTests.cs` (add), `Tests/Runtime/AsciiFilterTests.cs` (add), `Tests/Runtime/MortarAppTests.cs` (add)
 
@@ -1860,7 +1860,7 @@ In `InTheDarkOnlyTheLightRadiusShowsGlyphs` the light sits at pixel (600, 300) w
 - [ ] **Step 8: Commit**
 
 ```powershell
-git add unity/com.backwoods.mortar/Runtime/Ascii unity/com.backwoods.mortar/Runtime/Resources/Mortar/Downsample.cginc unity/com.backwoods.mortar/Runtime/App/MortarApp.cs unity/com.backwoods.mortar/Tests/Editor/GlyphLookupsTests.cs unity/com.backwoods.mortar/Tests/Runtime/AsciiFilterTests.cs unity/com.backwoods.mortar/Tests/Runtime/MortarAppTests.cs
+git add unity/com.mortar.unity/Runtime/Ascii unity/com.mortar.unity/Runtime/Resources/Mortar/Downsample.cginc unity/com.mortar.unity/Runtime/App/MortarApp.cs unity/com.mortar.unity/Tests/Editor/GlyphLookupsTests.cs unity/com.mortar.unity/Tests/Runtime/AsciiFilterTests.cs unity/com.mortar.unity/Tests/Runtime/MortarAppTests.cs
 git status --short
 git commit -m "light dungeons around the player"
 ```
@@ -1870,8 +1870,8 @@ git commit -m "light dungeons around the player"
 ### Task 5: The stroke mask for grass and water
 
 **Files:**
-- Create: `unity/com.backwoods.mortar/Runtime/Resources/Mortar/AsciiMask.shader`, `Mask.cginc`, `StrokeSprite.shader`
-- Create: `unity/com.backwoods.mortar/Runtime/Ascii/AsciiMask.cs`, `MaskMaterials.cs`
+- Create: `unity/com.mortar.unity/Runtime/Resources/Mortar/AsciiMask.shader`, `Mask.cginc`, `StrokeSprite.shader`
+- Create: `unity/com.mortar.unity/Runtime/Ascii/AsciiMask.cs`, `MaskMaterials.cs`
 - Modify: `Runtime/Ascii/AsciiSettings.cs`, `AsciiResources.cs`, `AsciiMaterial.cs`, `AsciiFilter.cs`; `Runtime/Resources/Mortar/Glyph.cginc`; `Runtime/Views/LevelView.cs`
 - Test: `Tests/Runtime/AsciiFilterTests.cs` (modify and add), `Tests/Runtime/LevelViewTests.cs` (add)
 
@@ -2539,7 +2539,7 @@ If `StrokeSpritesMarkTheMaskUnlessSomethingCoversThem` reads red under the cover
 - [ ] **Step 9: Commit**
 
 ```powershell
-git add unity/com.backwoods.mortar/Runtime/Resources/Mortar unity/com.backwoods.mortar/Runtime/Ascii unity/com.backwoods.mortar/Runtime/Views/LevelView.cs unity/com.backwoods.mortar/Tests/Runtime/AsciiFilterTests.cs unity/com.backwoods.mortar/Tests/Runtime/LevelViewTests.cs
+git add unity/com.mortar.unity/Runtime/Resources/Mortar unity/com.mortar.unity/Runtime/Ascii unity/com.mortar.unity/Runtime/Views/LevelView.cs unity/com.mortar.unity/Tests/Runtime/AsciiFilterTests.cs unity/com.mortar.unity/Tests/Runtime/LevelViewTests.cs
 git status --short
 git commit -m "ripple grass and water with stroke glyphs"
 ```
@@ -2549,7 +2549,7 @@ git commit -m "ripple grass and water with stroke glyphs"
 ### Task 6: Bloom and glowing loot, then the world review
 
 **Files:**
-- Create: `unity/com.backwoods.mortar/Runtime/Resources/Mortar/Bloom.cginc`, `GlowSprite.shader`
+- Create: `unity/com.mortar.unity/Runtime/Resources/Mortar/Bloom.cginc`, `GlowSprite.shader`
 - Modify: `Runtime/Resources/Mortar/Ascii.shader`, `Glyph.cginc`, `AsciiMask.shader` (`Mask.cginc` already has `FragGlow`); `Runtime/Ascii/AsciiSettings.cs`, `AsciiMaterial.cs`, `AsciiFilter.cs`, `MaskMaterials.cs`; `Runtime/Views/GroundItemViews.cs`
 - Test: `Tests/Runtime/AsciiFilterTests.cs` (add)
 
@@ -2898,7 +2898,7 @@ Expected: all green.
 - [ ] **Step 8: Commit**
 
 ```powershell
-git add unity/com.backwoods.mortar/Runtime/Resources/Mortar unity/com.backwoods.mortar/Runtime/Ascii unity/com.backwoods.mortar/Runtime/Views/GroundItemViews.cs unity/com.backwoods.mortar/Tests/Runtime/AsciiFilterTests.cs
+git add unity/com.mortar.unity/Runtime/Resources/Mortar unity/com.mortar.unity/Runtime/Ascii unity/com.mortar.unity/Runtime/Views/GroundItemViews.cs unity/com.mortar.unity/Tests/Runtime/AsciiFilterTests.cs
 git status --short
 git commit -m "bloom bright cells and glowing loot"
 ```
@@ -2932,8 +2932,8 @@ Steps: settings + shader decay/stamp; wire filter; `GrassTrampers.Collect` from 
 
 **Files:**
 - Modify: `tools/art/mortar_art/bake_geometry.py`, `tools/art/tests/test_bake_geometry.py`, `tools/art/tests/test_sheets.py`
-- Modify: `unity/com.backwoods.mortar/Runtime/Art/ActorClip.cs`, `unity/com.backwoods.mortar/Editor/ArtImport.cs`
-- Test: `unity/com.backwoods.mortar/Tests/Runtime/TestClips.cs`, `BakedActorTests.cs`; `Tests/Editor/ArtImportTests.cs`
+- Modify: `unity/com.mortar.unity/Runtime/Art/ActorClip.cs`, `unity/com.mortar.unity/Editor/ArtImport.cs`
+- Test: `unity/com.mortar.unity/Tests/Runtime/TestClips.cs`, `BakedActorTests.cs`; `Tests/Editor/ArtImportTests.cs`
 
 **Interfaces:**
 - Consumes: the 3D bake modules and `ActorClip` as committed (c787fb9).
@@ -3119,12 +3119,12 @@ Re-run both suites; all must pass, including `BakedActorsArePickedByTheirOutline
 - [ ] **Step 10: Commit**
 
 ```powershell
-git add tools/art/mortar_art/bake_geometry.py tools/art/tests/test_bake_geometry.py tools/art/tests/test_sheets.py unity/com.backwoods.mortar/Runtime/Art/ActorClip.cs unity/com.backwoods.mortar/Editor/ArtImport.cs unity/com.backwoods.mortar/Tests/Runtime/TestClips.cs unity/com.backwoods.mortar/Tests/Runtime/BakedActorTests.cs unity/com.backwoods.mortar/Tests/Editor/ArtImportTests.cs
+git add tools/art/mortar_art/bake_geometry.py tools/art/tests/test_bake_geometry.py tools/art/tests/test_sheets.py unity/com.mortar.unity/Runtime/Art/ActorClip.cs unity/com.mortar.unity/Editor/ArtImport.cs unity/com.mortar.unity/Tests/Runtime/TestClips.cs unity/com.mortar.unity/Tests/Runtime/BakedActorTests.cs unity/com.mortar.unity/Tests/Editor/ArtImportTests.cs
 git status --short
 git commit -m "bake actors at half resolution into compressed sheets"
 ```
 
-Add `unity/com.backwoods.mortar/Runtime/Views/SpriteObjects.cs` to the `git add` if Step 9 ran. Do not stage the uncommitted warrior art.
+Add `unity/com.mortar.unity/Runtime/Views/SpriteObjects.cs` to the `git add` if Step 9 ran. Do not stage the uncommitted warrior art.
 
 ---
 
@@ -3223,8 +3223,8 @@ Check that `git status --short` shows no `.env`, `out/` or `Library/` paths befo
 ### Task 9: Monospace panels
 
 **Files:**
-- Modify: `unity/com.backwoods.mortar/Runtime/UI/Ui.cs`, `UiRoot.cs`, `FloatingTexts.cs`, `InventoryScreen.cs`, `CharacterSheet.cs`
-- Test: `unity/com.backwoods.mortar/Tests/Editor/UiTests.cs` (new), `Tests/Runtime/HudTests.cs` (add)
+- Modify: `unity/com.mortar.unity/Runtime/UI/Ui.cs`, `UiRoot.cs`, `FloatingTexts.cs`, `InventoryScreen.cs`, `CharacterSheet.cs`
+- Test: `unity/com.mortar.unity/Tests/Editor/UiTests.cs` (new), `Tests/Runtime/HudTests.cs` (add)
 
 **Interfaces:**
 - Consumes: `Resources/Mortar/DejaVuSansMono.ttf` (Task 1).
@@ -3454,7 +3454,7 @@ Expected: all green.
 - [ ] **Step 6: Commit**
 
 ```powershell
-git add unity/com.backwoods.mortar/Runtime/UI/Ui.cs unity/com.backwoods.mortar/Runtime/UI/UiRoot.cs unity/com.backwoods.mortar/Runtime/UI/FloatingTexts.cs unity/com.backwoods.mortar/Runtime/UI/InventoryScreen.cs unity/com.backwoods.mortar/Runtime/UI/CharacterSheet.cs unity/com.backwoods.mortar/Tests/Editor/UiTests.cs unity/com.backwoods.mortar/Tests/Editor/UiTests.cs.meta unity/com.backwoods.mortar/Tests/Runtime/HudTests.cs
+git add unity/com.mortar.unity/Runtime/UI/Ui.cs unity/com.mortar.unity/Runtime/UI/UiRoot.cs unity/com.mortar.unity/Runtime/UI/FloatingTexts.cs unity/com.mortar.unity/Runtime/UI/InventoryScreen.cs unity/com.mortar.unity/Runtime/UI/CharacterSheet.cs unity/com.mortar.unity/Tests/Editor/UiTests.cs unity/com.mortar.unity/Tests/Editor/UiTests.cs.meta unity/com.mortar.unity/Tests/Runtime/HudTests.cs
 git status --short
 git commit -m "restyle the interface as monospace panels"
 ```
@@ -3464,10 +3464,10 @@ git commit -m "restyle the interface as monospace panels"
 ### Task 10: Text bars for life and mana
 
 **Files:**
-- Create: `unity/com.backwoods.mortar/Runtime/UI/TextBar.cs`
-- Modify: `unity/com.backwoods.mortar/Runtime/UI/HudView.cs`
-- Delete: `unity/com.backwoods.mortar/Runtime/UI/Orb.cs` and `Orb.cs.meta`
-- Test: `unity/com.backwoods.mortar/Tests/Editor/TextBarTests.cs` (new), `Tests/Runtime/HudTests.cs` (modify)
+- Create: `unity/com.mortar.unity/Runtime/UI/TextBar.cs`
+- Modify: `unity/com.mortar.unity/Runtime/UI/HudView.cs`
+- Delete: `unity/com.mortar.unity/Runtime/UI/Orb.cs` and `Orb.cs.meta`
+- Test: `unity/com.mortar.unity/Tests/Editor/TextBarTests.cs` (new), `Tests/Runtime/HudTests.cs` (modify)
 
 **Interfaces:**
 - Consumes: `Ui` palette and `Ui.Text` (Task 9).
@@ -3650,7 +3650,7 @@ Expected: all green, including `MortarAppTests.NewGameShowsTheTownAndHud` (it re
 - [ ] **Step 6: Commit**
 
 ```powershell
-git add unity/com.backwoods.mortar/Runtime/UI/TextBar.cs unity/com.backwoods.mortar/Runtime/UI/TextBar.cs.meta unity/com.backwoods.mortar/Runtime/UI/HudView.cs unity/com.backwoods.mortar/Runtime/UI/Orb.cs unity/com.backwoods.mortar/Runtime/UI/Orb.cs.meta unity/com.backwoods.mortar/Tests/Editor/TextBarTests.cs unity/com.backwoods.mortar/Tests/Editor/TextBarTests.cs.meta unity/com.backwoods.mortar/Tests/Runtime/HudTests.cs
+git add unity/com.mortar.unity/Runtime/UI/TextBar.cs unity/com.mortar.unity/Runtime/UI/TextBar.cs.meta unity/com.mortar.unity/Runtime/UI/HudView.cs unity/com.mortar.unity/Runtime/UI/Orb.cs unity/com.mortar.unity/Runtime/UI/Orb.cs.meta unity/com.mortar.unity/Tests/Editor/TextBarTests.cs unity/com.mortar.unity/Tests/Editor/TextBarTests.cs.meta unity/com.mortar.unity/Tests/Runtime/HudTests.cs
 git status --short
 git commit -m "show life and mana as text bars"
 ```
@@ -3999,10 +3999,10 @@ git commit -m "add the glyph icon converter"
 ### Task 12: Glyph icons in the interface, then the icon review
 
 **Files:**
-- Modify: `unity/com.backwoods.mortar/Runtime/Art/SpriteKeys.cs`, `SpriteCatalog.cs`, `Runtime/Views/GroundItemViews.cs`
+- Modify: `unity/com.mortar.unity/Runtime/Art/SpriteKeys.cs`, `SpriteCatalog.cs`, `Runtime/Views/GroundItemViews.cs`
 - Create: `unity/Mortar.Sample/Assets/Art/glyph-icons/*.png` with `.meta` files and `glyph-icons.meta` (controller, after approval)
 - Modify: `unity/Mortar.Sample/Assets/Art/SpriteCatalog.asset`
-- Test: `unity/com.backwoods.mortar/Tests/Editor/SpriteCatalogTests.cs` (add)
+- Test: `unity/com.mortar.unity/Tests/Editor/SpriteCatalogTests.cs` (add)
 
 **Interfaces:**
 - Consumes: Task 11's `glyphs.py icons`.
@@ -4079,7 +4079,7 @@ Expected: all green.
 - [ ] **Step 5: Commit the code**
 
 ```powershell
-git add unity/com.backwoods.mortar/Runtime/Art/SpriteKeys.cs unity/com.backwoods.mortar/Runtime/Art/SpriteCatalog.cs unity/com.backwoods.mortar/Runtime/Views/GroundItemViews.cs unity/com.backwoods.mortar/Tests/Editor/SpriteCatalogTests.cs
+git add unity/com.mortar.unity/Runtime/Art/SpriteKeys.cs unity/com.mortar.unity/Runtime/Art/SpriteCatalog.cs unity/com.mortar.unity/Runtime/Views/GroundItemViews.cs unity/com.mortar.unity/Tests/Editor/SpriteCatalogTests.cs
 git status --short
 git commit -m "prefer glyph icons in the interface"
 ```
@@ -4193,7 +4193,7 @@ The bake checks each file against its recorded hash, so a changed model fails lo
 Every model under `tools/art/models` is CC0 (public domain dedication); each pack folder's
 `LICENSE.txt` names its source: KayKit Adventurers and KayKit Skeletons by Kay Lousberg, and
 models by Quaternius. DejaVu Sans Mono ships with its own licence in
-`unity/com.backwoods.mortar/Runtime/Resources/Mortar/DejaVuSansMono-LICENSE.txt`.
+`unity/com.mortar.unity/Runtime/Resources/Mortar/DejaVuSansMono-LICENSE.txt`.
 ```
 
 - [ ] **Step 2: Update `docs/unity.md` and `README.md`**

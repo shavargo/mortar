@@ -8,7 +8,7 @@ namespace Mortar.Unity.EditorTools
     public sealed class ArtImport : AssetPostprocessor
     {
         public const int MaxSheetSize = 8192;
-        public const string GlyphAtlasPath = "Packages/com.backwoods.mortar/Runtime/Resources/Mortar/GlyphAtlas.png";
+        public const string GlyphAtlasPath = "Packages/com.mortar.unity/Runtime/Resources/Mortar/GlyphAtlas.png";
 
         public override uint GetVersion() => 2;
 

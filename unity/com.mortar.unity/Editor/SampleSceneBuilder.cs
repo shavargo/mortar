@@ -10,7 +10,7 @@ namespace Mortar.Unity.EditorTools
     {
         public const string ScenePath = "Assets/Scenes/Game.unity";
         public const string PanelSettingsPath = "Assets/Settings/MortarPanelSettings.asset";
-        public const string ThemePath = "Packages/com.backwoods.mortar/Runtime/UI/MortarTheme.tss";
+        public const string ThemePath = "Packages/com.mortar.unity/Runtime/UI/MortarTheme.tss";
         public const string DefaultThemeFolder = "Assets/UI Toolkit";
         public const string DefaultThemeSubfolder = DefaultThemeFolder + "/UnityThemes";
         public const string DefaultThemePath = DefaultThemeSubfolder + "/UnityDefaultRuntimeTheme.tss";
