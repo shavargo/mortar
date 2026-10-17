@@ -18,6 +18,8 @@ public static class WorldHash
         }
         hasher.Add(world.ActiveVendor ?? "");
         hasher.Add(world.NextStockRegenTick);
+        hasher.Add((long)world.DroppedUniques.Count);
+        foreach (var uniqueId in world.DroppedUniques) hasher.Add(uniqueId);
         AddVendorStock(hasher, world.Smith);
         AddVendorStock(hasher, world.Healer);
         AddVendorStock(hasher, world.Sage);

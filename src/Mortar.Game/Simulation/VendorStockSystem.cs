@@ -36,7 +36,7 @@ internal static class VendorStockSystem
         if (pool.Count == 0 || slots < 1) return;
         for (var i = 0; i < slots; i++)
         {
-            var item = ItemFactory.RollFrom(world, itemLevel, magicPercent, pool);
+            var item = ItemFactory.RollFrom(world, itemLevel, magicPercent, pool, uniqueChance: 0);
             if (item is null) break;
             item.Identified = true;
             vendor.MutableStock.Add(item);

@@ -23,7 +23,7 @@ internal static class LootSystem
             }
             else if (outcome == ItemRoll)
             {
-                var item = ItemFactory.Roll(world, definition.Level, table.MagicPercent);
+                var item = ItemFactory.Roll(world, definition.Level, table.MagicPercent, table.UniqueChance);
                 if (item is not null) Place(world, monster.Cell, item, 0, events);
             }
         }

@@ -11,6 +11,7 @@ namespace Mortar.Game.Simulation;
 public sealed class World
 {
     private readonly Dictionary<int, LevelState> _levels = new Dictionary<int, LevelState>();
+    private readonly List<string> _droppedUniques = new List<string>();
 
     private World(ContentSet content, ILevelGenerator generator, uint seed, ClassDefinition playerClass, PlayerProgress progress, Pcg32 rng)
     {
@@ -57,6 +58,17 @@ public sealed class World
     public long NextStockRegenTick { get; internal set; }
 
     public IReadOnlyList<int> VisitedDepths => _levels.Keys.OrderBy(depth => depth).ToList();
+
+    public IReadOnlyList<string> DroppedUniques => _droppedUniques;
+
+    public bool WasUniqueDropped(string uniqueId) =>
+        _droppedUniques.BinarySearch(uniqueId, StringComparer.Ordinal) >= 0;
+
+    internal void MarkUniqueDropped(string uniqueId)
+    {
+        var index = _droppedUniques.BinarySearch(uniqueId, StringComparer.Ordinal);
+        if (index < 0) _droppedUniques.Insert(~index, uniqueId);
+    }
 
     internal Pcg32 Rng { get; }
 
