@@ -43,6 +43,57 @@ internal static class TownServices
         return null;
     }
 
+    public static string? Repair(World world, int itemId, EventSink events)
+    {
+        var vendorError = RequireVendor(world, VendorKinds.Smith);
+        if (vendorError is not null) return vendorError;
+        var item = world.Belongings.Find(itemId);
+        if (item is null) return "no such item";
+        if (item.MaxDurability <= 0) return "item cannot be repaired";
+        if (item.Durability >= item.MaxDurability) return "item does not need repair";
+        var price = Pricing.RepairCost(item, world.Content.Rules);
+        if (world.Belongings.Gold < price) return "not enough gold";
+        world.Belongings.Gold -= price;
+        item.Durability = item.MaxDurability;
+        events.Add(new ItemRepaired(events.Tick, VendorKinds.Smith, item.Id, item.Name, price, world.Belongings.Gold));
+        return null;
+    }
+
+    public static string? Identify(World world, int itemId, EventSink events)
+    {
+        var vendorError = RequireVendor(world, VendorKinds.Sage);
+        if (vendorError is not null) return vendorError;
+        var item = world.Belongings.Find(itemId);
+        if (item is null) return "no such item";
+        if (item.Identified) return "item is already identified";
+        var price = world.Content.Rules.VendorIdentifyFee;
+        if (world.Belongings.Gold < price) return "not enough gold";
+        world.Belongings.Gold -= price;
+        return SpellSystem.IdentifyItem(world, itemId, events);
+    }
+
+    public static string? Heal(World world, EventSink events)
+    {
+        var vendorError = RequireVendor(world, VendorKinds.Healer);
+        if (vendorError is not null) return vendorError;
+        var player = world.Player;
+        if (player.Life >= player.Profile.MaxLife) return "already at full life";
+        var price = world.Content.Rules.VendorHealFee;
+        if (world.Belongings.Gold < price) return "not enough gold";
+        world.Belongings.Gold -= price;
+        player.Life = player.Profile.MaxLife;
+        events.Add(new VendorHealed(events.Tick, VendorKinds.Healer, price, player.Life, world.Belongings.Gold));
+        return null;
+    }
+
+    private static string? RequireVendor(World world, string kind)
+    {
+        var sessionError = VendorSession.RequireActive(world);
+        if (sessionError is not null) return sessionError;
+        if (world.ActiveVendor != kind) return "wrong vendor";
+        return null;
+    }
+
     private static VendorState Vendor(World world, string kind) =>
         kind switch
         {

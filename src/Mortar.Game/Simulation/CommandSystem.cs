@@ -42,6 +42,12 @@ internal static class CommandSystem
                 return TownServices.Buy(world, buy.StockIndex, events);
             case SellCommand sell:
                 return TownServices.Sell(world, sell.ItemId, events);
+            case RepairCommand repair:
+                return TownServices.Repair(world, repair.ItemId, events);
+            case IdentifyServiceCommand identify:
+                return TownServices.Identify(world, identify.ItemId, events);
+            case HealServiceCommand _:
+                return TownServices.Heal(world, events);
             case ClassSkillCommand _:
                 return ClassSkillSystem.Use(world, events);
             case PickUpCommand pickUp:
