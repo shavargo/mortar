@@ -46,13 +46,13 @@ internal static class PortalSystem
         var from = world.Depth;
         if (from != depth)
         {
+            var cell = PlaceAt(level, arrival);
+            if (cell is null) return "portal arrival is blocked";
             var current = world.Level;
             current.Remove(world.Player);
             current.ClearProjectiles();
             world.Player.ClearAction();
             world.Player.ClearIntent();
-            var cell = PlaceAt(level, arrival);
-            if (cell is null) return "portal arrival is blocked";
             level.Add(world.Player, cell.Value);
             world.Depth = depth;
         }

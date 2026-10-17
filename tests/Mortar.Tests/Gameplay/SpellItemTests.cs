@@ -25,6 +25,10 @@ public class SpellItemTests
         "scroll-heal", "Scroll", "scroll", ItemSlots.Scroll, 1, 1, 1, 0, default,
         null, null, null, 0, null, spellId: "healing");
 
+    private static ItemBaseDefinition FireboltScroll() => new ItemBaseDefinition(
+        "scroll-firebolt", "Scroll", "scroll", ItemSlots.Scroll, 1, 1, 1, 0, default,
+        null, null, null, 0, null, spellId: "firebolt");
+
     private static ItemBaseDefinition Staff() => new ItemBaseDefinition(
         "staff", "Staff", "staff", ItemSlots.Weapon, 1, 3, 1, 0, default,
         new IntRange(1, 2), new WeaponSwing(8, 4), null, 0, null,
@@ -66,6 +70,20 @@ public class SpellItemTests
         Assert.Contains(events.OfType<SpellHealed>(), e => e.Amount > 0);
         Assert.False(world.Progress.Knows("healing"));
         Assert.Equal(0, world.Player.Mana);
+        Assert.Null(world.Belongings.Find(scroll.Id));
+    }
+
+    [Fact]
+    public void Scroll_FireboltAimsAtTargetNotOrigin()
+    {
+        var world = WorldWith(FireboltScroll());
+        var scroll = TestWorlds.Give(world, FireboltScroll());
+        var zombie = TestWorlds.Spawn(world, "zombie", 4, 1);
+        var events = world.Tick(new Command[] { new UseItemCommand(scroll.Id, targetActorId: zombie.Id) });
+        var shot = Assert.Single(events.OfType<ProjectileSpawned>());
+        Assert.Equal("firebolt", shot.Kind);
+        Assert.Equal(world.Player.Cell, shot.Cell);
+        Assert.Equal(zombie.Cell, Assert.Single(world.Level.Projectiles).Aim);
         Assert.Null(world.Belongings.Find(scroll.Id));
     }
 

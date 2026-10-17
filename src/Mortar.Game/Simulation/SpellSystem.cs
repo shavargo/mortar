@@ -42,8 +42,14 @@ internal static class SpellSystem
         }
     }
 
-    public static string? ApplyScroll(World world, Actor caster, SpellDefinition spell, EventSink events) =>
-        Apply(world, caster, spell, spellLevel: 1, events);
+    public static string? ApplyScroll(
+        World world, Actor caster, SpellDefinition spell, Cell aim, int itemId, EventSink events)
+    {
+        caster.ActionAim = aim;
+        caster.ActionSpellId = spell.Id;
+        caster.ActionItemId = itemId;
+        return Apply(world, caster, spell, spellLevel: 1, events);
+    }
 
     internal static string? Apply(World world, Actor caster, SpellDefinition spell, int spellLevel, EventSink events)
     {

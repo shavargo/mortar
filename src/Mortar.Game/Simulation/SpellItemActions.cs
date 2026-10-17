@@ -53,12 +53,9 @@ internal static class SpellItemActions
             if (world.Content.ShallowestLevel > 0) return "there is no town";
             if (world.Depth <= 0) return "cannot open a portal in town";
         }
-        world.Player.ActionAim = aim;
-        world.Player.ActionSpellId = spell.Id;
-        world.Player.ActionItemId = command.TargetItemId;
-        world.Player.StartAction(ActionKind.Idle, 0);
-        var applyError = SpellSystem.ApplyScroll(world, world.Player, spell, events);
+        var applyError = SpellSystem.ApplyScroll(world, world.Player, spell, aim, command.TargetItemId, events);
         if (applyError is not null) return applyError;
+        world.Player.ClearAction();
         Consume(world, item, events);
         return null;
     }

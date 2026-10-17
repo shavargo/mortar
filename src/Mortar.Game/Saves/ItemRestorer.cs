@@ -19,7 +19,7 @@ internal static class ItemRestorer
         var stackCount = snapshot.StackCount <= 0 ? 1 : Check.Range(snapshot.StackCount, 1, stackMax, $"{where} stackCount");
         var charges = fromV1 && definition.MaxCharges > 0
             ? definition.MaxCharges
-            : Check.Range(snapshot.Charges, 0, Math.Max(definition.MaxCharges, snapshot.Charges), $"{where} charges");
+            : Check.Range(snapshot.Charges, 0, definition.MaxCharges, $"{where} charges");
         var identified = fromV1 || snapshot.Identified;
         return new Item(snapshot.Id, definition, itemLevel, armor, prefix, suffix, stackCount, charges, identified);
     }
