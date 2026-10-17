@@ -48,8 +48,8 @@ internal static class CommandSystem
                 return TownServices.Identify(world, identify.ItemId, events);
             case HealServiceCommand _:
                 return TownServices.Heal(world, events);
-            case ClassSkillCommand _:
-                return ClassSkillSystem.Use(world, events);
+            case ClassSkillCommand skill:
+                return ClassSkillSystem.Use(world, skill, events);
             case PickUpCommand pickUp:
                 return PickupSystem.Start(world, pickUp);
             case EquipCommand equip:
