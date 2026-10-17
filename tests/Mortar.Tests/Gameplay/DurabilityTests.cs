@@ -170,6 +170,23 @@ public class DurabilityTests
         Assert.Null(bonus.Swing);
     }
 
+    [Fact]
+    public void BreakingWeapon_RefreshesPlayerProfile()
+    {
+        var knife = TestGameContent.Weapon(maxDurability: 1, damageMin: 4, damageMax: 6);
+        var world = Arena(knife);
+        var weapon = Equip(world, knife);
+        var armed = world.Player.Profile.Damage;
+        var zombie = TestWorlds.Spawn(world, "zombie", 2, 1);
+        TestWorlds.Run(world, 4, new AttackCommand(zombie.Id));
+        Assert.Equal(0, weapon.Durability);
+        Assert.NotEqual(armed, world.Player.Profile.Damage);
+        var expected = PlayerStats.Compute(
+            world.PlayerClass, world.Progress, world.Content.Rules, GearBonus.From(world.Belongings.Equipment));
+        Assert.Equal(expected.Damage, world.Player.Profile.Damage);
+        Assert.Null(GearBonus.From(world.Belongings.Equipment).WeaponDamage);
+    }
+
     private static Item Equip(World world, ItemBaseDefinition definition)
     {
         var item = TestWorlds.Give(world, definition);

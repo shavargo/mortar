@@ -55,6 +55,7 @@ internal static class TownServices
         if (world.Belongings.Gold < price) return "not enough gold";
         world.Belongings.Gold -= price;
         item.Durability = item.MaxDurability;
+        world.RefreshPlayer();
         events.Add(new ItemRepaired(events.Tick, VendorKinds.Smith, item.Id, item.Name, price, world.Belongings.Gold));
         return null;
     }

@@ -68,6 +68,7 @@ internal static class ClassSkillSystem
 
         item.MaxDurability = max;
         item.Durability = Math.Min(durability + rep, max);
+        world.RefreshPlayer();
         events.Add(new ItemFieldRepaired(events.Tick, item.Id, item.Durability, item.MaxDurability));
         return null;
     }
