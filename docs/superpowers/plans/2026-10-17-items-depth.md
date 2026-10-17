@@ -96,40 +96,40 @@ docs/content.md, docs/saves.md
 
 **Files:** `ItemFactory`, `World` dropped list, `LootSystem`, `VendorStockSystem` (uniqueChance 0), WorldHash; tests.
 
-- [ ] `World.WasUniqueDropped` / `MarkUniqueDropped` with ordered storage.
-- [ ] Factory: unique chance → eligible → create unique (identified false, full dur, powers baked, UniqueId set) → mark dropped.
-- [ ] Determinism test: same seed same unique; second eligible roll skips flagged id.
-- [ ] Commit: `roll uniques from loot with once-per-world flags`
+- [x] `World.WasUniqueDropped` / `MarkUniqueDropped` with ordered storage.
+- [x] Factory: unique chance → eligible → create unique (identified false, full dur, powers baked, UniqueId set) → mark dropped.
+- [x] Determinism test: same seed same unique; second eligible roll skips flagged id.
+- [x] Commit: `roll uniques from loot with once-per-world flags`
 
 ### Task 4: Author ~8 uniques + loot chances
 
 **Files:** `content/uniques.json`, `content/loot.json`; content load smoke test.
 
-- [ ] Eight original uniques across existing bases (knife, blade, hatchet, vest, hauberk, helm, shield, ring/amulet).
-- [ ] loot uniqueChance: 1 / 1 / 1 / 15 for swarm/common/pack/boss.
-- [ ] Commit: `add unique item content and loot chances`
+- [x] Eight original uniques across existing bases (knife, blade, hatchet, vest, hauberk, helm, shield, ring/amulet).
+- [x] loot uniqueChance: 1 / 1 / 1 / 15 for swarm/common/pack/boss.
+- [x] Commit: `add unique item content and loot chances`
 
 ### Task 5: Warrior field repair
 
 **Files:** `ClassSkills`, warrior.json, `ClassSkillCommand(ItemId?)`, `ClassSkillSystem`, events; tests.
 
-- [ ] Repair skill path with DX-style loop; reject non-warrior / missing / unequipped / N/A / full.
-- [ ] Destroy path unequips and removes item.
-- [ ] Commit: `add warrior field repair skill`
+- [x] Repair skill path with DX-style loop; reject non-warrior / missing / unequipped / N/A / full.
+- [x] Destroy path unequips and removes item.
+- [x] Commit: `add warrior field repair skill`
 
 ### Task 6: Saves v4 + docs
 
 **Files:** snapshots, capture, restorers, `SaveMigration`, `WorldSnapshot.CurrentVersion = 4`, docs; tests.
 
-- [ ] Persist maxDurability, uniqueId, dropped uniques; migrate v3→v4; round-trip hash.
-- [ ] Update `docs/saves.md`, `docs/content.md`.
-- [ ] Commit: `save uniques and instance max durability as version 4`
+- [x] Persist maxDurability, uniqueId, dropped uniques; migrate v3→v4; round-trip hash.
+- [x] Update `docs/saves.md`, `docs/content.md`.
+- [x] Commit: `save uniques and instance max durability as version 4`
 
 ### Task 7: Final review
 
-- [ ] `dotnet test` on `Mortar.slnx` green; Release 0 warnings.
-- [ ] Review against Review Focus; fix Important issues.
-- [ ] Commit any fixes; mark items pass complete.
+- [x] `dotnet test` on `Mortar.slnx` green; Release 0 warnings.
+- [x] Review against Review Focus; fix Important issues.
+- [x] Commit any fixes; mark items pass complete.
 
 ## Later (not this plan)
 
