@@ -21,6 +21,14 @@ internal static class VendorSession
         return null;
     }
 
+    public static string? RequireActive(World world)
+    {
+        if (world.ActiveVendor is null) return "no active vendor";
+        if (world.Depth != 0) return "not in town";
+        if (!IsNear(world, world.ActiveVendor)) return "no vendor within reach";
+        return null;
+    }
+
     public static void Update(World world, EventSink events)
     {
         var kind = world.ActiveVendor;

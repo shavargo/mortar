@@ -22,3 +22,55 @@ public sealed class VendorStockRefreshed : GameEvent
 
     protected override string Describe() => "vendor stock refreshed";
 }
+
+public sealed class ItemBought : GameEvent
+{
+    public ItemBought(long tick, string vendorKind, int itemId, string name, int price, long goldRemaining)
+        : base(tick)
+    {
+        VendorKind = vendorKind;
+        ItemId = itemId;
+        Name = name;
+        Price = price;
+        GoldRemaining = goldRemaining;
+    }
+
+    public string VendorKind { get; }
+
+    public int ItemId { get; }
+
+    public string Name { get; }
+
+    public int Price { get; }
+
+    public long GoldRemaining { get; }
+
+    protected override string Describe() =>
+        $"bought item {ItemId} '{Name}' from {VendorKind} for {Price} gold (remaining {GoldRemaining})";
+}
+
+public sealed class ItemSold : GameEvent
+{
+    public ItemSold(long tick, string vendorKind, int itemId, string name, int price, long goldTotal)
+        : base(tick)
+    {
+        VendorKind = vendorKind;
+        ItemId = itemId;
+        Name = name;
+        Price = price;
+        GoldTotal = goldTotal;
+    }
+
+    public string VendorKind { get; }
+
+    public int ItemId { get; }
+
+    public string Name { get; }
+
+    public int Price { get; }
+
+    public long GoldTotal { get; }
+
+    protected override string Describe() =>
+        $"sold item {ItemId} '{Name}' to {VendorKind} for {Price} gold (total {GoldTotal})";
+}

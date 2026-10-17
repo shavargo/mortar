@@ -49,28 +49,11 @@ internal static class VendorStockSystem
         foreach (var definition in world.Content.ItemBases)
         {
             if (definition.DropWeight <= 0 || definition.ItemLevel > itemLevel) continue;
-            if (!Accepts(vendorKind, definition.Slot)) continue;
+            if (!VendorKinds.Accepts(vendorKind, definition.Slot)) continue;
             pool.Add(definition);
         }
         return pool;
     }
-
-    private static bool Accepts(string vendorKind, string slot) =>
-        vendorKind switch
-        {
-            VendorKinds.Smith => IsSmithSlot(slot),
-            VendorKinds.Healer => slot == ItemSlots.Potion,
-            VendorKinds.Sage => slot == ItemSlots.Scroll || slot == ItemSlots.Book,
-            _ => false,
-        };
-
-    private static bool IsSmithSlot(string slot) =>
-        slot == ItemSlots.Weapon
-        || slot == ItemSlots.Body
-        || slot == ItemSlots.Head
-        || slot == ItemSlots.Shield
-        || slot == ItemSlots.Ring
-        || slot == ItemSlots.Amulet;
 
     internal static int ShopItemLevel(World world)
     {

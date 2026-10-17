@@ -38,6 +38,10 @@ internal static class CommandSystem
                 return VendorSession.Talk(world, talk.VendorKind);
             case LeaveVendorCommand _:
                 return VendorSession.Leave(world);
+            case BuyCommand buy:
+                return TownServices.Buy(world, buy.StockIndex, events);
+            case SellCommand sell:
+                return TownServices.Sell(world, sell.ItemId, events);
             case ClassSkillCommand _:
                 return ClassSkillSystem.Use(world, events);
             case PickUpCommand pickUp:
